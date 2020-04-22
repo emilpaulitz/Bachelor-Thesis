@@ -1,0 +1,9 @@
+1.	Mit Art der Daten vertraut machen, parsen, FDR und q-value berechnen, Pseudo-ROCs zeichnen (Ordner 'Erste Aufgabe')
+2.	Richtige Daten mit XL bekommen, Skript aus 'Erste Aufgabe' anwenden, Pseudo-ROCs für XL und nicht-XL zeichnen.
+3.	GitHub anlegen
+4.	Rang-Spalte hinzufügen und jeweils nur Rang 1 für ROCs benutzen
+a.	Vorher (alle Einträge mit entspr. Q-Value, fast method, orange: XL, blue: non-XL): ROC_fast_all.jpg
+b.	Nachher (nur Rang-1-Einträge, fast method, orange: XL, blue: non-XL): ROC_fast_rank1only.jpg
+5.	Einlesen in lineare ML-Ansätze und ML-package scikit Learn
+6.	Percolator-Algorithmus nachbauen 
+7.	Cross-Validation einbauen
