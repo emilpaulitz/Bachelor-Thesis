@@ -4,6 +4,7 @@
 4.	Rang-Spalte hinzufügen und jeweils nur Rang 1 für ROCs benutzen
 a.	Vorher (alle Einträge mit entspr. Q-Value, fast method, orange: XL, blue: non-XL): ROC_fast_all.jpg
 b.	Nachher (nur Rang-1-Einträge, fast method, orange: XL, blue: non-XL): ROC_fast_rank1only.jpg
+c. 	Non-cross-links sehen gleich aus, Cross-links haben gleiche Form aber Anzahl ist bei allen Ranks bis q = 0.05 bei ca. 6000, nur bei Rank 1 nur ca. 4000
 5.	Einlesen in lineare ML-Ansätze und ML-package scikit Learn
 6.	Percolator-Algorithmus nachbauen 
 7.	Cross-Validation einbauen
