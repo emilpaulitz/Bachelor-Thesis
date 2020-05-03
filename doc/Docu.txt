@@ -7,8 +7,9 @@ b.	Nachher (nur Rang-1-Einträge, fast method, orange: XL, blue: non-XL): ROC_fa
 c. 	Non-cross-links sehen gleich aus, Cross-links haben gleiche Form aber Anzahl ist bei allen Ranks bis q = 0.05 bei ca. 6000, nur bei Rank 1 nur ca. 4000
 5.	Einlesen in lineare ML-Ansätze und ML-package scikit Learn
 a. 	LDA: Geht von Normalverteilungen mit unterschiedlichem Erwartungswert und/oder Varianz der einzelnen Scores für jede Klasse aus. Das passt nicht wirklich auf unser Beispiel, da (zumindest die meisten) scores nicht normalverteilt sind (oder?). Ergebnis: lda_compared_to_NuXLscore.png
-b. 	Logistic regression: Trennt ähnlich wie NuXL score. Warum? Wie wird NuXL score zusammengesetzt? Ergebnis: lr_compared_to_NuXLscore.png
-c.	SVM: Trennt ähnlich wie NuXL score, wird von percolator benutzt, versucht die Grenze so zu legen, dass der Abstand der Grenze zu Objekten der Klasse maximal ist (?). Ergebnis: svm_compared_to_NuXLscore.png
+b. 	Ladder score ist etwas normalverteilt, mit einem deutlich unterschiedlichen Erwartungswert zwischen den wahren und den falschen Trainigsdaten. Nur den zu verwenden macht das Training (natürlich?) nicht besser, wieviel schlechter es ist müsste man noch mehr rausfinden. Ergebnis: lda_of_ladder_score.png
+c.	Logistic regression: Trennt ähnlich wie NuXL score. Warum? Wie wird NuXL score zusammengesetzt? Ergebnis: lr_compared_to_NuXLscore.png
+d.	SVM: Trennt ähnlich wie NuXL score, wird von percolator benutzt, versucht die Grenze so zu legen, dass der Abstand der Grenze zu Objekten der Klasse maximal ist, ohne zu viele zu wichtige Datenpunkte als Ausreißer zu klassifizieren. Ergebnis: svm_compared_to_NuXLscore.png
 6.	Struktur des Notebook verändern, dass man die Module beliebig zusammensetzen kann
 7.	Percolator-Algorithmus nachbauen 
 8.	Cross-Validation einbauen
