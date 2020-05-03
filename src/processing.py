@@ -23,7 +23,6 @@ def DFfromTXT(fileName):
 
 # add columns containing FDR and the q-value respectively
 def calcQ(df, scoreColName):
-    #df[scoreColName] = [float(i) for i in df[scoreColName]]
     
     # Sort by score columns
     df.sort_values(scoreColName, ascending=False, inplace = True)
@@ -65,9 +64,13 @@ def addRanks(df, idColName, scoreColName):
 # Read the specified file, calculate FDR, q-value and ranks and sort it according to its score
 def readAndProcess(fileName, idColName,  scoreColName):
     d = DFfromTXT(fileName)
+    print('file read')
     d1 = strToNum(d)
+    print('strings converted to numbers')
     d2 = calcQ(d1, scoreColName)
+    print('q-values estimated')
     df = addRanks(d2, idColName, scoreColName)
+    print('ranks computed')
     df.sort_values(scoreColName, inplace = True, ascending = False)
     return df   
 
