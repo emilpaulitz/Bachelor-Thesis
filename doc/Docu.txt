@@ -1,3 +1,5 @@
+PSM = Peptide Spectrum Matches
+# Frage: Warum generiert man nicht mehrere decoy-databases (shuffled, reversed...), damit nicht jeder zweite falsche Eintrag ein decoy ist, sondern jeder dritte, vierte, fünfte....?
 1.	Mit Art der Daten vertraut machen, parsen, FDR und q-value berechnen, Pseudo-ROCs zeichnen (Ordner 'Erste Aufgabe')
 2.	Richtige Daten mit XL bekommen, Skript aus 'Erste Aufgabe' anwenden, Pseudo-ROCs für XL und nicht-XL zeichnen.
 3.	GitHub anlegen
@@ -12,4 +14,17 @@ c.	Logistic regression: Trennt ähnlich wie NuXL score. Warum? Wie wird NuXL sco
 d.	SVM: Trennt ähnlich wie NuXL score, wird von percolator benutzt, versucht die Grenze so zu legen, dass der Abstand der Grenze zu Objekten der Klasse maximal ist, ohne zu viele zu wichtige Datenpunkte als Ausreißer zu klassifizieren. Ergebnis: svm_compared_to_NuXLscore.png
 6.	Struktur des Notebook verändern, dass man die Module beliebig zusammensetzen kann
 7.	Percolator-Algorithmus nachbauen 
+Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zelle. Vielleicht müssen die Scores nochmal transformiert werden? Darum benutze ich allerdings predict_proba bzw. eine lineare SVM, bei der gibt es die Probleme nicht.
+	Option 'dual = False' hat es signifikant schneller werden lassen, sodass das Lernen fertig wird (konvergiert) und die Ergebnisse tatsächlich besser sind als der NuXL:score
+	Auch die Pseudo-ROC-Kurven wenn man nach dem NuXL:score geht sehen unterschiedlich aus, da im Percolator-Algorithmus zufällig die Hälfte der Decoys entfernt wird.
+	Experiment:
+		Number of PSMs for q <= 0.01, rank = 1, training with rank 1 only = True and classes option = : 5569
+		Number of PSMs for q <= 0.01, rank = 1, training with rank 1 only = True and classes option = balanced: 5560
+		Number of PSMs for q <= 0.01, rank = 1, training with rank 1 only = False and classes option = : 5351
+		Number of PSMs for q <= 0.01, rank = 1, training with rank 1 only = False and classes option = balanced: 5185
+		
+		Genauere Untersuchung zu den Klassen Optionen mit den Eckwerten von je 10 Ausführungen:
+		class Option: , max PSMs: 5285, min PSMs: 4413, median PSMs: 5203.0
+		class Option: balanced, max PSMs: 5261, min PSMs: 5067, median PSMs: 5179.0
+		Bilder jeweils im 'results' Ordner.
 8.	Cross-Validation einbauen

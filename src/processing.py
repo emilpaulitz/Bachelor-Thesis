@@ -87,11 +87,13 @@ def strToNum(df):
     return df
 
 # Plot Pseudo ROC of the df including colums 'q-val' in x = [0,xMax] for all entries (with col 'Rank' being 1, if specified)
-def pseudoROC(df, xMax, onlyFirstRank):
+def pseudoROC(df, xMax, onlyFirstRank = True, qColName = 'q-val', title = ''):
     if (onlyFirstRank):
-        qVals = [df.loc[i, 'q-val'] for i in df.index if (df.loc[i,'q-val'] <= xMax and df.loc[i, 'Rank'] == 1)]
+        qVals = [df.loc[i, qColName] for i in df.index if (df.loc[i,qColName] <= xMax and df.loc[i, 'Rank'] == 1)]
     else: 
-        qVals = [df.loc[i, 'q-val'] for i in df.index if (df.loc[i,'q-val'] <= xMax)]
+        qVals = [df.loc[i, qColName] for i in df.index if (df.loc[i,qColName] <= xMax)]
     plt.xlim(0,xMax)
     plt.ylim(0,len(qVals))
+    plt.title(title)
     plt.plot(qVals, range(len(qVals)))
+
