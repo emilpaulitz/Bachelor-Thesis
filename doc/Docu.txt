@@ -18,13 +18,24 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 	Option 'dual = False' hat es signifikant schneller werden lassen, sodass das Lernen fertig wird (konvergiert) und die Ergebnisse tatsächlich besser sind als der NuXL:score
 	Auch die Pseudo-ROC-Kurven wenn man nach dem NuXL:score geht sehen unterschiedlich aus, da im Percolator-Algorithmus zufällig die Hälfte der Decoys entfernt wird.
 	Experiment:
-		Number of PSMs for q <= 0.01, rank = 1, training with rank 1 only = True and classes option = : 5569
-		Number of PSMs for q <= 0.01, rank = 1, training with rank 1 only = True and classes option = balanced: 5560
-		Number of PSMs for q <= 0.01, rank = 1, training with rank 1 only = False and classes option = : 5351
-		Number of PSMs for q <= 0.01, rank = 1, training with rank 1 only = False and classes option = balanced: 5185
+		Number of PSMs for q <= 0.01, rank = 1, using rank 1 only = True and classes option = : 5569
+		Number of PSMs for q <= 0.01, rank = 1, using rank 1 only = True and classes option = balanced: 5560
+		Number of PSMs for q <= 0.01, rank = 1, using rank 1 only = False and classes option = : 5351
+		Number of PSMs for q <= 0.01, rank = 1, using rank 1 only = False and classes option = balanced: 5185
 		
-		Genauere Untersuchung zu den Klassen Optionen mit den Eckwerten von je 10 Ausführungen:
+		Genauere Untersuchung zu den Klassen Optionen mit den Eckwerten von je 10 Ausführungen (q <= 0.01, rank = 1):
 		class Option: , max PSMs: 5285, min PSMs: 4413, median PSMs: 5203.0
 		class Option: balanced, max PSMs: 5261, min PSMs: 5067, median PSMs: 5179.0
+
+		Genauere Untersuchung dazu, nur Rang 1 fürs Training zu benutzen, zum Scoring aber alle zu nehmen (auch je 10 Ausführungen):
+		useRankOneOnly: True, max PSMs: 5111, min PSMs: 4876, median PSMs: 4987.5
+		useRankOneOnly: False, max PSMs: 5333, min PSMs: 4320, median PSMs: 4956.0
+
+		Genauere Untersuchung dazu, nur Rang 1 PSMs für Training und Scoring zu benutzen (auch je 10 Ausführungen):
+		useRankOneOnly: True, max PSMs: 5669, min PSMs: 5011, median PSMs: 5569.0
+		useRankOneOnly: False, max PSMs: 5380, min PSMs: 4364, median PSMs: 5238.0
+		Mögliche Gründe: PSMs mit q <= 0.01 aber Rang > 1 werden ausgeschlossen. Es gibt weniger schlechte PSMs im df die man falsch klassifizieren kann?
+
+		Vergleich: mit NuXL:score mit q <= 0.01 findet man 4067 PSMs.
 		Bilder jeweils im 'results' Ordner.
 8.	Cross-Validation einbauen

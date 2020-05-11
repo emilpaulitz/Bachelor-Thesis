@@ -129,7 +129,7 @@ def evalXL(df, printResult = True):
     return [nXL, XL]
 
 # re-build of percolator algorithm
-def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter = 1000, q = 0.05, useRankOneOnly = False, plotEveryIter = False, suppressLog = False, plotSaveName = ''):
+def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter = 1000, svmC = 1.0, q = 0.05, useRankOneOnly = False, plotEveryIter = False, suppressLog = False, plotSaveName = ''):
     
     # Ugly Syntax because of ugly pandas behavior
     if (useRankOneOnly):
@@ -147,16 +147,12 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
     scndDecoys = df.loc[ixSecondHalf,]
     df = df.drop(ixSecondHalf)
     
-    # calculate the scores used for learning
+    # select the scores used for learning
     scores = [x for x in list(df.columns) if (x not in excludedCols)]
 
-    # calculate negative training set
-    # trim the negative training set so its size matches the positive training set
-    # ixFalse = rd.sample(ixDecoys, k = len(ixTrue))
+    # select negative training set
     ixFalse = ixFirstHalf
     falseTrain = df[scores].loc[ixFalse].values.tolist()
-    
-    scoreName = 'percolator_score'
     
     # set color cycle if needed
     if(plotEveryIter):
@@ -166,30 +162,35 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
         new_prop_cycle = cycler('color', cols)
         plt.rc('axes', prop_cycle = new_prop_cycle)
 
+    scoreName = 'percolator_score'
+    
     # iterate I times:
     for i in range(I):
         
         # choose positive training set by q-val
-        # Maybe also use decoys with necessary q-value?
         trueTrain = df[scores][(df['q-val'] <= q) & (df.Label == 1)].values.tolist()
         
-        # train linear svm
+        # compute training and response sets
         train = falseTrain + trueTrain
         classes = [0] * len(falseTrain) + [1] * len(trueTrain)
+        
+        # train linear svm
         if(not suppressLog):
             print('Training in iteration {} starts!'.format(i + 1))
-        W = svm.LinearSVC(dual = False, class_weight = class_weight, max_iter = svmIter).fit(train, classes)
+        W = svm.LinearSVC(dual = False, C = svmC, class_weight = class_weight, max_iter = svmIter).fit(train, classes)
         
         # re-rank PSMs by using the svm-generated scores instead of scoreCol, re-calculating q-val
         X = df[scores].values.tolist()
         df[scoreName] = W.decision_function(X)
         df = calcQ(df, scoreName)
+        
+        # log and plot this iteration
         if(plotEveryIter):
             pseudoROC(df, 0.05, label = 'Iteration {}'.format(i + 1))
         if(not suppressLog):
             print('Iteration {} done!'.format(i + 1))
         
-    # show plot and revert color cycle
+    # show plot and revert color cycle after for loop
     if(plotEveryIter):
         plt.legend(loc = 'best')
         if (plotSaveName != ''):
@@ -197,9 +198,15 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
         plt.show()
         plt.rc('axes', prop_cycle = cycler('color', [plt.get_cmap('tab10')(i) for i in range(10)]))
 
-    # compute new decoy PSMs / use second half
+    # use second half of decoy PSMs
     df = df[df.Label == 1]
     df = pd.concat([df, scndDecoys], sort = False)
+    
+    # re-add lesser ranked PSMs to df for scoring
+    #if (useRankOneOnly):
+    #    df = pd.concat([df, data[data.Rank != 1]], sort = False)
+    
+    # score and calculate q for the new database
     X = df[scores].values.tolist()
     df[scoreName] = W.decision_function(X)
     d = calcQ(df, scoreName)
