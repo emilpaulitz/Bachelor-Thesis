@@ -1,5 +1,11 @@
 PSM = Peptide Spectrum Matches
 # Frage: Warum generiert man nicht mehrere decoy-databases (shuffled, reversed...), damit nicht jeder zweite falsche Eintrag ein decoy ist, sondern jeder dritte, vierte, fünfte....?
+# Frage: Die Aufteilung auf 3 subsets für cross-validation nur mit PSMs die eh fürs Training verwendet werden oder mit allen und dann werden daraus die benötigten PSMs ausgewählt (momentan implementiert)?
+# Frage: Warum kommt immer ein anderes Ergebnis, wenn man öfter die Funktion decision_function anwendet ohne neu zu fitten? Werden den PSMs nicht immer die gleichen scores gegeben? Code:
+df['test_score'] = W.decision_function(X)
+calcQ(df,'test_score')
+print(len(df[df['q-val'] <= 0.01]))
+
 1.	Mit Art der Daten vertraut machen, parsen, FDR und q-value berechnen, Pseudo-ROCs zeichnen (Ordner 'Erste Aufgabe')
 2.	Richtige Daten mit XL bekommen, Skript aus 'Erste Aufgabe' anwenden, Pseudo-ROCs für XL und nicht-XL zeichnen.
 3.	GitHub anlegen
