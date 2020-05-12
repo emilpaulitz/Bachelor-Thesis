@@ -138,11 +138,8 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
     else:
         df = pd.DataFrame(data)
     
-    # select the scores used for learning
+    # select the columns used for learning
     scores = [x for x in list(df.columns) if (x not in excludedCols)]
-
-    # select negative training set (yes, should use loc, not iloc)
-    falseExamples = df[scores].loc[list(df[df.Label == 0].index)]
     
     # set color cycle if needed
     if(plotEveryIter):
@@ -155,7 +152,6 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
     scoreName = 'percolator_score'
     scoreNameTemp = 'temp_score'
     
-   
     # iterate I times:
     for i in range(I):
         
@@ -168,7 +164,7 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
             validate = threeParts[j]
             training = pd.concat([threeParts[k] for k in range(len(threeParts)) if(k != j)], sort = False)
                 
-            # compute training and response sets
+            # compute training and response sets (yes, should use loc for falseTrain, not iloc)
             falseTrain = training.loc[list(training[training.Label == 0].index), scores]
             trueTrain = training[scores][(training['q-val'] <= qTrain) & (training.Label == 1)]
             train = falseTrain.values.tolist() + trueTrain.values.tolist()
@@ -188,16 +184,16 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
             X = validate[scores].values.tolist()
             validate[scoreNameTemp] = clf.decision_function(X)
             
-            # merge: calculate comparable score for every PSM. TODO?Outside or inside j-for-loop?
+            # merge: calculate comparable score. TODO?Outside or inside j-for-loop?
             calcQ(validate, scoreNameTemp)
             qThreshold = min(validate[validate['q-val'] <= centralScoringQ][scoreNameTemp])
             decoyMedian = np.median(validate[validate.Label == 0][scoreNameTemp])
             validate[scoreName] = (validate[scoreNameTemp] - qThreshold) / (qThreshold - decoyMedian)
         
+        # merge the three parts and calculate q based on comparable score
         df = pd.concat([validate, training])
         calcQ(df, scoreName)
         
-       
         # log and plot this iteration
         if(plotEveryIter):
             pseudoROC(df, 0.05, label = 'Iteration {}'.format(i + 1))
@@ -212,7 +208,7 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
         plt.show()
         plt.rc('axes', prop_cycle = cycler('color', [plt.get_cmap('tab10')(i) for i in range(10)]))
     
-    # WHAT TO DO WITH RANKS re-add lesser ranked PSMs to df for scoring
+    # TODO?WHAT TO DO WITH RANKS re-add lesser ranked PSMs to df for scoring
     #if (useRankOneOnly):
     #    df = pd.concat([df, data[data.Rank != 1]], sort = False)
     #df = addRanks(d, idColName, scoreName)
