@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import random as rd
 from sklearn import svm
 from sklearn.metrics import auc
-from sklearn.model_selection import GridSearchCV
 from cycler import cycler
 
 # Read text file and turn it into a pandas data frame
@@ -27,7 +26,7 @@ def DFfromTXT(fileName):
 # add columns containing FDR and the q-value respectively
 def calcQ(df, scoreColName, labelColName = 'Label'):
     
-    # Sort by score column
+    # Sort by score columns
     df.sort_values(scoreColName, ascending=False, inplace = True)
 
     # Replace -1 by 0
@@ -130,16 +129,30 @@ def evalXL(df, printResult = True):
     return [nXL, XL]
 
 # re-build of percolator algorithm
-def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter = 1000, svmC = 1.0, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = False, suppressLog = False, plotSaveName = ''):
+def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter = 1000, svmC = 1.0, q = 0.05, useRankOneOnly = False, plotEveryIter = False, suppressLog = False, plotSaveName = ''):
     
     # Ugly Syntax because of ugly pandas behavior
     if (useRankOneOnly):
         df = pd.DataFrame(data[data.Rank == 1])
     else:
         df = pd.DataFrame(data)
+        
+    # split decoys in half
+    df.sort_index(inplace = True)
+    ixDecoys = list(df[df.Label == 0].index)
+    ixFirstHalf = rd.sample(ixDecoys, k = (int(len(ixDecoys)/2)))
     
-    # select the columns used for learning
+    # save second half of decoys for later and drop them from df
+    ixSecondHalf = set(ixDecoys) - set(ixFirstHalf)
+    scndDecoys = df.loc[ixSecondHalf,]
+    df = df.drop(ixSecondHalf)
+    
+    # select the scores used for learning
     scores = [x for x in list(df.columns) if (x not in excludedCols)]
+
+    # select negative training set
+    ixFalse = ixFirstHalf
+    falseTrain = df[scores].loc[ixFalse].values.tolist()
     
     # set color cycle if needed
     if(plotEveryIter):
@@ -150,55 +163,32 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
         plt.rc('axes', prop_cycle = new_prop_cycle)
 
     scoreName = 'percolator_score'
-    scoreNameTemp = 'temp_score'
     
     # iterate I times:
     for i in range(I):
         
-        # split dataframe in 3. TODO?Maybe do this outside of i-for-loop?
-        threeParts = np.array_split(df.sample(frac = 1, replace = False), 3)
+        # choose positive training set by q-val
+        trueTrain = df[scores][(df['q-val'] <= q) & (df.Label == 1)].values.tolist()
         
-        for j in [0,1,2]:
-            
-            # compute validation and training sets
-            validate = threeParts[j]
-            training = pd.concat([threeParts[k] for k in range(len(threeParts)) if(k != j)], sort = False)
-            
-            # compute training and response sets (yes, should use loc for falseTrain, not iloc)
-            falseTrain = training.loc[list(training[training.Label == 0].index), scores]
-            trueTrain = training[scores][(training['q-val'] <= qTrain) & (training.Label == 1)]
-            train = falseTrain.values.tolist() + trueTrain.values.tolist()
-            classes = [0] * len(falseTrain) + [1] * len(trueTrain)
-            
-            # set up SVM for internal cross-validation
-            parameters = {'C':[0.1,1,10], 'class_weight':[{0:i, 1:1} for i in [1,3,10]]}
-            W = svm.LinearSVC(dual = False, max_iter = svmIter)
-            clf = GridSearchCV(W, parameters, cv = 3)
-            
-            # train svm with optimal C and class weights
-            if(not suppressLog):
-                print('Training in iteration {} with split {} starts!'.format(i + 1, j + 1))
-            clf.fit(train,classes)
-            
-            # compute score for validation part
-            X = validate[scores].values.tolist()
-            validate[scoreNameTemp] = clf.decision_function(X)
-            
-            # merge: calculate comparable score. TODO?Outside or inside j-for-loop?
-            calcQ(validate, scoreNameTemp)
-            qThreshold = min(validate[validate['q-val'] <= centralScoringQ][scoreNameTemp])
-            decoyMedian = np.median(validate[validate.Label == 0][scoreNameTemp])
-            validate[scoreName] = (validate[scoreNameTemp] - qThreshold) / (qThreshold - decoyMedian)
+        # compute training and response sets
+        train = falseTrain + trueTrain
+        classes = [0] * len(falseTrain) + [1] * len(trueTrain)
         
-        # merge the three parts and calculate q based on comparable score
-        df = pd.concat([validate, training])
-        calcQ(df, scoreName)
+        # train linear svm
+        if(not suppressLog):
+            print('Training in iteration {} starts!'.format(i + 1))
+        W = svm.LinearSVC(dual = False, C = svmC, class_weight = class_weight, max_iter = svmIter).fit(train, classes)
+        
+        # re-rank PSMs by using the svm-generated scores instead of scoreCol, re-calculating q-val
+        X = df[scores].values.tolist()
+        df[scoreName] = W.decision_function(X)
+        df = calcQ(df, scoreName)
         
         # log and plot this iteration
         if(plotEveryIter):
             pseudoROC(df, 0.05, label = 'Iteration {}'.format(i + 1))
         if(not suppressLog):
-            print('Iteration {}/{} done!'.format(i + 1, I))
+            print('Iteration {} done!'.format(i + 1))
         
     # show plot and revert color cycle after for loop
     if(plotEveryIter):
@@ -207,11 +197,21 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
             plt.savefig(plotSaveName)
         plt.show()
         plt.rc('axes', prop_cycle = cycler('color', [plt.get_cmap('tab10')(i) for i in range(10)]))
+
+    # use second half of decoy PSMs
+    df = df[df.Label == 1]
+    df = pd.concat([df, scndDecoys], sort = False)
     
-    # TODO?WHAT TO DO WITH RANKS re-add lesser ranked PSMs to df for scoring
+    # re-add lesser ranked PSMs to df for scoring
     #if (useRankOneOnly):
     #    df = pd.concat([df, data[data.Rank != 1]], sort = False)
-    df = addRanks(df, idColName, scoreName)
+    
+    # score and calculate q for the new database
+    X = df[scores].values.tolist()
+    df[scoreName] = W.decision_function(X)
+    d = calcQ(df, scoreName)
+    df = addRanks(d, idColName, scoreName)
+    df.sort_values(scoreName, inplace = True, ascending = False)
     
     # return PSMs with new score
-    return df[df['Rank'] == 1]
+    return df

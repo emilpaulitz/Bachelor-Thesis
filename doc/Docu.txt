@@ -1,6 +1,8 @@
 PSM = Peptide Spectrum Matches
 # Frage: Warum generiert man nicht mehrere decoy-databases (shuffled, reversed...), damit nicht jeder zweite falsche Eintrag ein decoy ist, sondern jeder dritte, vierte, fünfte....?
-# Frage: Die Aufteilung auf 3 subsets für cross-validation nur mit PSMs die eh fürs Training verwendet werden oder mit allen und dann werden daraus die benötigten PSMs ausgewählt (momentan implementiert)?
+# Antwort: Sehr sehr aufwändig, besonders bei cross-links. Wenn ich ne Idee habe kann ich die Daten dazu bekommen. Viele decoys bedeuten dass auch hohe scores random generiert werden.
+# Frage: Die Aufteilung auf 3 subsets für cross-validation nur mit PSMs, die eh fürs Training verwendet werden oder mit allen und dann werden daraus die benötigten PSMs ausgewählt (momentan implementiert)?
+# Antwort: Gute Frage, überlegen wir uns nochmal. Überlegung wert, gleichmäßiger samplen oä
 # Frage: Warum kommt immer ein anderes Ergebnis, wenn man öfter die Funktion decision_function anwendet ohne neu zu fitten? Werden den PSMs nicht immer die gleichen scores gegeben? Code:
 df['test_score'] = W.decision_function(X)
 calcQ(df,'test_score')
@@ -40,8 +42,17 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 		Genauere Untersuchung dazu, nur Rang 1 PSMs für Training und Scoring zu benutzen (auch je 10 Ausführungen):
 		useRankOneOnly: True, max PSMs: 5669, min PSMs: 5011, median PSMs: 5569.0
 		useRankOneOnly: False, max PSMs: 5380, min PSMs: 4364, median PSMs: 5238.0
-		Mögliche Gründe: PSMs mit q <= 0.01 aber Rang > 1 werden ausgeschlossen. Es gibt weniger schlechte PSMs im df die man falsch klassifizieren kann?
+		Mögliche Gründe: PSMs mit q <= 0.01 aber Rang > 1 (also eher schlecht) werden ausgeschlossen. Es gibt weniger schlechte PSMs im df die man falsch klassifizieren kann?
 
 		Vergleich: mit NuXL:score mit q <= 0.01 findet man 4067 PSMs.
 		Bilder jeweils im 'results' Ordner.
 8.	Cross-Validation einbauen
+9.	Ränge mit einbeziehen:
+		Wenn auf Rang 1 target : target, wenn auf rang 1 decoy, alle decoy?
+		während training Rang 2+ target als decoy behandeln?
+		zum scoring aber wieder target
+10.	XL-q-value berechnen: Q values nur mit den klassenmembern berechnen (extra spalte).
+		Iterationen-plots für XL und nicht XL getrennt. 3 plots: XL, nicht-XL, beides zusammen
+		Plus metrik (AUC?)
+		für ROC kurven auch klassen q values benutzen
+11. 	Wenn es in den Iterationen schlechter wird, vllt letztes bestes nehmen?
