@@ -25,20 +25,30 @@ def DFfromTXT(fileName):
     return df
 
 # add columns containing FDR and the q-value respectively
-def calcQ(df, scoreColName, labelColName = 'Label'):
+def calcQ(df, scoreColName, labelColName = 'Label', isXLColName = 'NuXL:isXL', addXlQ = False):
     
-    # Sort by score column
     df.sort_values(scoreColName, ascending=False, inplace = True)
-
-    # Replace -1 by 0
     df[labelColName].replace(to_replace = -1, value = 0, inplace = True)
-
-    # calculate FDR
     df['FDR'] = 1 - (df[labelColName].cumsum()/[i + 1 for i in range(len(df.index))])
-
-    # calculate q-value
     df['q-val'] = df['FDR'][::-1].cummin()[::-1]
     
+    # add q-values calculated from the different classes
+    if(addXlQ):
+        ls = []
+        for XL in [0,1]:
+            
+            # split the dataframe and save the subset
+            currClass = pd.DataFrame(df[df[isXLColName] == XL])
+            ls.append(currClass)
+            
+            # calculate class-specific q-value
+            currClass.sort_values(scoreColName, ascending=False, inplace = True)
+            FDR = 1 - (currClass[labelColName].cumsum()/[i + 1 for i in range(len(currClass))])
+            currClass['class-specific_q-val'] = FDR[::-1].cummin()[::-1]
+            
+        df = pd.concat(ls)
+        df.sort_values(scoreColName, ascending=False, inplace = True)
+        
     return df
 
 # add a column containing the Ranks of entries with the same id
@@ -90,11 +100,14 @@ def strToNum(df):
     return df
 
 # Plot Pseudo ROC of the df including entries with q in x = [0,xMax] and return area under the curve
-def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, qColName = 'q-val', rankColName = 'Rank', title = '', label = ''):
+def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, onlyVals = False, qColName = 'q-val', rankColName = 'Rank', title = '', label = ''):
     if (onlyFirstRank):
-        qVals = [df.loc[i, qColName] for i in df.index if (df.loc[i,qColName] <= xMax and df.loc[i, rankColName] == 1)]
+        qVals = df[(df[qColName] <= xMax) & (df[rankColName] == 1)][qColName].values.tolist()
     else: 
-        qVals = [df.loc[i, qColName] for i in df.index if (df.loc[i,qColName] <= xMax)]
+        qVals = df[df[qColName] <= xMax][qColName].values.tolist()
+    qVals.sort()
+    if (onlyVals):
+        return qVals
     plt.xlim(0,xMax)
     plt.ylim(0,len(qVals))
     plt.title(title)
@@ -130,7 +143,7 @@ def evalXL(df, printResult = True):
     return [nXL, XL]
 
 # re-build of percolator algorithm
-def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter = 1000, svmC = 1.0, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = False, suppressLog = False, plotSaveName = ''):
+def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter = 1000, svmC = 1.0, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = False, suppressLog = False, plotSaveName = '', plotDPI = 100):
     
     # Ugly Syntax because of ugly pandas behavior
     if (useRankOneOnly):
@@ -143,16 +156,16 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
     
     # set color cycle if needed
     if(plotEveryIter):
+        plotList = [[],[],[]]
         cols = []
-        for i in range(10):
-            cols.append((1-(i*0.1),0.,i*0.1))
+        for i in range(I):
+            cols.append((1-(i*(1/I)),0.,i*(1/I)))
         new_prop_cycle = cycler('color', cols)
         plt.rc('axes', prop_cycle = new_prop_cycle)
 
     scoreName = 'percolator_score'
     scoreNameTemp = 'temp_score'
     
-    # iterate I times:
     for i in range(I):
         
         # split dataframe in 3. TODO?Maybe do this outside of i-for-loop?
@@ -177,14 +190,14 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
             
             # train svm with optimal C and class weights
             if(not suppressLog):
-                print('Training in iteration {} with split {} starts!'.format(i + 1, j + 1))
+                print('Training in iteration {} with split {}/3 starts!'.format(i + 1, j + 1))
             clf.fit(train,classes)
             
             # compute score for validation part
             X = validate[scores].values.tolist()
             validate[scoreNameTemp] = clf.decision_function(X)
             
-            # merge: calculate comparable score. TODO?Outside or inside j-for-loop?
+            # merge: calculate comparable score
             calcQ(validate, scoreNameTemp)
             qThreshold = min(validate[validate['q-val'] <= centralScoringQ][scoreNameTemp])
             decoyMedian = np.median(validate[validate.Label == 0][scoreNameTemp])
@@ -192,26 +205,41 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
         
         # merge the three parts and calculate q based on comparable score
         df = pd.concat([validate, training])
-        calcQ(df, scoreName)
+        df = calcQ(df, scoreName, addXlQ = True)
         
         # log and plot this iteration
         if(plotEveryIter):
-            pseudoROC(df, 0.05, label = 'Iteration {}'.format(i + 1))
+            for plot in [0,1]:
+                plotList[plot].append(pseudoROC(df[df['NuXL:isXL'] == plot], onlyVals = True, qColName = 'class-specific_q-val'))
+            plotList[2].append(pseudoROC(df, onlyVals = True))
         if(not suppressLog):
             print('Iteration {}/{} done!'.format(i + 1, I))
-        
-    # show plot and revert color cycle after for loop
+    
+    # generate plots and revert color cycle after calculations are done
     if(plotEveryIter):
-        plt.legend(loc = 'best')
-        if (plotSaveName != ''):
-            plt.savefig(plotSaveName)
-        plt.show()
+        nameList = ['non-XL', 'XL', 'all']
+        for i in [0,1,2]:
+            plt.xlim(0,0.05)
+            plt.ylim(0,max([len(plotList[i][j]) for j in range(I)]))
+            plt.title('Pseudo ROC-Curve of {} PSMs'.format(nameList[i]))
+            for j in range(I):
+                plt.plot(plotList[i][j], range(len(plotList[i][j])), label = 'Iteration {}'.format(j + 1))
+            plt.legend(loc = 'best')
+            if (plotSaveName != ''):
+                if ('{}' in plotSaveName):
+                    name = plotSaveName.format(nameList[i])
+                else:
+                    name = nameList[i] + plotSaveName
+                plt.savefig(name, dpi = plotDPI)
+            plt.show()
+            print('AUC of last iteration: ' + str(auc(plotList[i][-1], range(len(plotList[i][-1])))))
         plt.rc('axes', prop_cycle = cycler('color', [plt.get_cmap('tab10')(i) for i in range(10)]))
     
     # TODO?WHAT TO DO WITH RANKS re-add lesser ranked PSMs to df for scoring
     #if (useRankOneOnly):
     #    df = pd.concat([df, data[data.Rank != 1]], sort = False)
     df = addRanks(df, idColName, scoreName)
+    df.sort_values(scoreName, inplace = True, ascending = False)
     
     # return PSMs with new score
-    return df[df['Rank'] == 1]
+    return df#[df['Rank'] == 1]
