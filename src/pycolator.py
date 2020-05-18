@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import random as rd
 from sklearn import svm
 from sklearn.metrics import auc
 from sklearn.model_selection import GridSearchCV
@@ -111,7 +110,8 @@ def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, onlyVals = False, qColName 
     plt.xlim(0,xMax)
     plt.ylim(0,len(qVals))
     plt.title(title)
-    plt.plot(qVals, range(len(qVals)), label = label)
+    plt.plot(qVals, range(len(qVals)), label = label + ', AUC: ' + str(round(auc(qVals,range(len(qVals))), 2)))
+    plt.legend(loc = 'best')
     return auc(qVals, range(len(qVals)))
 
 # plot pseudo ROCs of maximum, median and minimum of given q-values
@@ -129,8 +129,35 @@ def pseudoROCmulti(lss, xMax = 0.05, title = '', labels = ['maximum', 'minimum',
     plt.plot(md, range(len(md)), label = labels[2])
     plt.legend(loc = 'best')
     
+# plot pseudo ROC for every iteration (see percolator)
+def pseudoROCiter(plotList, I, nameList, plotSaveName, plotDPI):
+    cols = []
+    for i in range(I):
+        cols.append((1-(i*(1/I)),0.,i*(1/I)))
+    new_prop_cycle = cycler('color', cols)
+    plt.rc('axes', prop_cycle = new_prop_cycle)
+        
+    for i in [0,1,2]:
+        plt.xlim(0,0.05)
+        plt.ylim(0,max([len(plotList[i][j]) for j in range(I)]))
+        plt.title('Pseudo ROC-Curve of {} PSMs'.format(nameList[i]))
+        for j in range(I):
+            currAuc = round(auc(plotList[i][j], range(len(plotList[i][j]))), 2)
+            plt.plot(plotList[i][j], range(len(plotList[i][j])), label = 'Iteration {}, AUC: {}'.format(j + 1, currAuc))
+        plt.legend(loc = 'best')
+        if (plotSaveName != ''):
+            if ('{}' in plotSaveName):
+                name = plotSaveName.format(nameList[i])
+            else:
+                name = nameList[i] + plotSaveName
+            plt.savefig(name, dpi = plotDPI)
+        plt.show()
+    
+    # reset color cycle
+    plt.rc('axes', prop_cycle = cycler('color', [plt.get_cmap('tab10')(i) for i in range(10)]))
+
 # plot pseudoROCs for XLs and Non XLs and return the areas under the curves
-def evalXL(df, printResult = True):
+def evalXL(df, printResult = False):
     
     nXL = pseudoROC(df[df['NuXL:isXL'] == 0], label = 'not cross-linked')
     XL = pseudoROC(df[df['NuXL:isXL'] == 1], label = 'cross-linked')
@@ -143,7 +170,7 @@ def evalXL(df, printResult = True):
     return [nXL, XL]
 
 # re-build of percolator algorithm
-def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter = 1000, svmC = 1.0, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = False, suppressLog = False, plotSaveName = '', plotDPI = 100):
+def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter = 1000, svmC = 1.0, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = False, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4):
     
     # Ugly Syntax because of ugly pandas behavior
     if (useRankOneOnly):
@@ -154,17 +181,13 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
     # select the columns used for learning
     scores = [x for x in list(df.columns) if (x not in excludedCols)]
     
-    # set color cycle if needed
     if(plotEveryIter):
         plotList = [[],[],[]]
-        cols = []
-        for i in range(I):
-            cols.append((1-(i*(1/I)),0.,i*(1/I)))
-        new_prop_cycle = cycler('color', cols)
-        plt.rc('axes', prop_cycle = new_prop_cycle)
-
+    
     scoreName = 'percolator_score'
     scoreNameTemp = 'temp_score'
+    aucIter = []
+    scoresIter = []
     
     for i in range(I):
         
@@ -179,7 +202,7 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
             
             # compute training and response sets (yes, should use loc for falseTrain, not iloc)
             falseTrain = training.loc[list(training[training.Label == 0].index), scores]
-            trueTrain = training[scores][(training['q-val'] <= qTrain) & (training.Label == 1)]
+            trueTrain = training.loc[list(training[(training['q-val'] <= qTrain) & (training.Label == 1)].index), scores]
             train = falseTrain.values.tolist() + trueTrain.values.tolist()
             classes = [0] * len(falseTrain) + [1] * len(trueTrain)
             
@@ -207,33 +230,34 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
         df = pd.concat([validate, training])
         df = calcQ(df, scoreName, addXlQ = True)
         
-        # log and plot this iteration
+        # plot and calc auc for this iteration
         if(plotEveryIter):
             for plot in [0,1]:
                 plotList[plot].append(pseudoROC(df[df['NuXL:isXL'] == plot], onlyVals = True, qColName = 'class-specific_q-val'))
             plotList[2].append(pseudoROC(df, onlyVals = True))
+            x = plotList[2][i]
+        else:
+            x = pseudoROC(df, onlyVals = True)
+        aucIter.append(auc(x, range(len(x))))
+        df.sort_index(inplace = True)
+        scoresIter.append(df[scoreName])
+        
+        # Terminate if auc has not been getting better in last termWorseIters iterations
+        if(i + 1 >= termWorseIters):
+            if(aucIter[-termWorseIters] == max(aucIter)):
+                if(not suppressLog):
+                    print('Results are not getting better. Terminating learning.')
+                I = i + 1
+                df.sort_index(inplace = True)
+                df[scoreName] = scoresIter[-termWorseIters]
+                break
+        
         if(not suppressLog):
             print('Iteration {}/{} done!'.format(i + 1, I))
     
     # generate plots and revert color cycle after calculations are done
     if(plotEveryIter):
-        nameList = ['non-XL', 'XL', 'all']
-        for i in [0,1,2]:
-            plt.xlim(0,0.05)
-            plt.ylim(0,max([len(plotList[i][j]) for j in range(I)]))
-            plt.title('Pseudo ROC-Curve of {} PSMs'.format(nameList[i]))
-            for j in range(I):
-                plt.plot(plotList[i][j], range(len(plotList[i][j])), label = 'Iteration {}'.format(j + 1))
-            plt.legend(loc = 'best')
-            if (plotSaveName != ''):
-                if ('{}' in plotSaveName):
-                    name = plotSaveName.format(nameList[i])
-                else:
-                    name = nameList[i] + plotSaveName
-                plt.savefig(name, dpi = plotDPI)
-            plt.show()
-            print('AUC of last iteration: ' + str(auc(plotList[i][-1], range(len(plotList[i][-1])))))
-        plt.rc('axes', prop_cycle = cycler('color', [plt.get_cmap('tab10')(i) for i in range(10)]))
+        pseudoROCiter(plotList, I, ['non-XL', 'XL', 'all'], plotSaveName, plotDPI)
     
     # TODO?WHAT TO DO WITH RANKS re-add lesser ranked PSMs to df for scoring
     #if (useRankOneOnly):
