@@ -24,7 +24,7 @@ def DFfromTXT(fileName):
     return df
 
 # add columns containing FDR and the q-value respectively
-def calcQ(df, scoreColName, labelColName = 'Label', isXLColName = 'NuXL:isXL', addXlQ = False):
+def calcQ(df, scoreColName, labelColName = 'Label', isXLColName = 'NuXL:isXL', addXlQ = True):
     
     df.sort_values(scoreColName, ascending=False, inplace = True)
     df[labelColName].replace(to_replace = -1, value = 0, inplace = True)
@@ -47,7 +47,6 @@ def calcQ(df, scoreColName, labelColName = 'Label', isXLColName = 'NuXL:isXL', a
             
         df = pd.concat(ls)
         df.sort_values(scoreColName, ascending=False, inplace = True)
-        
     return df
 
 # add a column containing the Ranks of entries with the same id
@@ -56,7 +55,7 @@ def addRanks(df, idColName, scoreColName):
     df.sort_values(scoreColName, inplace = True, ascending = False)
     df.sort_values(idColName, inplace = True, kind = 'mergesort')
 
-    # for better performance iterate over lists
+    # for better performance iterate over list
     ids = list(df[idColName])
     ranks = []
     lastId = ''
@@ -110,9 +109,12 @@ def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, onlyVals = False, qColName 
     plt.xlim(0,xMax)
     plt.ylim(0,len(qVals))
     plt.title(title)
-    plt.plot(qVals, range(len(qVals)), label = label + ', AUC: ' + str(round(auc(qVals,range(len(qVals))), 2)))
+    AUC = auc(qVals, range(len(qVals)))
+    if (label != ''):
+        label += ', '
+    plt.plot(qVals, range(len(qVals)), label = label + 'AUC: ' + str(round(AUC, 2)))
     plt.legend(loc = 'best')
-    return auc(qVals, range(len(qVals)))
+    return AUC
 
 # plot pseudo ROCs of maximum, median and minimum of given q-values
 def pseudoROCmulti(lss, xMax = 0.05, title = '', labels = ['maximum', 'minimum', 'median']):
@@ -157,20 +159,14 @@ def pseudoROCiter(plotList, I, nameList, plotSaveName, plotDPI):
     plt.rc('axes', prop_cycle = cycler('color', [plt.get_cmap('tab10')(i) for i in range(10)]))
 
 # plot pseudoROCs for XLs and Non XLs and return the areas under the curves
-def evalXL(df, printResult = False):
-    
-    nXL = pseudoROC(df[df['NuXL:isXL'] == 0], label = 'not cross-linked')
-    XL = pseudoROC(df[df['NuXL:isXL'] == 1], label = 'cross-linked')
-    plt.legend(loc = 'best')
-    
-    if (printResult):
-        print('AUC for Non-cross-linked PSMs: ' + str(nXL))
-        print('AUC for Cross-linked PSMs: ' + str(XL))
-    
-    return [nXL, XL]
+def evalXL(df, qColName = 'class-specific_q-val'):
+    nXLauc = pseudoROC(df[df['NuXL:isXL'] == 0], qColName = qColName, label = 'not cross-linked')
+    XLauc = pseudoROC(df[df['NuXL:isXL'] == 1], qColName = qColName, label = 'cross-linked')
+    plt.legend(loc = 'best')    
+    return [nXLauc, XLauc]
 
-# re-build of percolator algorithm
-def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter = 1000, svmC = 1.0, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = False, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4):
+# re-build of percolator algorithm.
+def percolator(data, idColName, excludedCols, I = 10, svmIter = 1000, svmC = 1.0, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, rankOption = True):
     
     # Ugly Syntax because of ugly pandas behavior
     if (useRankOneOnly):
@@ -178,12 +174,9 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
     else:
         df = pd.DataFrame(data)
     
-    # select the columns used for learning
     scores = [x for x in list(df.columns) if (x not in excludedCols)]
-    
     if(plotEveryIter):
         plotList = [[],[],[]]
-    
     scoreName = 'percolator_score'
     scoreNameTemp = 'temp_score'
     aucIter = []
@@ -196,22 +189,27 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
         
         for j in [0,1,2]:
             
-            # compute validation and training sets
             validate = threeParts[j]
-            training = pd.concat([threeParts[k] for k in range(len(threeParts)) if(k != j)], sort = False)
+            training = pd.concat([threeParts[k] for k in range(3) if(k != j)], sort = False)
             
-            # compute training and response sets (yes, should use loc for falseTrain, not iloc)
-            falseTrain = training.loc[list(training[training.Label == 0].index), scores]
-            trueTrain = training.loc[list(training[(training['q-val'] <= qTrain) & (training.Label == 1)].index), scores]
+            # calc SpecIds, of which the first rank is a decoy and include corresponding PSMs in neg train set
+            if(rankOption):
+                badSpecs = training[(training['Rank'] == 1) & (training['Label'] == 0)][idColName].tolist()
+                goodSpecs = list(set(training[idColName]) - set(badSpecs))
+            
+                # compute training and response sets (yes, should use loc, not iloc)
+                falseTrain = training.loc[list(training[(training.Label == 0) | (training[idColName].isin(badSpecs))].index), scores]
+                trueTrain = training.loc[list(training[(training['q-val'] <= qTrain) & (training.Label == 1) & (training[idColName].isin(goodSpecs))].index), scores]
+            else:
+                falseTrain = training.loc[list(training[training.Label == 0].index), scores]
+                trueTrain = training.loc[list(training[(training['q-val'] <= qTrain) & (training.Label == 1)].index), scores]
             train = falseTrain.values.tolist() + trueTrain.values.tolist()
             classes = [0] * len(falseTrain) + [1] * len(trueTrain)
             
-            # set up SVM for internal cross-validation
+            # set up SVM using internal cross-validation
             parameters = {'C':[0.1,1,10], 'class_weight':[{0:i, 1:1} for i in [1,3,10]]}
             W = svm.LinearSVC(dual = False, max_iter = svmIter)
             clf = GridSearchCV(W, parameters, cv = 3)
-            
-            # train svm with optimal C and class weights
             if(not suppressLog):
                 print('Training in iteration {} with split {}/3 starts!'.format(i + 1, j + 1))
             clf.fit(train,classes)
@@ -221,14 +219,15 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
             validate[scoreNameTemp] = clf.decision_function(X)
             
             # merge: calculate comparable score
-            calcQ(validate, scoreNameTemp)
+            calcQ(validate, scoreNameTemp, addXlQ = False)
             qThreshold = min(validate[validate['q-val'] <= centralScoringQ][scoreNameTemp])
             decoyMedian = np.median(validate[validate.Label == 0][scoreNameTemp])
             validate[scoreName] = (validate[scoreNameTemp] - qThreshold) / (qThreshold - decoyMedian)
         
         # merge the three parts and calculate q based on comparable score
         df = pd.concat([validate, training])
-        df = calcQ(df, scoreName, addXlQ = True)
+        df = calcQ(df, scoreName)
+        df = addRanks(df, idColName, scoreName)
         
         # plot and calc auc for this iteration
         if(plotEveryIter):
@@ -246,14 +245,18 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
         if(i + 1 >= termWorseIters):
             if(aucIter[-termWorseIters] == max(aucIter)):
                 if(not suppressLog):
-                    print('Results are not getting better. Terminating learning.')
+                    print('Results are not getting better. Terminating and using Iteration {} with an auc of {}.'.format(i + 2 - termWorseIters, round(max(aucIter),2)))
                 I = i + 1
                 df.sort_index(inplace = True)
                 df[scoreName] = scoresIter[-termWorseIters]
+                df = calcQ(df, scoreName)
+                df = addRanks(df, idColName, scoreName)
                 break
         
         if(not suppressLog):
             print('Iteration {}/{} done!'.format(i + 1, I))
+    
+    df.sort_values(scoreName, inplace = True, ascending = False)
     
     # generate plots and revert color cycle after calculations are done
     if(plotEveryIter):
@@ -262,8 +265,6 @@ def percolator(data, idColName, excludedCols, class_weight = '', I = 10, svmIter
     # TODO?WHAT TO DO WITH RANKS re-add lesser ranked PSMs to df for scoring
     #if (useRankOneOnly):
     #    df = pd.concat([df, data[data.Rank != 1]], sort = False)
-    df = addRanks(df, idColName, scoreName)
-    df.sort_values(scoreName, inplace = True, ascending = False)
     
     # return PSMs with new score
     return df#[df['Rank'] == 1]

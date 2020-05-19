@@ -48,9 +48,10 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 		Bilder jeweils im 'results' Ordner.
 8.	Cross-Validation einbauen
 9.	Ränge mit einbeziehen:
-		Wenn auf Rang 1 target : target, wenn auf rang 1 decoy, alle decoy?
-		während training Rang 2+ target als decoy behandeln?
-		zum scoring aber wieder target
+		Wenn auf Rang 1 target : target, wenn auf rang 1 decoy, alle decoy? "RankOption = True": uses all PSMs of species, of which the first-ranked PSM is a decoy, as negative training examples, and no longer as positive training examples.
+		Ergebnisse bleiben etwa gleich, bei 1 Versuch ging Konvergieren etwas schneller. decoy trainingsbeispiele: 42592 decoys + 11200 = 53792, weniger pos. Trainingsbeispiele: 5498 - 18 = 5480. Bilder: percolator_acv_{}_rankOptionTrue.png
+		während training Rang 2+ target als decoy behandeln? -> Jede Iteration schlechter, ob bei pos train set nur Rang 1 betrachtet wurde (Bilder: percolator_acv_rankTest_{}.png) oder nicht.
+		zum scoring aber immer wieder wie original!
 10.	XL-q-value berechnen: Q values nur mit den klassenmembern berechnen (extra spalte).
 		Iterationen-plots für XL und nicht XL getrennt. 3 plots: XL, nicht-XL, beides zusammen
 		Plus metrik (AUC?)
