@@ -23,6 +23,18 @@ def DFfromTXT(fileName):
     df = pd.DataFrame(xs[1:], index = range(len(xs[1:])), columns = xs[0])
     return df
 
+# convert every string col into an int or float if possible
+def strToNum(df):
+    for col in df:
+        try:
+            df[col] = [int(i) for i in df[col]]
+        except ValueError:
+            try:
+                df[col] = [float(i) for i in df[col]]
+            except ValueError:
+                continue
+    return df
+
 # add columns containing FDR and the q-value respectively
 def calcQ(df, scoreColName, labelColName = 'Label', isXLColName = 'NuXL:isXL', addXlQ = True):
     
@@ -72,8 +84,17 @@ def addRanks(df, idColName, scoreColName):
     df['Rank'] = ranks
     return df
 
-# Read the specified file, calculate FDR, q-value and ranks and sort it according to its score
-def readAndProcess(fileName, idColName,  scoreColName):
+# Norm the feature columns so their values lie between 0 and 1
+def normFeatures(df, excluded):
+    features = [x for x in list(df.columns) if (x not in excluded)]
+    for f in df[features]:
+        if (max(df[f]) != min(df[f])):
+            temp = df[f] - min(df[f])
+            df[f] = temp / max(temp)
+    return df
+
+# Read the specified file, calculate q-values and ranks, norm the features if excluded is given and sort it according to its score
+def readAndProcess(fileName, idColName,  scoreColName, excludedCols = ''):
     d = DFfromTXT(fileName)
     print('file read')
     d1 = strToNum(d)
@@ -82,20 +103,12 @@ def readAndProcess(fileName, idColName,  scoreColName):
     print('q-values estimated')
     df = addRanks(d2, idColName, scoreColName)
     print('ranks computed')
+    if (not excludedCols == ''):
+        df = normFeatures(df, excludedCols)
+        print('features normed')
     df.sort_values(scoreColName, inplace = True, ascending = False)
+    print('file ready')
     return df   
-
-# convert every string col into an int or float if possible
-def strToNum(df):
-    for col in df:
-        try:
-            df[col] = [int(i) for i in df[col]]
-        except ValueError:
-            try:
-                df[col] = [float(i) for i in df[col]]
-            except ValueError:
-                continue
-    return df
 
 # Plot Pseudo ROC of the df including entries with q in x = [0,xMax] and return area under the curve
 def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, onlyVals = False, qColName = 'q-val', rankColName = 'Rank', title = '', label = ''):
@@ -131,6 +144,13 @@ def pseudoROCmulti(lss, xMax = 0.05, title = '', labels = ['maximum', 'minimum',
     plt.plot(md, range(len(md)), label = labels[2])
     plt.legend(loc = 'best')
     
+# plot pseudoROCs for XLs and Non XLs and return the areas under the curves
+def evalXL(df, qColName = 'class-specific_q-val'):
+    nXLauc = pseudoROC(df[df['NuXL:isXL'] == 0], qColName = qColName, label = 'not cross-linked')
+    XLauc = pseudoROC(df[df['NuXL:isXL'] == 1], qColName = qColName, label = 'cross-linked')
+    plt.legend(loc = 'best')    
+    return [nXLauc, XLauc]
+
 # plot pseudo ROC for every iteration (see percolator)
 def pseudoROCiter(plotList, I, nameList, plotSaveName, plotDPI):
     cols = []
@@ -157,13 +177,13 @@ def pseudoROCiter(plotList, I, nameList, plotSaveName, plotDPI):
     
     # reset color cycle
     plt.rc('axes', prop_cycle = cycler('color', [plt.get_cmap('tab10')(i) for i in range(10)]))
-
-# plot pseudoROCs for XLs and Non XLs and return the areas under the curves
-def evalXL(df, qColName = 'class-specific_q-val'):
-    nXLauc = pseudoROC(df[df['NuXL:isXL'] == 0], qColName = qColName, label = 'not cross-linked')
-    XLauc = pseudoROC(df[df['NuXL:isXL'] == 1], qColName = qColName, label = 'cross-linked')
-    plt.legend(loc = 'best')    
-    return [nXLauc, XLauc]
+    
+# End for loop by setting the scores to the best iteration (given by bestIterReverse)
+def percEndFor(df, scoreName, idColName, bestIterReverse, scoresIter):
+    df.sort_index(inplace = True)
+    df[scoreName] = scoresIter[-bestIterReverse]
+    df = calcQ(df, scoreName)
+    df = addRanks(df, idColName, scoreName)
 
 # re-build of percolator algorithm.
 def percolator(data, idColName, excludedCols, I = 10, svmIter = 1000, svmC = 1.0, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, rankOption = True):
@@ -247,24 +267,25 @@ def percolator(data, idColName, excludedCols, I = 10, svmIter = 1000, svmC = 1.0
                 if(not suppressLog):
                     print('Results are not getting better. Terminating and using Iteration {} with an auc of {}.'.format(i + 2 - termWorseIters, round(max(aucIter),2)))
                 I = i + 1
-                df.sort_index(inplace = True)
-                df[scoreName] = scoresIter[-termWorseIters]
-                df = calcQ(df, scoreName)
-                df = addRanks(df, idColName, scoreName)
+                percEndFor(df, scoreName, idColName, termWorseIters, scoresIter)
                 break
         
         if(not suppressLog):
             print('Iteration {}/{} done!'.format(i + 1, I))
-    
-    df.sort_values(scoreName, inplace = True, ascending = False)
+            
+        # in the end, choose the best of the last iterations
+        if(i + 1 == I):
+            for j in range(2,termWorseIters):
+                if(aucIter[-j] == max(aucIter)):
+                    percEndFor(df, scoreName, idColName, j, scoresIter)
+                    print('Terminating and using Iteration {} with an auc of {}.'.format(i + 2 - j, round(max(aucIter),2)))
+            
+    result = pd.DataFrame(df[df.Rank == 1])
+    result = calcQ(result, scoreName)
     
     # generate plots and revert color cycle after calculations are done
     if(plotEveryIter):
         pseudoROCiter(plotList, I, ['non-XL', 'XL', 'all'], plotSaveName, plotDPI)
     
-    # TODO?WHAT TO DO WITH RANKS re-add lesser ranked PSMs to df for scoring
-    #if (useRankOneOnly):
-    #    df = pd.concat([df, data[data.Rank != 1]], sort = False)
-    
     # return PSMs with new score
-    return df#[df['Rank'] == 1]
+    return result

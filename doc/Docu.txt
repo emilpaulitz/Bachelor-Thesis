@@ -8,6 +8,8 @@ df['test_score'] = W.decision_function(X)
 calcQ(df,'test_score')
 print(len(df[df['q-val'] <= 0.01]))
 
+# Frage: Was bringt normalisierung nach unit norm?
+
 1.	Mit Art der Daten vertraut machen, parsen, FDR und q-value berechnen, Pseudo-ROCs zeichnen (Ordner 'Erste Aufgabe')
 2.	Richtige Daten mit XL bekommen, Skript aus 'Erste Aufgabe' anwenden, Pseudo-ROCs für XL und nicht-XL zeichnen.
 3.	GitHub anlegen
@@ -47,13 +49,23 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 		Vergleich: mit NuXL:score mit q <= 0.01 findet man 4067 PSMs.
 		Bilder jeweils im 'results' Ordner.
 8.	Cross-Validation einbauen
-9.	Ränge mit einbeziehen:
-		Wenn auf Rang 1 target : target, wenn auf rang 1 decoy, alle decoy? "RankOption = True": uses all PSMs of species, of which the first-ranked PSM is a decoy, as negative training examples, and no longer as positive training examples.
-		Ergebnisse bleiben etwa gleich, bei 1 Versuch ging Konvergieren etwas schneller. decoy trainingsbeispiele: 42592 decoys + 11200 = 53792, weniger pos. Trainingsbeispiele: 5498 - 18 = 5480. Bilder: percolator_acv_{}_rankOptionTrue.png
-		während training Rang 2+ target als decoy behandeln? -> Jede Iteration schlechter, ob bei pos train set nur Rang 1 betrachtet wurde (Bilder: percolator_acv_rankTest_{}.png) oder nicht.
+9.	XL-q-value berechnen: Q values nur mit den klassenmembern berechnen (extra spalte).
+		Iterationen-plots für XL und nicht XL getrennt. 3 plots: XL, nicht-XL, beides zusammen, plus AUC in Legende
+		für allgmeine ROC kurven auch klassen q values benutzen
+10. 	Wenn es in den letzten 4 (standard) Iterationen schlechter wird, wird letztes bestes genommen
+11.	features nach unit norm normalisieren. d.h. min jedes features wird 0 und maximum wird 1.
+12.	Experimente:
+	Normal: percolator_acv_{}.png
+	Ränge mit einbeziehen:
+		Neues Normal: Wenn auf Rang 1 target : target, wenn auf rang 1 decoy, alle decoy? "RankOption = True": uses all PSMs of species, of which the first-ranked PSM is a decoy, as negative training examples, and no longer as positive training examples.
+		Ergebnisse bleiben etwa gleich. decoy trainingsbeispiele: 42592 decoys + 11200 = 53792, weniger pos. Trainingsbeispiele: 5498 - 18 = 5480. Bilder: percolator_acv_{}_rankOptionTrue.png
+		
+		Während training Rang 2+ target als decoy behandeln -> Jede Iteration schlechter, ob bei pos train set nur Rang 1 betrachtet wurde (Bilder: percolator_acv_rankTest_{}.png) oder nicht.
 		zum scoring aber immer wieder wie original!
-10.	XL-q-value berechnen: Q values nur mit den klassenmembern berechnen (extra spalte).
-		Iterationen-plots für XL und nicht XL getrennt. 3 plots: XL, nicht-XL, beides zusammen
-		Plus metrik (AUC?)
-		für ROC kurven auch klassen q values benutzen
-11. 	Wenn es in den Iterationen schlechter wird, vllt letztes bestes nehmen?
+
+	Sehr ähnliche Peptide auf verschiedene splits verteilen führt zu gleichen PSMs in training und test set. Abhilfe: nach scanNr sortieren und dann splitten. Oder: gleiche Peptide in den gleichen split?
+13.	KFold, nested score benutzen, groupKFold anschauen? https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html
+14.	Ein mächtigerer Klassifikator (hat bei Timo leider nicht gut funktioniert bzw. hat zu stark overfitted) könnte evtl. funktionieren falls wir zusätzliche Bedingungen beim lernen einfügen: https://scikit-learn.org/stable/modules/ensemble.html#monotonic-constraints
+15.	Boosting der linearen SVM: https://www.datacamp.com/community/tutorials/adaboost-classifier-python
+16.	feature selection: https://scikit-learn.org/stable/auto_examples/linear_model/plot_multi_task_lasso_support.html#sphx-glr-auto-examples-linear-model-plot-multi-task-lasso-support-py
+
