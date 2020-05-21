@@ -186,13 +186,10 @@ def percEndFor(df, scoreName, idColName, bestIterReverse, scoresIter):
     df = addRanks(df, idColName, scoreName)
 
 # re-build of percolator algorithm.
-def percolator(data, idColName, excludedCols, I = 10, svmIter = 1000, svmC = 1.0, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, rankOption = True):
-    
-    # Ugly Syntax because of ugly pandas behavior
+def percolator(df, idColName, excludedCols, I = 10, svmIter = 1000, svmC = 1.0, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, rankOption = True):
+
     if (useRankOneOnly):
-        df = pd.DataFrame(data[data.Rank == 1])
-    else:
-        df = pd.DataFrame(data)
+        df = df.loc[df.Rank == 1]
     
     scores = [x for x in list(df.columns) if (x not in excludedCols)]
     if(plotEveryIter):
@@ -203,9 +200,13 @@ def percolator(data, idColName, excludedCols, I = 10, svmIter = 1000, svmC = 1.0
     scoresIter = []
     
     for i in range(I):
+                
+        # ScanNrs together tests
+        idParts = np.array_split(df['ScanNr'].sample(frac = 1, replace = False).unique(), 3)
+        threeParts = [pd.DataFrame(df.loc[df['ScanNr'].isin(idParts[part])]) for part in range(3)]
         
-        # split dataframe in 3. TODO?Maybe do this outside of i-for-loop?
-        threeParts = np.array_split(df.sample(frac = 1, replace = False), 3)
+        # split dataframe in 3.
+        #threeParts = np.array_split(df.sample(frac = 1, replace = False), 3)
         
         for j in [0,1,2]:
             
@@ -214,15 +215,15 @@ def percolator(data, idColName, excludedCols, I = 10, svmIter = 1000, svmC = 1.0
             
             # calc SpecIds, of which the first rank is a decoy and include corresponding PSMs in neg train set
             if(rankOption):
-                badSpecs = training[(training['Rank'] == 1) & (training['Label'] == 0)][idColName].tolist()
+                badSpecs = training.loc[(training['Rank'] == 1) & (training['Label'] == 0), idColName].tolist()
                 goodSpecs = list(set(training[idColName]) - set(badSpecs))
             
                 # compute training and response sets (yes, should use loc, not iloc)
-                falseTrain = training.loc[list(training[(training.Label == 0) | (training[idColName].isin(badSpecs))].index), scores]
-                trueTrain = training.loc[list(training[(training['q-val'] <= qTrain) & (training.Label == 1) & (training[idColName].isin(goodSpecs))].index), scores]
+                falseTrain = training.loc[(training.Label == 0) | (training[idColName].isin(badSpecs)), scores]
+                trueTrain = training.loc[(training['q-val'] <= qTrain) & (training.Label == 1) & (training[idColName].isin(goodSpecs)), scores]
             else:
-                falseTrain = training.loc[list(training[training.Label == 0].index), scores]
-                trueTrain = training.loc[list(training[(training['q-val'] <= qTrain) & (training.Label == 1)].index), scores]
+                falseTrain = training.loc[training.Label == 0, scores]
+                trueTrain = training.loc[(training['q-val'] <= qTrain) & (training.Label == 1), scores]
             train = falseTrain.values.tolist() + trueTrain.values.tolist()
             classes = [0] * len(falseTrain) + [1] * len(trueTrain)
             
@@ -240,8 +241,8 @@ def percolator(data, idColName, excludedCols, I = 10, svmIter = 1000, svmC = 1.0
             
             # merge: calculate comparable score
             calcQ(validate, scoreNameTemp, addXlQ = False)
-            qThreshold = min(validate[validate['q-val'] <= centralScoringQ][scoreNameTemp])
-            decoyMedian = np.median(validate[validate.Label == 0][scoreNameTemp])
+            qThreshold = min(validate.loc[validate['q-val'] <= centralScoringQ, scoreNameTemp])
+            decoyMedian = np.median(validate.loc[validate.Label == 0, scoreNameTemp])
             validate[scoreName] = (validate[scoreNameTemp] - qThreshold) / (qThreshold - decoyMedian)
         
         # merge the three parts and calculate q based on comparable score
@@ -252,7 +253,7 @@ def percolator(data, idColName, excludedCols, I = 10, svmIter = 1000, svmC = 1.0
         # plot and calc auc for this iteration
         if(plotEveryIter):
             for plot in [0,1]:
-                plotList[plot].append(pseudoROC(df[df['NuXL:isXL'] == plot], onlyVals = True, qColName = 'class-specific_q-val'))
+                plotList[plot].append(pseudoROC(df.loc[df['NuXL:isXL'] == plot], onlyVals = True, qColName = 'class-specific_q-val'))
             plotList[2].append(pseudoROC(df, onlyVals = True))
             x = plotList[2][i]
         else:
@@ -280,7 +281,7 @@ def percolator(data, idColName, excludedCols, I = 10, svmIter = 1000, svmC = 1.0
                     percEndFor(df, scoreName, idColName, j, scoresIter)
                     print('Terminating and using Iteration {} with an auc of {}.'.format(i + 2 - j, round(max(aucIter),2)))
             
-    result = pd.DataFrame(df[df.Rank == 1])
+    result = pd.DataFrame(df.loc[df.Rank == 1])
     result = calcQ(result, scoreName)
     
     # generate plots and revert color cycle after calculations are done

@@ -8,7 +8,7 @@ df['test_score'] = W.decision_function(X)
 calcQ(df,'test_score')
 print(len(df[df['q-val'] <= 0.01]))
 
-# Frage: Was bringt normalisierung nach unit norm?
+# Frage: Was bringt normalisierung nach unit norm? -> Ziemliche Verbesserung der Trennleistung wie es aussieht...
 
 1.	Mit Art der Daten vertraut machen, parsen, FDR und q-value berechnen, Pseudo-ROCs zeichnen (Ordner 'Erste Aufgabe')
 2.	Richtige Daten mit XL bekommen, Skript aus 'Erste Aufgabe' anwenden, Pseudo-ROCs für XL und nicht-XL zeichnen.
@@ -57,13 +57,19 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 12.	Experimente:
 	Normal: percolator_acv_{}.png
 	Ränge mit einbeziehen:
-		Neues Normal: Wenn auf Rang 1 target : target, wenn auf rang 1 decoy, alle decoy? "RankOption = True": uses all PSMs of species, of which the first-ranked PSM is a decoy, as negative training examples, and no longer as positive training examples.
+		Wenn auf Rang 1 target : target, wenn auf rang 1 decoy, alle decoy? "RankOption = True": uses all PSMs of species, of which the first-ranked PSM is a decoy, as negative training examples, and no longer as positive training examples.
 		Ergebnisse bleiben etwa gleich. decoy trainingsbeispiele: 42592 decoys + 11200 = 53792, weniger pos. Trainingsbeispiele: 5498 - 18 = 5480. Bilder: percolator_acv_{}_rankOptionTrue.png
 		
 		Während training Rang 2+ target als decoy behandeln -> Jede Iteration schlechter, ob bei pos train set nur Rang 1 betrachtet wurde (Bilder: percolator_acv_rankTest_{}.png) oder nicht.
 		zum scoring aber immer wieder wie original!
+		
+		!!!AB HIER: rankOption = True neues normal!!!
 
-	Sehr ähnliche Peptide auf verschiedene splits verteilen führt zu gleichen PSMs in training und test set. Abhilfe: nach scanNr sortieren und dann splitten. Oder: gleiche Peptide in den gleichen split?
+	ScanNr Versuche:
+		Sehr ähnliche Peptide auf verschiedene splits verteilen führt zu gleichen PSMs in training und test set. Abhilfe: nach scanNr sortieren und dann splitten (nicht mehr random, abhilfe: gleiche scanNr beim aufteilen als 1 Element behandeln -> alle gleichen scanNr kommen in gleichen Split)
+			Momentan noch hässlich implementiert mit immer neuen DataFrames -> müsste man ändern. 
+			Ergebnisse nicht viel anders als sonst. Bilder: percolator_acv_{}_ScanNrTest.png.
+		Oder: gleiche Peptide in den gleichen split
 13.	KFold, nested score benutzen, groupKFold anschauen? https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html
 14.	Ein mächtigerer Klassifikator (hat bei Timo leider nicht gut funktioniert bzw. hat zu stark overfitted) könnte evtl. funktionieren falls wir zusätzliche Bedingungen beim lernen einfügen: https://scikit-learn.org/stable/modules/ensemble.html#monotonic-constraints
 15.	Boosting der linearen SVM: https://www.datacamp.com/community/tutorials/adaboost-classifier-python
