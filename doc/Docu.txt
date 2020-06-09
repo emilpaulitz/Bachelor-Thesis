@@ -8,7 +8,17 @@ df['test_score'] = W.decision_function(X)
 calcQ(df,'test_score')
 print(len(df[df['q-val'] <= 0.01]))
 
-# Frage: Was bringt normalisierung nach unit norm? -> Ziemliche Verbesserung der Trennleistung wie es aussieht...
+# Frage: Was bringt normalisierung nach unit norm? -> Ziemliche Verbesserung der Trennleistung zumindest
+Numerische Gründe
+optimierung probleme mit floating point
+kleine zahlen werden weggerundet -> man sieht die unterschiede nicht mehr
+
+# Welche mächtigeren Klassifikatoren wären sinnvoll um die monotonic constraints zu verwenden? Auch non-linear svm? -> später 
+# Idee: trainingsteil von df so bewerten wie ich es gerade tue, aber rest mit einem klassifikator, der auf alles Daten trainiert hat? 
+	# für normalisierung brauche ich wahrscheinlich repräsentativen Ausschnitt aus den Daten, oder?
+	# Das ist beim rest nicht möglich, da ich einen bestimmten Teil komplett fürs Lernen verbraucht habe.
+# Was ist eigentlich mein Ziel gerade? Dass es möglichst gut funktioniert, und dann auf Daten anwenden die Timo mir noch schickt. Was schafft der C-percolator? -> Etwa so wie meine Implementierung auch
+# evalXL(p) vs evalXL(dSlow) zeigt, dass non-XL deutlich weniger verbessert werden als XLs. Liegt das daran, dass der NuXL-Score schon besser mit non-XLs umgehen kann? Ja vermutlich (?)
 
 1.	Mit Art der Daten vertraut machen, parsen, FDR und q-value berechnen, Pseudo-ROCs zeichnen (Ordner 'Erste Aufgabe')
 2.	Richtige Daten mit XL bekommen, Skript aus 'Erste Aufgabe' anwenden, Pseudo-ROCs für XL und nicht-XL zeichnen.
@@ -54,6 +64,7 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 		für allgmeine ROC kurven auch klassen q values benutzen
 10. 	Wenn es in den letzten 4 (standard) Iterationen schlechter wird, wird letztes bestes genommen
 11.	features nach unit norm normalisieren. d.h. min jedes features wird 0 und maximum wird 1.
+		Ergebnisse werden viel besser! Bilder ohne normierung: percolator_acv_{}_noNorming.png, mit normierung z.B. percolator_acv_{}.png
 12.	Experimente:
 	Normal: percolator_acv_{}.png
 	Ränge mit einbeziehen:
@@ -64,14 +75,42 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 		zum scoring aber immer wieder wie original!
 		
 		!!!AB HIER: rankOption = True neues normal!!!
+	Generell nur Rang 1 benutzen:
+		Bilder: percolator_acv_{}_useRankOneOnly.png
+		Bestes Ergebnis bisher. Schlechtere Ränge verwirren percolator? Endergebnis ist auch besser als normal und ganz am Ende nur Rang 1 zurückgeben (wird immer gemacht) (percolator_acv_ROC_normal.png)
 
 	ScanNr Versuche:
 		Sehr ähnliche Peptide auf verschiedene splits verteilen führt zu gleichen PSMs in training und test set. Abhilfe: nach scanNr sortieren und dann splitten (nicht mehr random, abhilfe: gleiche scanNr beim aufteilen als 1 Element behandeln -> alle gleichen scanNr kommen in gleichen Split)
 			Momentan noch hässlich implementiert mit immer neuen DataFrames -> müsste man ändern. 
-			Ergebnisse nicht viel anders als sonst. Bilder: percolator_acv_{}_ScanNrTest.png.
+			Ergebnisse nicht viel anders als sonst. Bilder: percolator_acv_{}_ScanNrTest.png
+			Vermutlich sind die niedrigeren Ränge dann so schlecht, dass es nichts bringt die schonmal gesehen zu haben.
 		Oder: gleiche Peptide in den gleichen split
+			Bilder: percolator_acv_{}_PeptideTest.png
+			Schlechterer Score insgesamt, nonXLs werden eher immer schlechter
+			Aber eher ehrlich, vielleicht besser zum generalisieren? 
+				auf was soll man aber noch generalisieren? die svm wird gelöscht sobald der split fertig ist?
+				ist es hier unehrlich oder besseres training, wenn man der svmgute Beispiele zeigt?
+					Beispiele (= Elemente des train set), bei denen Peptide dabei sind, die dann auch im test set sind.
+					Die Generalisierung von manchen Peptiden auf alle Pepide fällt der SVM schwer, weil der score sinkt wenn man die Peptide im test set nicht auch im train set zeigt. 
+					Idee: Vielleicht sind es nur wenige, bestimmte Peptide (oder Proteine), die besondere Eigenschaften haben und somit schlecht vorhergesagt werden können?
+					Oder: Peptide von decoys und peptide von targets sind disjunkt. Vielleicht haben gleiche Peptide gleiche Eigenschaften in manchen der scores, und die SVM kriegt diese Eigenschaften über die false train mit? Und kann somit zwischen decoy und target direkt unterscheiden?
+					Zu beachten: nXL werden hier immer schlechter!
+	
+	((Nystroem Transform: Experiment hat nicht funktioniert, teilweise war bester q-value >35%? Was hab ich falsch gemacht?))
 13.	KFold, nested score benutzen, groupKFold anschauen? https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html
-14.	Ein mächtigerer Klassifikator (hat bei Timo leider nicht gut funktioniert bzw. hat zu stark overfitted) könnte evtl. funktionieren falls wir zusätzliche Bedingungen beim lernen einfügen: https://scikit-learn.org/stable/modules/ensemble.html#monotonic-constraints
-15.	Boosting der linearen SVM: https://www.datacamp.com/community/tutorials/adaboost-classifier-python
-16.	feature selection: https://scikit-learn.org/stable/auto_examples/linear_model/plot_multi_task_lasso_support.html#sphx-glr-auto-examples-linear-model-plot-multi-task-lasso-support-py
+	Statt stratified KFold normales KFold benutzen macht praktisch keinen Unterschied: percolator_acv_{}_KFoldTest.png
+	splitting in drei Teile mit KFold implementieren vielleicht eleganter? Nein:
+		ixTraining, ixValidate = kf.split(df)	
+		aber in zukünftigen interationen? Man müsste sich indices speichern, ixTraining nochmal spliten und dann manuell neu zusammensetzen. 
+		Das is nicht besser als wie es jetzt ist. 
+	outer cross validation (outer cv) muss man selbst bauen, weil bei cross_val_predict nur supervised oder unsupervised, aber nicht semi-supervised unterstützt wird.
+
+14.	Welche mächtigeren Klassifikatoren wären sinnvoll? z.b. auch non-linear svms? Ein mächtigerer Klassifikator (hat bei Timo leider nicht gut funktioniert bzw. hat zu stark overfitted) könnte evtl. funktionieren falls wir zusätzliche Bedingungen beim lernen einfügen: https://scikit-learn.org/stable/modules/ensemble.html#monotonic-constraints
+
+15.	Ist das nicht das gleiche wie was ich mache? Trainieren, neu ordnen, trainieren? Boosting der linearen SVM: https://www.datacamp.com/community/tutorials/adaboost-classifier-python
+
+16.	was ist feature selection: https://scikit-learn.org/stable/auto_examples/linear_model/plot_multi_task_lasso_support.html#sphx-glr-auto-examples-linear-model-plot-multi-task-lasso-support-py
+		Jeder Datensatz zB. unterschiedliche parameter
+
+Nächstes: balancing
 
