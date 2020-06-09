@@ -1,98 +1,4 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn import svm
-from sklearn.metrics import auc
-from sklearn.model_selection import GridSearchCV, cross_val_score, KFold, GroupKFold
-from cycler import cycler
-
-# Read text file and turn it into a pandas data frame
-def DFfromTXT(fileName):
-    with open(fileName, 'r') as file:
-        txt = file.read()
-
-    # create list of lists from txt
-    lines = txt.splitlines()
-    xs = [l.split('\t') for l in lines]
-
-    # join the listed proteins if there is more than one
-    for x in xs:
-        while (len(x) > len(xs[0])):
-            x[-2:] = [', '.join(x[-2:])]
-
-    # create a pandas DataFrame from the acquired data
-    df = pd.DataFrame(xs[1:], index = range(len(xs[1:])), columns = xs[0])
-    return df
-
-# convert every string col into an int or float if possible
-def strToNum(df):
-    for col in df:
-        try:
-            df[col] = [int(i) for i in df[col]]
-        except ValueError:
-            try:
-                df[col] = [float(i) for i in df[col]]
-            except ValueError:
-                continue
-    return df
-
-# add columns containing FDR and the q-value respectively
-def calcQ(df, scoreColName, labelColName = 'Label', isXLColName = 'NuXL:isXL', addXlQ = True):
-    
-    df.sort_values(scoreColName, ascending=False, inplace = True)
-    df[labelColName].replace(to_replace = -1, value = 0, inplace = True)
-    df['FDR'] = 1 - (df[labelColName].cumsum()/[i + 1 for i in range(len(df.index))])
-    df['q-val'] = df['FDR'][::-1].cummin()[::-1]
-    
-    # add q-values calculated from the different classes
-    if(addXlQ):
-        ls = []
-        for XL in [0,1]:
-            
-            # split the dataframe and save the subset
-            currClass = pd.DataFrame(df[df[isXLColName] == XL])
-            ls.append(currClass)
-            
-            # calculate class-specific q-value
-            currClass.sort_values(scoreColName, ascending=False, inplace = True)
-            FDR = 1 - (currClass[labelColName].cumsum()/[i + 1 for i in range(len(currClass))])
-            currClass['class-specific_q-val'] = FDR[::-1].cummin()[::-1]
-            
-        df = pd.concat(ls)
-        df.sort_values(scoreColName, ascending=False, inplace = True)
-    return df
-
-# add a column containing the Ranks of entries with the same id
-def addRanks(df, idColName, scoreColName):
-    # Sort by score to have the ranks in increasing order, and by ID to group same IDs
-    df.sort_values(scoreColName, inplace = True, ascending = False)
-    df.sort_values(idColName, inplace = True, kind = 'mergesort')
-
-    # for better performance iterate over list
-    ids = list(df[idColName])
-    ranks = []
-    lastId = ''
-
-    # iterate over the sorted IDs, increasing the rank for every occurence of the same ID
-    for currId in ids:
-        if (currId == lastId):
-            currRank += 1
-        else:
-            currRank = 1
-            lastId = currId
-        ranks += [currRank]
-
-    df['Rank'] = ranks
-    return df
-
-# Norm the feature columns so their values lie between 0 and 1
-def normFeatures(df, excluded):
-    features = [x for x in list(df.columns) if (x not in excluded)]
-    for f in df[features]:
-        if (max(df[f]) != min(df[f])):
-            temp = df[f] - min(df[f])
-            df[f] = temp / max(temp)
-    return df
+from pycohelper import *
 
 # Read the specified file, calculate q-values and ranks, norm the features if excluded is given and sort it according to its score
 def readAndProcess(fileName, idColName,  scoreColName, excludedCols = ''):
@@ -105,7 +11,7 @@ def readAndProcess(fileName, idColName,  scoreColName, excludedCols = ''):
     df = addRanks(d2, idColName, scoreColName)
     print('ranks computed...')
     if (not excludedCols == ''):
-        df = normFeatures(df, excludedCols)
+        df = normFeatures(df, [x for x in list(df.columns) if (x not in excludedCols)])
         print('features normed...')
     df.sort_values(scoreColName, inplace = True, ascending = False)
     print('file ready!')
@@ -152,48 +58,12 @@ def evalXL(df, qColName = 'class-specific_q-val'):
     plt.legend(loc = 'best')    
     return [nXLauc, XLauc]
 
-# plot pseudo ROC for every iteration (see percolator)
-def pseudoROCiter(plotList, I, nameList, plotSaveName, plotDPI):
-    cols = []
-    for i in range(I):
-        cols.append(( 1-(i/(I-1)), 0., i/(I-1) ))
-    new_prop_cycle = cycler('color', cols)
-    plt.rc('axes', prop_cycle = new_prop_cycle)
-        
-    for i in [0,1,2]:
-        plt.xlim(0,0.05)
-        plt.ylim(0,max([len(plotList[i][j]) for j in range(I)]))
-        plt.title('Pseudo ROC-Curve of {} PSMs'.format(nameList[i]))
-        for j in range(I):
-            currAuc = round(auc(plotList[i][j], range(len(plotList[i][j]))), 2)
-            plt.plot(plotList[i][j], range(len(plotList[i][j])), label = 'Iteration {}, AUC: {}'.format(j + 1, currAuc))
-        plt.legend(loc = 'best')
-        if (plotSaveName != ''):
-            if ('{}' in plotSaveName):
-                name = plotSaveName.format(nameList[i])
-            else:
-                name = nameList[i] + plotSaveName
-            plt.savefig(name, dpi = plotDPI)
-        plt.show()
-    
-    # reset color cycle
-    plt.rc('axes', prop_cycle = cycler('color', [plt.get_cmap('tab10')(i) for i in range(10)]))
-    
-# End for loop by setting the scores to the best iteration (given by bestIterReverse)
-def percEndFor(df, scoreName, idColName, bestIterReverse, I):
-    df[scoreName] = df['scoresIter_{}'.format(I - bestIterReverse)]
-    cols = df.columns
-    df.drop([cols[i] for i in range(len(cols)) if(cols[i].startswith('scoresIter_'))], axis = 1, inplace = True)
-    df = calcQ(df, scoreName)
-    df = addRanks(df, idColName, scoreName)
-
 # percolator with several exprimental options
-def percolator_experimental(df, idColName, excludedCols, I = 10, svmIter = 1000, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, rankOption = True, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False):
+def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, rankOption = True, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False):
 
     if (useRankOneOnly):
         df = df.loc[df.Rank == 1]
     
-    scores = [x for x in list(df.columns) if (x not in excludedCols)]
     if(plotEveryIter):
         plotList = [[],[],[]]
     scoreName = 'percolator_score'
@@ -202,19 +72,7 @@ def percolator_experimental(df, idColName, excludedCols, I = 10, svmIter = 1000,
     scoresIter = []
     
     for i in range(I):
-        if (scanNrTest):
-            # ScanNrs together tests
-            idParts = np.array_split(df['ScanNr'].sample(frac=1, replace = False).unique(), 3)
-            threeParts = [pd.DataFrame(df.loc[df['ScanNr'].isin(idParts[part])]) for part in range(3)]
-        elif (peptideTest):
-            # Same peptides together tests
-            peptides = pd.Series(df['Peptide'].unique())
-            np.random.shuffle(peptides)
-            pepParts = np.array_split(peptides, 3)
-            threeParts = [pd.DataFrame(df.loc[df['Peptide'].isin(pepParts[part])]) for part in range(3)]
-        else:
-            # split dataframe in 3
-            threeParts = np.array_split(df.sample(frac = 1, replace = False), 3)
+        threeParts = percSplitOuter(df, scanNrTest, peptideTest)
         
         for j in [0,1,2]:
             
@@ -222,39 +80,13 @@ def percolator_experimental(df, idColName, excludedCols, I = 10, svmIter = 1000,
             training = pd.concat([threeParts[k] for k in range(3) if(k != j)], sort = False)
                         
             # calc SpecIds, of which the first rank is a decoy and include corresponding PSMs in neg train set
-            if(rankOption):
-                badSpecs = training.loc[(training['Rank'] == 1) & (training['Label'] == 0), idColName].tolist()
-                goodSpecs = list(set(training[idColName]) - set(badSpecs))
-            
-                # compute training and response sets (yes, should use loc, not iloc)
-                falseTrain = training.loc[(training.Label == 0) | (training[idColName].isin(badSpecs))]
-                trueTrain = training.loc[(training['q-val'] <= qTrain) & (training.Label == 1) & (training[idColName].isin(goodSpecs))]
-            elif (lowRankDecoy):
-                falseTrain = training.loc[(training.Label == 0) | (training.Rank > 1)]
-                trueTrain = training.loc[(training['q-val'] <= qTrain) & (training.Label == 1) & (training.Rank == 1)]
-            else:
-                falseTrain = training.loc[training.Label == 0]
-                trueTrain = training.loc[(training['q-val'] <= qTrain) & (training.Label == 1)]
-            train = falseTrain[scores].values.tolist() + trueTrain[scores].values.tolist()
+            falseTrain, trueTrain = percSelectTrain(training, qTrain, rankOption, lowRankDecoy)
+            train = falseTrain[features].values.tolist() + trueTrain[features].values.tolist()
             classes = [0] * len(falseTrain) + [1] * len(trueTrain)
             
             # set up SVM using internal cross-validation
-            parameters = {'C':[0.1,1,10], 'class_weight':[{0:i, 1:1} for i in [1,3,10]]}
-            if(balancedOption):
-                parameters['class_weight'] += ['balanced']
-            W = svm.LinearSVC(dual = False, max_iter = svmIter)
-            if(KFoldTest):
-                # use normal kfold instead of stratified kfold
-                clf = GridSearchCV(W, parameters, cv = KFold(n_splits=3, shuffle=True))
-            elif(scanNrTest):
-                groups = falseTrain['ScanNr'].tolist() + trueTrain['ScanNr'].tolist()
-                clf = GridSearchCV(W, parameters, cv = GroupKFold(n_splits=3).split(train, classes, groups))
-            elif(peptideTest):
-                groups = falseTrain['Peptide'].tolist() + trueTrain['Peptide'].tolist()
-                clf = GridSearchCV(W, parameters, cv = GroupKFold(n_splits=3).split(train, classes, groups))
-            else:
-                clf = GridSearchCV(W, parameters, cv = 3)
-                        
+            clf = percInitClf(falseTrain, trueTrain, train, classes, balancedOption, KFoldTest, scanNrTest, peptideTest)
+            
             if(not suppressLog):
                 print('Training in iteration {} with split {}/3 starts!'.format(i + 1, j + 1))
                 print('Cardinality of...\npositive trainingset: {}, negative training set: {}'.format(len(trueTrain), len(falseTrain)))
@@ -263,7 +95,7 @@ def percolator_experimental(df, idColName, excludedCols, I = 10, svmIter = 1000,
                 print('Optimal parameters are C={} and class_weight={}.'.format(clf.best_params_['C'], clf.best_params_['class_weight']))
             
             # compute score for validation part
-            X = validate[scores].values.tolist()
+            X = validate[features].values.tolist()
             validate[scoreNameTemp] = clf.decision_function(X)
             
             # merge: calculate comparable score
@@ -289,8 +121,7 @@ def percolator_experimental(df, idColName, excludedCols, I = 10, svmIter = 1000,
         df['scoresIter_{}'.format(i)] = df[scoreName]
         
         # Terminate if auc has not been getting better in last termWorseIters iterations
-        if(i + 1 >= termWorseIters):
-            if(aucIter[-termWorseIters] == max(aucIter)):
+        if((i + 1 >= termWorseIters) and (aucIter[-termWorseIters] == max(aucIter))):
                 I = i + 1
                 percEndFor(df, scoreName, idColName, termWorseIters, I)
                 if(not suppressLog):
@@ -318,9 +149,8 @@ def percolator_experimental(df, idColName, excludedCols, I = 10, svmIter = 1000,
     return df
 
 # clean re-build of percolator algorithm.
-def percolator(df, idColName, excludedCols, I = 10, qTrain = 0.05, centralScoringQ = 0.01, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4):
+def percolator(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4):
     
-    scores = [x for x in list(df.columns) if (x not in excludedCols)]
     if(plotEveryIter):
         plotList = [[],[],[]]
     scoreName = 'percolator_score'
@@ -340,11 +170,10 @@ def percolator(df, idColName, excludedCols, I = 10, qTrain = 0.05, centralScorin
             
             # calc SpecIds, of which the first rank is a decoy and include corresponding PSMs in neg train set
             badSpecs = training.loc[(training['Rank'] == 1) & (training['Label'] == 0), idColName].tolist()
-            goodSpecs = list(set(training[idColName]) - set(badSpecs))
 
             # compute training and response sets (yes, should use loc, not iloc)
-            falseTrain = training.loc[(training.Label == 0) | (training[idColName].isin(badSpecs)), scores]
-            trueTrain = training.loc[(training['q-val'] <= qTrain) & (training.Label == 1) & (training[idColName].isin(goodSpecs)), scores]
+            falseTrain = training.loc[(training.Label == 0) | (training[idColName].isin(badSpecs)), features]
+            trueTrain = training.loc[(training['q-val'] <= qTrain) & (training.Label == 1) & (~training[idColName].isin(badSpecs)), features]
             train = falseTrain.values.tolist() + trueTrain.values.tolist()
             classes = [0] * len(falseTrain) + [1] * len(trueTrain)
             
@@ -358,7 +187,7 @@ def percolator(df, idColName, excludedCols, I = 10, qTrain = 0.05, centralScorin
             clf.fit(train,classes)
             
             # compute score for validation part
-            X = validate[scores].values.tolist()
+            X = validate[features].values.tolist()
             validate[scoreNameTemp] = clf.decision_function(X)
             
             # merge: calculate comparable score
