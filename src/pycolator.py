@@ -1,3 +1,11 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import svm
+from sklearn.metrics import auc
+from sklearn.model_selection import GridSearchCV, cross_val_score, KFold, GroupKFold, LeaveOneGroupOut
+from cycler import cycler
+from itertools import product
 from pycohelper import *
 
 # Read the specified file, calculate q-values and ranks, norm the features if excluded is given and sort it according to its score
@@ -59,7 +67,7 @@ def evalXL(df, qColName = 'class-specific_q-val'):
     return [nXLauc, XLauc]
 
 # percolator with several exprimental options
-def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, rankOption = True, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False):
+def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, rankOption = True, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False, fastCV = False, propTarDec = False, propXLnXL = False, balancingInner = True, balancingOuter = True):
 
     if (useRankOneOnly):
         df = df.loc[df.Rank == 1]
@@ -72,24 +80,30 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
     scoresIter = []
     
     for i in range(I):
-        threeParts = percSplitOuter(df, scanNrTest, peptideTest)
-        
+        threeParts = percSplitOuter(df, scanNrTest, peptideTest, balancingOuter, propTarDec, propXLnXL)
+        for tp in threeParts:
+            t = len(tp.loc[tp.Label==1])
+            d = len(tp.loc[tp.Label==0])
+            print('t/d=',t/d)
+        t = len(df.loc[df.Label==1])
+        d = len(df.loc[df.Label==0])
+        print('t/d beim ganzen df=',t/d)
         for j in [0,1,2]:
             
             validate = threeParts[j]
             training = pd.concat([threeParts[k] for k in range(3) if(k != j)], sort = False)
                         
             # calc SpecIds, of which the first rank is a decoy and include corresponding PSMs in neg train set
-            falseTrain, trueTrain = percSelectTrain(training, qTrain, rankOption, lowRankDecoy)
+            falseTrain, trueTrain = percSelectTrain(training, qTrain, rankOption, lowRankDecoy, idColName)
             train = falseTrain[features].values.tolist() + trueTrain[features].values.tolist()
             classes = [0] * len(falseTrain) + [1] * len(trueTrain)
             
             # set up SVM using internal cross-validation
-            clf = percInitClf(falseTrain, trueTrain, train, classes, balancedOption, KFoldTest, scanNrTest, peptideTest)
+            clf = percInitClf(falseTrain, trueTrain, train, classes, balancedOption, KFoldTest, scanNrTest, peptideTest, fastCV)
             
             if(not suppressLog):
                 print('Training in iteration {} with split {}/3 starts!'.format(i + 1, j + 1))
-                print('Cardinality of...\npositive trainingset: {}, negative training set: {}'.format(len(trueTrain), len(falseTrain)))
+                print('len of positive trainingset: {}, len of negative training set: {}\n'.format(len(trueTrain), len(falseTrain)))
             clf.fit(train,classes)
             if(not suppressLog):
                 print('Optimal parameters are C={} and class_weight={}.'.format(clf.best_params_['C'], clf.best_params_['class_weight']))

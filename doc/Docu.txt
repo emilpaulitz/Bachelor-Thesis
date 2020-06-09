@@ -20,6 +20,41 @@ kleine zahlen werden weggerundet -> man sieht die unterschiede nicht mehr
 # Was ist eigentlich mein Ziel gerade? Dass es möglichst gut funktioniert, und dann auf Daten anwenden die Timo mir noch schickt. Was schafft der C-percolator? -> Etwa so wie meine Implementierung auch
 # evalXL(p) vs evalXL(dSlow) zeigt, dass non-XL deutlich weniger verbessert werden als XLs. Liegt das daran, dass der NuXL-Score schon besser mit non-XLs umgehen kann? Ja vermutlich (?)
 
+# Frage: Ist es schlimm dass es immer viel mehr negative als positive Beispiele gibt? (ca 10:1)
+
+# Nachschauen: https://pandas.pydata.org/pandas-docs/version/0.15.2/indexing.html
+Combine DataFrame’s isin with the any() and all() methods to quickly select subsets of your data that meet a given criteria. To select a row where each column meets its own criterion:
+
+In [116]: values = {'ids': ['a', 'b'], 'ids2': ['a', 'c'], 'vals': [1, 3]}
+
+In [117]: row_mask = df.isin(values).all(1)
+
+In [118]: df[row_mask]
+Out[118]: 
+  ids ids2  vals
+0   a    a     1
+
+# Code Schnipsel: 
+falseTrain, trueTrain = percSelectTrain(df, qTrain, rankOption, lowRankDecoy, idColName)
+        train = falseTrain[features].values.tolist() + trueTrain[features].values.tolist()
+        classes = [0] * len(falseTrain) + [1] * len(trueTrain)
+        
+        for ixTrain, ixTest in LeaveOneGroupOut().split(train, classes, groups = splits):
+            
+            validate = df.loc[ixTest, features]
+            training = df.loc[ixTrain, features]
+            
+            #test
+            parameters = {'C':[0.1,1,10], 'class_weight':[{0:i, 1:1} for i in [1,3,10]]}
+            if(balancedOption):
+                parameters['class_weight'] += ['balanced']
+            W = svm.LinearSVC(dual = False)
+
+            groups = training['Peptide'].tolist()
+            clf = GridSearchCV(W, parameters, cv = GroupKFold(n_splits=3).split(training, classes[ixTrain], groups))
+        
+
+
 1.	Mit Art der Daten vertraut machen, parsen, FDR und q-value berechnen, Pseudo-ROCs zeichnen (Ordner 'Erste Aufgabe')
 2.	Richtige Daten mit XL bekommen, Skript aus 'Erste Aufgabe' anwenden, Pseudo-ROCs für XL und nicht-XL zeichnen.
 3.	GitHub anlegen
@@ -101,16 +136,24 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 	Statt stratified KFold normales KFold benutzen macht praktisch keinen Unterschied: percolator_acv_{}_KFoldTest.png
 	splitting in drei Teile mit KFold implementieren vielleicht eleganter? Nein:
 		ixTraining, ixValidate = kf.split(df)	
-		aber in zukünftigen interationen? Man müsste sich indices speichern, ixTraining nochmal spliten und dann manuell neu zusammensetzen. 
-		Das is nicht besser als wie es jetzt ist. 
+		aber in zukünftigen Iterationen? Man müsste sich indices speichern, ixTraining nochmal spliten und dann manuell neu zusammensetzen. 
+		Das ist nicht besser als wie es jetzt ist.
+		Aber mit leave one group out? 
 	outer cross validation (outer cv) muss man selbst bauen, weil bei cross_val_predict nur supervised oder unsupervised, aber nicht semi-supervised unterstützt wird.
 
-14.	Welche mächtigeren Klassifikatoren wären sinnvoll? z.b. auch non-linear svms? Ein mächtigerer Klassifikator (hat bei Timo leider nicht gut funktioniert bzw. hat zu stark overfitted) könnte evtl. funktionieren falls wir zusätzliche Bedingungen beim lernen einfügen: https://scikit-learn.org/stable/modules/ensemble.html#monotonic-constraints
+14.	Balancing:
+	Bei inner cross-validation für class_weights "balanced" hinzugefügt. Wird aber praktisch nie ausgewählt. (Stimmt der Gedanke, dass es für SVMs auch gar nicht so wichtig ist, weil da ja nur die support vectors wichtig sind und alle anderen nicht?)
+		Wieder rausgemacht, weil es dadurch 33% länger dauert. 
+	Genau gleich viele von Tar:Dec oder XL:nXL macht keinen Sinn, weil dann ja Elemente der größeren Gruppe überbleiben. Wo würde man die hintun?
+		Möglich wäre, den DataFrame vorher zu filtern, sodass es immer gleich viele gibt und dann proportional zu verteilen. 
+	Tar:Dec proportional zum Verhältnis im ganzen DataFrame funktioniert (s. Code-Bilder in results/balancingTest)
+	Ergebnisse kommen nach dem Einbauen in innere Schleife.
 
-15.	Ist das nicht das gleiche wie was ich mache? Trainieren, neu ordnen, trainieren? Boosting der linearen SVM: https://www.datacamp.com/community/tutorials/adaboost-classifier-python
-
-16.	was ist feature selection: https://scikit-learn.org/stable/auto_examples/linear_model/plot_multi_task_lasso_support.html#sphx-glr-auto-examples-linear-model-plot-multi-task-lasso-support-py
+TO-DO: LeaveOneGroupOut einbauen (s. Codeschnipsel oben)
+Ideen für Zukunft:
+	Welche mächtigeren Klassifikatoren wären sinnvoll? z.b. auch non-linear svms? Ein mächtigerer Klassifikator (hat bei Timo leider nicht gut funktioniert bzw. hat zu stark overfitted) könnte evtl. funktionieren falls wir zusätzliche Bedingungen beim lernen einfügen: https://scikit-learn.org/stable/modules/ensemble.html#monotonic-constraints
+	Ist das nicht das gleiche wie was ich mache? Trainieren, neu ordnen, trainieren? Boosting der linearen SVM: https://www.datacamp.com/community/tutorials/adaboost-classifier-python
+	was ist feature selection: https://scikit-learn.org/stable/auto_examples/linear_model/plot_multi_task_lasso_support.html#sphx-glr-auto-examples-linear-model-plot-multi-task-lasso-support-py
 		Jeder Datensatz zB. unterschiedliche parameter
 
-Nächstes: balancing
 
