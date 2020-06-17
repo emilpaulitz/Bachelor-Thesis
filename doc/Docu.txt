@@ -20,7 +20,12 @@ kleine zahlen werden weggerundet -> man sieht die unterschiede nicht mehr
 # Was ist eigentlich mein Ziel gerade? Dass es möglichst gut funktioniert, und dann auf Daten anwenden die Timo mir noch schickt. Was schafft der C-percolator? -> Etwa so wie meine Implementierung auch
 # evalXL(p) vs evalXL(dSlow) zeigt, dass non-XL deutlich weniger verbessert werden als XLs. Liegt das daran, dass der NuXL-Score schon besser mit non-XLs umgehen kann? Ja vermutlich (?)
 
-# Frage: Ist es schlimm dass es immer viel mehr negative als positive Beispiele gibt? (ca 10:1)
+# Frage: Ist es schlimm dass es immer viel mehr negative als positive Beispiele gibt? (ca 10:1) Könnte Grund sein, dass nur Rang 1 besseres Ergebnis erzielt? -> weniger Decoys, Verhältnis etwa 2:1
+	Habe zum Test mal angeboten, dass C- auch weniger sein darf als C+, und er hat das teilweise angenommen. Bedeutung?
+	"balanced"-Option wurde aber nicht genommen...
+# Frage: Kleiner Unterschied zw. Percolator und mir: Bei gridsearch nimmt percolator die Werte, die die meisten PSMs bei bestimmtem q geben. Ich nehme die, die besten Wert bei Training geben. Schlimm?
+# Frage: Im Datensatz sind XL:nXL 5:4, aber wenn man nur Rang 1 betrachtet ist es 4:1 ??
+	Vielleicht einfacher, XLs zu verbessern als nXLs, ist bisher praktisch immer so. Könnte das ein Grund sein für die bessere Performance wenn man nur Rang 1 nimmt?
 
 # Nachschauen: https://pandas.pydata.org/pandas-docs/version/0.15.2/indexing.html
 Combine DataFrame’s isin with the any() and all() methods to quickly select subsets of your data that meet a given criteria. To select a row where each column meets its own criterion:
@@ -131,7 +136,6 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 					Oder: Peptide von decoys und peptide von targets sind disjunkt. Vielleicht haben gleiche Peptide gleiche Eigenschaften in manchen der scores, und die SVM kriegt diese Eigenschaften über die false train mit? Und kann somit zwischen decoy und target direkt unterscheiden?
 					Zu beachten: nXL werden hier immer schlechter!
 	
-	((Nystroem Transform: Experiment hat nicht funktioniert, teilweise war bester q-value >35%? Was hab ich falsch gemacht?))
 13.	KFold, nested score benutzen, groupKFold anschauen? https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html
 	Statt stratified KFold normales KFold benutzen macht praktisch keinen Unterschied: percolator_acv_{}_KFoldTest.png
 	splitting in drei Teile mit KFold implementieren vielleicht eleganter? Nein:
@@ -142,12 +146,29 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 	outer cross validation (outer cv) muss man selbst bauen, weil bei cross_val_predict nur supervised oder unsupervised, aber nicht semi-supervised unterstützt wird.
 
 14.	Balancing:
-	Bei inner cross-validation für class_weights "balanced" hinzugefügt. Wird aber praktisch nie ausgewählt. (Stimmt der Gedanke, dass es für SVMs auch gar nicht so wichtig ist, weil da ja nur die support vectors wichtig sind und alle anderen nicht?)
+	Bei inner cross-validation für class_weights "balanced" hinzugefügt. Wird aber praktisch nie ausgewählt. (Stimmt der Gedanke, dass es für SVMs auch gar nicht so wichtig ist, weil da ja nur die support vectors wichtig sind und alle anderen nicht? Nein -> C ist die penalty für Falsch-Klassifizierungen, und die kommen ja trotzdem vor.)
 		Wieder rausgemacht, weil es dadurch 33% länger dauert. 
 	Genau gleich viele von Tar:Dec oder XL:nXL macht keinen Sinn, weil dann ja Elemente der größeren Gruppe überbleiben. Wo würde man die hintun?
-		Möglich wäre, den DataFrame vorher zu filtern, sodass es immer gleich viele gibt und dann proportional zu verteilen. 
+		Möglich wäre, den DataFrame vorher zu filtern, sodass es immer gleich viele gibt und dann proportional zu verteilen. Aber dann hat man viel weniger PSMs -> nicht sinnvoll
 	Tar:Dec proportional zum Verhältnis im ganzen DataFrame funktioniert (s. Code-Bilder in results/balancingTest)
-	Ergebnisse kommen nach dem Einbauen in innere Schleife.
+	Ergebnisse:
+	used balancing: True, max AUCs: [343.2544021400075], min AUCs: [341.2731519815712], median AUCs: 342.3760451913073
+	used balancing: False, max AUCs: [343.8859680229368], min AUCs: [342.05103793927975], median AUCs: 342.7538097947935
+	Bilder: percolator_acv_MaxMinMedian_balancing={}.png
+	
+15.	Gemerkt: Experimente machen wenig Sinn, wenn nur den ersten Rang verwenden die allerbesten Ergebnisse bringt. Darum Experimente damit, um neues Standard etablieren zu können:
+	Nur die ersten beiden Ränge benutzen macht keinen großen Unterschied. (Bilder: percolator_acv_{}_TopTwoRanks.png, finales AUC: 342.442)
+	Vielleicht ein paar Iterationen, um die Ränge neu zu ordnen, dann alle außer ersten rausschmeißen und weiter trainieren? Option: optimalRanking
+		-> bestes Ergebnis bisher. Damit neue Tests. Anzahl Iterationen verändern? -> 5,3 ziemlich genau wie 4 <- neuer Standard
+
+	Erneuter Test mit Balancing:
+	10 Wiederholungen pro Option (balance in [True, False]):
+	p = percolator_experimental(dSlow, idCol, features, suppressLog = True, plotEveryIter = False, optimalRanking = 4, propTarDec = balance, propXLnXL = balance, balancingInner = balance, specialGrid = True, rankOption = False, balancingOuter = balance)
+	used balancing: False, max AUCs: [349.1406103405052, 53.62776494990441, 294.41672772316707], min AUCs: [347.0401814390844, 54.339546009885346, 291.51140599645385], median AUCs: [347.69301852109606, 53.775556995129946, 292.85960639082884]
+	used balancing: True, max AUCs: [348.65198905387354, 53.85216435170418, 293.90713490741655], min AUCs: [347.47934498739266, 53.76340540673226, 293.1242788154449], median AUCs: [348.1949527179018, 53.83653035743281, 293.58185177459325]
+	Bilder: percolator_acv_MaxMinMedian_optimalRanking_balancing=False.png
+
+	AB HIER: NEUER STANDARD: optimalRanking = 4, specialGrid = True, balancing = True, rankOption = False
 
 TO-DO: LeaveOneGroupOut einbauen (s. Codeschnipsel oben)
 Ideen für Zukunft:

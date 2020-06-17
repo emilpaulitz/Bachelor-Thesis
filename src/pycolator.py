@@ -12,8 +12,8 @@ from pycohelper import *
 def readAndProcess(fileName, idColName,  scoreColName, excludedCols = ''):
     d = DFfromTXT(fileName)
     print('file read...')
-    d1 = strToNum(d)
-    print('strings converted to numbers...')
+    d1 = strToFloat(d)
+    print('strings converted to floats...')
     d2 = calcQ(d1, scoreColName)
     print('q-values estimated...')
     df = addRanks(d2, idColName, scoreColName)
@@ -21,12 +21,14 @@ def readAndProcess(fileName, idColName,  scoreColName, excludedCols = ''):
     if (not excludedCols == ''):
         df = normFeatures(df, [x for x in list(df.columns) if (x not in excludedCols)])
         print('features normed...')
+        df = floatToInt(df)
+        print('floats converted to int...')
     df.sort_values(scoreColName, inplace = True, ascending = False)
     print('file ready!')
     return df   
 
 # Plot Pseudo ROC of the df including entries with q in x = [0,xMax] and return area under the curve
-def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, onlyVals = False, qColName = 'q-val', rankColName = 'Rank', title = '', label = ''):
+def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, onlyVals = False, qColName = 'q-val', rankColName = 'Rank', title = '', label = '', plot = True):
     if (onlyFirstRank):
         qVals = df[(df[qColName] <= xMax) & (df[rankColName] == 1)][qColName].values.tolist()
     else: 
@@ -34,6 +36,8 @@ def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, onlyVals = False, qColName 
     qVals.sort()
     if (onlyVals):
         return qVals
+    if (not plot):
+        return auc(qVals, range(len(qVals)))
     plt.xlim(0,xMax)
     plt.ylim(0,len(qVals))
     plt.title(title)
@@ -60,14 +64,18 @@ def pseudoROCmulti(lss, xMax = 0.05, title = '', labels = ['maximum', 'minimum',
     plt.legend(loc = 'best')
     
 # plot pseudoROCs for XLs and Non XLs and return the areas under the curves
-def evalXL(df, qColName = 'class-specific_q-val'):
-    nXLauc = pseudoROC(df[df['NuXL:isXL'] == 0], qColName = qColName, label = 'not cross-linked')
-    XLauc = pseudoROC(df[df['NuXL:isXL'] == 1], qColName = qColName, label = 'cross-linked')
-    plt.legend(loc = 'best')    
+def evalXL(df, qColName = 'class-specific_q-val', plot = True):
+    if (plot):
+        nXLauc = pseudoROC(df[df['NuXL:isXL'] == 0], qColName = qColName, label = 'not cross-linked')
+        XLauc = pseudoROC(df[df['NuXL:isXL'] == 1], qColName = qColName, label = 'cross-linked')
+        plt.legend(loc = 'best')  
+    else:
+        nXLauc = pseudoROC(df[df['NuXL:isXL'] == 0], qColName = qColName, plot = False)
+        XLauc = pseudoROC(df[df['NuXL:isXL'] == 1], qColName = qColName, plot = False)
     return [nXLauc, XLauc]
 
-# percolator with several exprimental options
-def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, rankOption = True, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False, fastCV = False, propTarDec = False, propXLnXL = False, balancingInner = True, balancingOuter = True):
+# percolator with several experimental options
+def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, plotXLnXL = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, rankOption = False, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False, fastCV = False, propTarDec = True, propXLnXL = True, balancingInner = True, balancingOuter = True, optimalRanking = 4, specialGrid = True):
 
     if (useRankOneOnly):
         df = df.loc[df.Rank == 1]
@@ -80,14 +88,12 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
     scoresIter = []
     
     for i in range(I):
+        
+        if (optimalRanking and (i == optimalRanking)):
+            df = df.loc[df.Rank == 1]
+            
         threeParts = percSplitOuter(df, scanNrTest, peptideTest, balancingOuter, propTarDec, propXLnXL)
-        for tp in threeParts:
-            t = len(tp.loc[tp.Label==1])
-            d = len(tp.loc[tp.Label==0])
-            print('t/d=',t/d)
-        t = len(df.loc[df.Label==1])
-        d = len(df.loc[df.Label==0])
-        print('t/d beim ganzen df=',t/d)
+        
         for j in [0,1,2]:
             
             validate = threeParts[j]
@@ -99,7 +105,7 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
             classes = [0] * len(falseTrain) + [1] * len(trueTrain)
             
             # set up SVM using internal cross-validation
-            clf = percInitClf(falseTrain, trueTrain, train, classes, balancedOption, KFoldTest, scanNrTest, peptideTest, fastCV)
+            clf = percInitClf(falseTrain, trueTrain, train, classes, balancedOption, KFoldTest, scanNrTest, peptideTest, fastCV, propTarDec, propXLnXL, balancingInner, specialGrid)
             
             if(not suppressLog):
                 print('Training in iteration {} with split {}/3 starts!'.format(i + 1, j + 1))
@@ -125,8 +131,9 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
         
         # plot and calc auc for this iteration
         if(plotEveryIter):
-            for plot in [0,1]:
-                plotList[plot].append(pseudoROC(df.loc[df['NuXL:isXL'] == plot], onlyVals = True, qColName = 'class-specific_q-val'))
+            if (plotXLnXL):
+                for plot in [0,1]:
+                    plotList[plot].append(pseudoROC(df.loc[df['NuXL:isXL'] == plot], onlyVals = True, qColName = 'class-specific_q-val'))
             plotList[2].append(pseudoROC(df, onlyVals = True))
             x = plotList[2][i]
         else:
@@ -150,14 +157,15 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
             for j in range(1,termWorseIters):
                 if(aucIter[-j] == max(aucIter)):
                     percEndFor(df, scoreName, idColName, j, I)
-                    print('Terminating and using Iteration {} with an auc of {}.'.format(i + 2 - j, round(max(aucIter),2)))
+                    if(not suppressLog):
+                        print('Terminating and using Iteration {} with an auc of {}.'.format(i + 2 - j, round(max(aucIter),2)))
             
     df = df.loc[df.Rank == 1]
     df = calcQ(df, scoreName)
     
     # generate plots and revert color cycle after calculations are done
     if(plotEveryIter):
-        pseudoROCiter(plotList, I, ['non-XL', 'XL', 'all'], plotSaveName, plotDPI)
+        pseudoROCiter(plotList, I, ['non-XL', 'XL', 'all'], plotSaveName, plotDPI, plotXLnXL)
     
     # return PSMs with new score
     return df

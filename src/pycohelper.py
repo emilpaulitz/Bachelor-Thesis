@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
 from sklearn.metrics import auc
-from sklearn.model_selection import GridSearchCV, cross_val_score, KFold, GroupKFold, LeaveOneGroupOut
+from sklearn.model_selection import GridSearchCV, cross_val_score, KFold, GroupKFold, LeaveOneGroupOut, StratifiedKFold
+from sklearn.utils import shuffle
 from cycler import cycler
 from itertools import product
 
@@ -26,21 +27,21 @@ def DFfromTXT(fileName):
     return df
 
 # convert every string col into an int or float if possible
-def strToNum(df):
+def strToFloat(df):
     for col in df:
         try:
-            df[col] = [int(i) for i in df[col]]
+            df[col] = [float(i) for i in df[col]]
         except ValueError:
-            try:
-                df[col] = [float(i) for i in df[col]]
-            except ValueError:
-                continue
+            continue
     return df
 
 # add columns containing FDR and the q-value respectively
-def calcQ(df, scoreColName, labelColName = 'Label', isXLColName = 'NuXL:isXL', addXlQ = True):
+def calcQ(df, scoreColName, labelColName = 'Label', isXLColName = 'NuXL:isXL', addXlQ = True, ascending = False):
     
-    df.sort_values(scoreColName, ascending=False, inplace = True)
+    if (ascending):
+        df.sort_values(scoreColName, ascending=True, inplace = True)
+    else:
+        df.sort_values(scoreColName, ascending=False, inplace = True)
     df[labelColName].replace(to_replace = -1, value = 0, inplace = True)
     df['FDR'] = 1 - (df[labelColName].cumsum()/[i + 1 for i in range(len(df.index))])
     df['q-val'] = df['FDR'][::-1].cummin()[::-1]
@@ -86,12 +87,24 @@ def addRanks(df, idColName, scoreColName):
     df['Rank'] = ranks
     return df
 
-# Norm the feature columns so their values lie between 0 and 1
+# norm the feature columns so their values lie between 0 and 1 and throw out meaningless columns
 def normFeatures(df, features):
     for f in df[features]:
         if (max(df[f]) != min(df[f])):
             temp = df[f] - min(df[f])
             df[f] = temp / max(temp)
+        else:
+            df.drop(columns = f, inplace = True)
+    return df
+
+# convert every col into an int if possible
+def floatToInt(df):
+    for col in df:
+        try:
+            if all([i.is_integer() for i in df[col]]):
+                df[col] = [int(x) for x in df[col]]
+        except:
+            continue
     return df
     
 # split data in three parts by selected method (experimental)
@@ -104,8 +117,7 @@ def percSplitOuter(df, scanNrTest, peptideTest, balancingOuter, propTarDec, prop
     elif (peptideTest):
         # Same peptides together tests (why is the code structure different?)
         peptides = pd.Series(df['Peptide'].unique())
-        np.random.shuffle(peptides)
-        subgroups = np.array_split(peptides, 3)
+        subgroups = np.array_split(shuffle(peptides), 3)
         return [pd.DataFrame(df.loc[df['Peptide'].isin(subgroups[part])]) for part in range(3)]
     
     elif (balancingOuter and (propTarDec or propXLnXL)):
@@ -119,10 +131,10 @@ def percSplitOuter(df, scanNrTest, peptideTest, balancingOuter, propTarDec, prop
         elif (propXLnXL):
             comb = [df.loc[df['NuXL:isXL'] == b] for b in [0,1]]
             
-        genSplits = map(lambda part: np.array_split(part.sample(frac = 1, replace = False), 3), comb)
+        genSplits = map(lambda part: np.array_split(shuffle(part), 3), comb)
         return [pd.concat(z) for z in zip(*genSplits)]
     
-    return np.array_split(df.sample(frac = 1, replace = False), 3)
+    return np.array_split(shuffle(df), 3)
 
 # select negative and positive training set using given method (experimental)
 def percSelectTrain(training, qTrain, rankOption, lowRankDecoy, idColName):
@@ -142,9 +154,11 @@ def percSelectTrain(training, qTrain, rankOption, lowRankDecoy, idColName):
     return falseTrain, trueTrain
 
 # initalize classifier using selected option (experimental)
-def percInitClf(falseTrain, trueTrain, train, classes, balancedOption, KFoldTest, scanNrTest, peptideTest, fastCV):
+def percInitClf(falseTrain, trueTrain, train, classes, balancedOption, KFoldTest, scanNrTest, peptideTest, fastCV, propTarDec, propXLnXL, balancingInner, specialGrid):
     if (fastCV):
         parameters = {'C':[1,10], 'class_weight':[{0:1, 1:1}]}
+    if (specialGrid):        
+        parameters = {'C':[0.1,1,10], 'class_weight':[{0:i, 1:10} for i in [3,10,30]]}
     else:
         parameters = {'C':[0.1,1,10], 'class_weight':[{0:i, 1:1} for i in [1,3,10]]}
     if(balancedOption):
@@ -154,6 +168,30 @@ def percInitClf(falseTrain, trueTrain, train, classes, balancedOption, KFoldTest
     if(KFoldTest):
         # use normal kfold instead of stratified kfold
         clf = GridSearchCV(W, parameters, cv = KFold(n_splits=3, shuffle=True))
+    elif(balancingInner and (propTarDec or propXLnXL)):
+        
+        df = pd.concat([falseTrain,trueTrain])
+        
+        # balance subsets of inner cv in order to keep the proportions of tar/dec or XL/nXL the same as in the whole dataset
+        if(propTarDec and propXLnXL):
+            comb = [df.loc[(df.Label == a) & (df['NuXL:isXL'] == b)] for a,b in product([0,1], repeat = 2)]
+        if(propTarDec):
+            comb = [df.loc[df.Label == a] for a in [0,1]]
+        if(propXLnXL):
+            comb = [df.loc[df['NuXL:isXL'] == b] for b in [0,1]]
+            
+        # Generate a list of lists of indices, with the correct proportions in every sublist.
+        genSplits = map(lambda part: np.array_split(shuffle(part.index), 3), comb)
+
+        # zip the lists and flatten them
+        indices = [[item for sublist in z for item in sublist] for z in zip(*genSplits)]
+            
+        # Convert this nested list into a Series, containing the corresponding split in every index
+        groups = pd.Series(index = df.index)
+        for i in [0,1,2]:
+            groups.loc[groups.index.isin(indices[i])] = i
+            
+        clf = GridSearchCV(W, parameters, cv = GroupKFold(n_splits=3).split(train, classes, groups))
     elif(scanNrTest):
         groups = falseTrain['ScanNr'].tolist() + trueTrain['ScanNr'].tolist()
         clf = GridSearchCV(W, parameters, cv = GroupKFold(n_splits=3).split(train, classes, groups))
@@ -173,14 +211,19 @@ def percEndFor(df, scoreName, idColName, bestIterReverse, I):
     df = addRanks(df, idColName, scoreName)
     
 # plot pseudo ROC for every iteration (see percolator)
-def pseudoROCiter(plotList, I, nameList, plotSaveName, plotDPI):
+def pseudoROCiter(plotList, I, nameList, plotSaveName, plotDPI, plotXLnXL):
     cols = []
     for i in range(I):
         cols.append(( 1-(i/(I-1)), 0., i/(I-1) ))
     new_prop_cycle = cycler('color', cols)
     plt.rc('axes', prop_cycle = new_prop_cycle)
         
-    for i in [0,1,2]:
+    if (plotXLnXL):
+        iterate = [0,1,2]
+    else:
+        iterate = [2]
+        
+    for i in iterate:
         plt.xlim(0,0.05)
         plt.ylim(0,max([len(plotList[i][j]) for j in range(I)]))
         plt.title('Pseudo ROC-Curve of {} PSMs'.format(nameList[i]))
