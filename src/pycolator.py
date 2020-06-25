@@ -22,7 +22,7 @@ def readAndProcess(fileName, idColName,  scoreColName, excludedCols = ''):
         df = normFeatures(df, [x for x in list(df.columns) if (x not in excludedCols)])
         print('features normed...')
         df = floatToInt(df)
-        print('floats converted to int...')
+        print('floats converted to ints...')
     df.sort_values(scoreColName, inplace = True, ascending = False)
     print('file ready!')
     return df   
@@ -30,9 +30,11 @@ def readAndProcess(fileName, idColName,  scoreColName, excludedCols = ''):
 # Plot Pseudo ROC of the df including entries with q in x = [0,xMax] and return area under the curve
 def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, onlyVals = False, qColName = 'q-val', rankColName = 'Rank', title = '', label = '', plot = True):
     if (onlyFirstRank):
-        qVals = df[(df[qColName] <= xMax) & (df[rankColName] == 1)][qColName].values.tolist()
+        temp = pd.DataFrame(df.loc[df.Rank == 1, [qColName, 'Label', rankColName, 'NuXL:isXL']])
+        temp = calcQ(temp, qColName, ascending = True)
+        qVals = temp.loc[temp[qColName] <= xMax, qColName].values.tolist()
     else: 
-        qVals = df[df[qColName] <= xMax][qColName].values.tolist()
+        qVals = df.loc[df[qColName] <= xMax, qColName].values.tolist()
     qVals.sort()
     if (onlyVals):
         return qVals
@@ -75,7 +77,7 @@ def evalXL(df, qColName = 'class-specific_q-val', plot = True):
     return [nXLauc, XLauc]
 
 # percolator with several experimental options
-def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, plotXLnXL = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, rankOption = False, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False, fastCV = False, propTarDec = True, propXLnXL = True, balancingInner = True, balancingOuter = True, optimalRanking = 4, specialGrid = True):
+def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, plotXLnXL = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, cutOffImprove = 0.01, rankOption = False, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False, fastCV = False, propTarDec = True, propXLnXL = True, balancingInner = True, balancingOuter = True, optimalRanking = True, specialGrid = True, identsAsMetric = 'automatic'):
 
     if (useRankOneOnly):
         df = df.loc[df.Rank == 1]
@@ -84,13 +86,17 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
         plotList = [[],[],[]]
     scoreName = 'percolator_score'
     scoreNameTemp = 'temp_score'
-    aucIter = []
+    metricIter = []
     scoresIter = []
     
     for i in range(I):
         
-        if (optimalRanking and (i == optimalRanking)):
+        # If the results are improving by less than cutOffImprove, cut off every entry with a worse rank than 1
+        if (optimalRanking and (i >= 2) and metricIter[-1] < (metricIter[-2]*(1 + cutOffImprove))):
+            if (not suppressLog):
+                print('Re-ranking complete. Cutting off low ranks.\n')
             df = df.loc[df.Rank == 1]
+            optimalRanking = False
             
         threeParts = percSplitOuter(df, scanNrTest, peptideTest, balancingOuter, propTarDec, propXLnXL)
         
@@ -101,6 +107,10 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
                         
             # calc SpecIds, of which the first rank is a decoy and include corresponding PSMs in neg train set
             falseTrain, trueTrain = percSelectTrain(training, qTrain, rankOption, lowRankDecoy, idColName)
+            if(len(trueTrain) < 3 or len(falseTrain) < 3):
+                print('Dataset too small. There are not enough positive or negative examples to perform nested cross-validation.')
+                return
+            
             train = falseTrain[features].values.tolist() + trueTrain[features].values.tolist()
             classes = [0] * len(falseTrain) + [1] * len(trueTrain)
             
@@ -109,10 +119,10 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
             
             if(not suppressLog):
                 print('Training in iteration {} with split {}/3 starts!'.format(i + 1, j + 1))
-                print('len of positive trainingset: {}, len of negative training set: {}\n'.format(len(trueTrain), len(falseTrain)))
+                print('Length of positive trainingset: {}, length of negative training set: {}'.format(len(trueTrain), len(falseTrain)))
             clf.fit(train,classes)
             if(not suppressLog):
-                print('Optimal parameters are C={} and class_weight={}.'.format(clf.best_params_['C'], clf.best_params_['class_weight']))
+                print('Optimal parameters are C={} and class_weight={}.\n'.format(clf.best_params_['C'], clf.best_params_['class_weight']))
             
             # compute score for validation part
             X = validate[features].values.tolist()
@@ -129,48 +139,71 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
         df = calcQ(df, scoreName)
         df = addRanks(df, idColName, scoreName)
         
-        # plot and calc auc for this iteration
-        if(plotEveryIter):
-            if (plotXLnXL):
-                for plot in [0,1]:
-                    plotList[plot].append(pseudoROC(df.loc[df['NuXL:isXL'] == plot], onlyVals = True, qColName = 'class-specific_q-val'))
-            plotList[2].append(pseudoROC(df, onlyVals = True))
-            x = plotList[2][i]
+        # determine metric to use
+        if (identsAsMetric == 'automatic'):
+            identsAsMetric = len(df.loc[(df.Rank == 1) & (df['q-val'] > 0) & (df['q-val'] <= 0.05)]) == 0
+            if(not suppressLog):
+                if (identsAsMetric):
+                    print('Using identifications at 1% q-value with rank 1 as metric.')
+                else:
+                    print('Using AUC of pseudo-ROC with x = [0,0.05] as metric.')
+
+        if (identsAsMetric):
+            metric = 'identifications'
         else:
-            x = pseudoROC(df, onlyVals = True)
-        aucIter.append(auc(x, range(len(x))))
+            metric = 'an auc'
+        
+        # plot metric for this iteration
+        if(plotEveryIter):
+            if(identsAsMetric):
+                if (plotXLnXL):
+                    for plot in [0,1]:
+                        plotList[plot].append(len(df.loc[(df.Rank == 1) & (df['class-specific_q-val'] <= 0.01) & (df['NuXL:isXL'] == plot)]))
+                plotList[2].append(len(df.loc[(df.Rank == 1) & (df['q-val'] <= 0.01)]))
+            else:
+                if (plotXLnXL):
+                    for plot in [0,1]:
+                        plotList[plot].append(pseudoROC(df.loc[df['NuXL:isXL'] == plot], onlyVals = True, qColName = 'class-specific_q-val'))
+                plotList[2].append(pseudoROC(df, onlyVals = True))              
+            
+        # Calc metric for this iteration
+        if (identsAsMetric):
+            metricIter.append(len(df.loc[(df.Rank == 1) & (df['q-val'] <= 0.01)]))
+        else:
+            metricIter.append(pseudoROC(df, plot = False))
         df['scoresIter_{}'.format(i)] = df[scoreName]
         
-        # Terminate if auc has not been getting better in last termWorseIters iterations
-        if((i + 1 >= termWorseIters) and (aucIter[-termWorseIters] == max(aucIter))):
-                I = i + 1
-                percEndFor(df, scoreName, idColName, termWorseIters, I)
-                if(not suppressLog):
-                    print('Results are not getting better. Terminating and using Iteration {} with an auc of {}.'.format(i + 2 - termWorseIters, round(max(aucIter),2)))
-                break
-        
         if(not suppressLog):
-            print('Iteration {}/{} done!'.format(i + 1, I))
+            print('Iteration {}/{} done! It yielded {} of {}.\n'.format(i + 1, I, metric, metricIter[-1]))
             
+        # Terminate if metric has not been getting better in last termWorseIters iterations
+        if((i + 1 >= termWorseIters) and (metricIter[-termWorseIters] == max(metricIter))):
+            I = i + 1
+            percEndFor(df, scoreName, idColName, I - termWorseIters)
+            if(not suppressLog):
+                print('Results are not getting better. Terminating and using Iteration {} with {} of {}.'.format(i + 2 - termWorseIters, metric, round(max(metricIter),2)))
+            break
+        
         # in the end, choose the best of the last iterations
         if((i + 1 == I) and (i + 1 >= termWorseIters)):
             for j in range(1,termWorseIters):
-                if(aucIter[-j] == max(aucIter)):
-                    percEndFor(df, scoreName, idColName, j, I)
+                if(metricIter[-j] == max(metricIter)):
+                    percEndFor(df, scoreName, idColName, I - j)
                     if(not suppressLog):
-                        print('Terminating and using Iteration {} with an auc of {}.'.format(i + 2 - j, round(max(aucIter),2)))
+                        print('Terminating and using Iteration {} with {} of {}.'.format(i + 2 - j, metric, round(max(metricIter),2)))
             
     df = df.loc[df.Rank == 1]
     df = calcQ(df, scoreName)
     
     # generate plots and revert color cycle after calculations are done
     if(plotEveryIter):
-        pseudoROCiter(plotList, I, ['non-XL', 'XL', 'all'], plotSaveName, plotDPI, plotXLnXL)
+        pseudoROCiter(plotList, I, ['non-XL', 'XL', 'all'], plotSaveName, plotDPI, plotXLnXL, identsAsMetric)
     
     # return PSMs with new score
     return df
 
 # clean re-build of percolator algorithm.
+# not up to date!
 def percolator(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, plotEveryIter = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4):
     
     if(plotEveryIter):

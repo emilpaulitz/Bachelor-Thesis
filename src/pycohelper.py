@@ -37,13 +37,10 @@ def strToFloat(df):
 
 # add columns containing FDR and the q-value respectively
 def calcQ(df, scoreColName, labelColName = 'Label', isXLColName = 'NuXL:isXL', addXlQ = True, ascending = False):
-    
-    if (ascending):
-        df.sort_values(scoreColName, ascending=True, inplace = True)
-    else:
-        df.sort_values(scoreColName, ascending=False, inplace = True)
+
+    df.sort_values(scoreColName, ascending=ascending, inplace = True)
     df[labelColName].replace(to_replace = -1, value = 0, inplace = True)
-    df['FDR'] = 1 - (df[labelColName].cumsum()/[i + 1 for i in range(len(df.index))])
+    df['FDR'] = 1 - (df[labelColName].cumsum()/range(1, len(df) + 1))
     df['q-val'] = df['FDR'][::-1].cummin()[::-1]
     
     # add q-values calculated from the different classes
@@ -56,12 +53,12 @@ def calcQ(df, scoreColName, labelColName = 'Label', isXLColName = 'NuXL:isXL', a
             ls.append(currClass)
             
             # calculate class-specific q-value
-            currClass.sort_values(scoreColName, ascending=False, inplace = True)
-            FDR = 1 - (currClass[labelColName].cumsum()/[i + 1 for i in range(len(currClass))])
+            currClass.sort_values(scoreColName, ascending=ascending, inplace = True)
+            FDR = 1 - (currClass[labelColName].cumsum()/range(1, len(currClass) + 1))
             currClass['class-specific_q-val'] = FDR[::-1].cummin()[::-1]
             
         df = pd.concat(ls)
-        df.sort_values(scoreColName, ascending=False, inplace = True)
+        df.sort_values(scoreColName, ascending=ascending, inplace = True)
     return df
 
 # add a column containing the Ranks of entries with the same id
@@ -203,41 +200,58 @@ def percInitClf(falseTrain, trueTrain, train, classes, balancedOption, KFoldTest
     return clf
     
 # End for loop by setting the scores to the best iteration (given by bestIterReverse)
-def percEndFor(df, scoreName, idColName, bestIterReverse, I):
-    df[scoreName] = df['scoresIter_{}'.format(I - bestIterReverse)]
+def percEndFor(df, scoreName, idColName, bestIter):
+    df[scoreName] = df['scoresIter_{}'.format(bestIter)]
     cols = df.columns
     df.drop([cols[i] for i in range(len(cols)) if(cols[i].startswith('scoresIter_'))], axis = 1, inplace = True)
     df = calcQ(df, scoreName)
     df = addRanks(df, idColName, scoreName)
     
 # plot pseudo ROC for every iteration (see percolator)
-def pseudoROCiter(plotList, I, nameList, plotSaveName, plotDPI, plotXLnXL):
-    cols = []
-    for i in range(I):
-        cols.append(( 1-(i/(I-1)), 0., i/(I-1) ))
-    new_prop_cycle = cycler('color', cols)
-    plt.rc('axes', prop_cycle = new_prop_cycle)
+def pseudoROCiter(plotList, I, nameList, plotSaveName, plotDPI, plotXLnXL, identsAsMetric):
         
+    # determine over which parts of the plotList to iterate
     if (plotXLnXL):
         iterate = [0,1,2]
     else:
         iterate = [2]
         
-    for i in iterate:
-        plt.xlim(0,0.05)
-        plt.ylim(0,max([len(plotList[i][j]) for j in range(I)]))
-        plt.title('Pseudo ROC-Curve of {} PSMs'.format(nameList[i]))
-        for j in range(I):
-            currAuc = round(auc(plotList[i][j], range(len(plotList[i][j]))), 2)
-            plt.plot(plotList[i][j], range(len(plotList[i][j])), label = 'Iteration {}, AUC: {}'.format(j + 1, currAuc))
-        plt.legend(loc = 'best')
+    if (identsAsMetric):
+        for i in iterate:
+            plt.ylim(0,max([max(plotList[plot]) for plot in iterate]) * 1.05)
+            plt.plot(range(1,I + 1), plotList[i], label = nameList[i])
+            plt.legend(loc = 'best')
+        plt.title('Number of identified PSMs at q = 0.01'.format(nameList[i]))
         if (plotSaveName != ''):
-            if ('{}' in plotSaveName):
-                name = plotSaveName.format(nameList[i])
-            else:
-                name = nameList[i] + plotSaveName
-            plt.savefig(name, dpi = plotDPI)
+            plt.savefig(plotSaveName, dpi = plotDPI)
         plt.show()
-    
-    # reset color cycle
-    plt.rc('axes', prop_cycle = cycler('color', [plt.get_cmap('tab10')(i) for i in range(10)]))
+    else:
+        # set new color cycle (gradient from red to blue)
+        cols = []
+        for i in range(I):
+            cols.append(( 1-(i/(I-1)), 0., i/(I-1) ))
+        new_prop_cycle = cycler('color', cols)
+        plt.rc('axes', prop_cycle = new_prop_cycle)
+        
+        for i in iterate:
+            plt.xlim(0,0.05)
+            plt.ylim(0,max([len(plotList[i][j]) for j in range(I)]))
+            plt.title('Pseudo ROC-Curve of {} PSMs'.format(nameList[i]))
+
+            # generate pseudo ROC for every iteration represented in plotList
+            for j in range(I):
+                currAuc = round(auc(plotList[i][j], range(len(plotList[i][j]))), 2)
+                plt.plot(plotList[i][j], range(len(plotList[i][j])), label = 'Iteration {}, AUC: {}'.format(j + 1, currAuc))
+
+            # generate legend and save figure if specified
+            plt.legend(loc = 'best')
+            if (plotSaveName != ''):
+                if ('{}' in plotSaveName):
+                    name = plotSaveName.format(nameList[i])
+                else:
+                    name = nameList[i] + plotSaveName
+                plt.savefig(name, dpi = plotDPI)
+            plt.show()
+
+        # reset color cycle to standard
+        plt.rc('axes', prop_cycle = cycler('color', [plt.get_cmap('tab10')(i) for i in range(10)]))

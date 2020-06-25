@@ -168,7 +168,7 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 	used balancing: True, max AUCs: [348.65198905387354, 53.85216435170418, 293.90713490741655], min AUCs: [347.47934498739266, 53.76340540673226, 293.1242788154449], median AUCs: [348.1949527179018, 53.83653035743281, 293.58185177459325]
 	Bilder: percolator_acv_MaxMinMedian_optimalRanking_balancing=False.png
 
-	AB HIER: NEUER STANDARD: optimalRanking = 4, specialGrid = True, balancing = True, rankOption = False
+	AB HIER: NEUER STANDARD: optimalRanking = True, specialGrid = True, balancing = True, rankOption = False
 
 TO-DO: LeaveOneGroupOut einbauen (s. Codeschnipsel oben)
 Ideen für Zukunft:
