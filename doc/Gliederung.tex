@@ -1,0 +1,106 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{graphicx} 
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{amstext}
+\usepackage{scrlayer-scrpage}
+\usepackage{titling}
+\pagestyle{scrheadings}
+\clearpairofpagestyles
+
+\author{Emil Paulitz}
+\title{Semi-supervised learning for nucleic acid cross-linking mass spectrometry}
+\begin{document}
+	\ohead{\theauthor}
+	\cfoot{\pagemark}
+	\maketitle
+	\tableofcontents
+	
+	\section{Introduction}
+		- Motivation
+	\section{Background}	
+		- Proteomic, MS, Peptide Identification, Protein-RNA cross-linking (alles relativ kurz)\\
+		\\
+		Nachweise!
+		Rather straightforward algorithms like (Beispiele einfacher scoring algorithmen) compare the spectra with every possible peptide and compute a score based on their similarity. The best scoring peptide is then considered a peptide-spectrum-match (PSM). Those algorithms often differ greatly in their results and are thus not considered reliable, but their scores enable FDR estimation using decoy databases and serve as a basis for score re-calibration with the Percolator algorithm.\\
+		Decoy databases are created from the target database, have the same size and contain all of the proteins or peptides in a usually reversed or shuffled order. They are presented to the scoring algorithm along with the target database. For the algorithm, decoy and target peptide are not distinguishable, and thus, for spectra not matching any target peptide very well, the best scoring peptide will be a decoy half the time. This allows for an estimation of wrongly assigned targets, since the score distribution should be the same for decoys and false targets.\\
+		In practice, one estimates the probability of a PSM being a false target via counting the number of decoy-PSMs with the same or a higher score. It is then assumed, there are as many false targets and thus a false discovery rate (FDR) can be calculated. This leads to the following formula:
+		\begin{equation}
+		FDR = \frac{\text{\# false target PSMs}}{\text{\# all target PSMs}} =  \frac{\text{\# decoy PSMs}}{\text{\# all target PSMs}}
+		\end{equation}
+		Currently, this formula, yielding slightly lower values for the relevant, low FDRs is used [Nachweis, (percolator paper?)]: 
+		\begin{equation}
+		FDR = \frac{\text{\# decoy PSMs}}{\text{\# all PSMs}} = \frac{\text{\# decoy PSMs}}{\text{\# decoy PSMs} + \text{\# target PSMs}}
+		\end{equation}
+		The q-value for a PSM is then derived from this as the minimum FDR of all PSMs with a lower score. (q-val Definition und Grund für diese Berechnung nachschauen) %This prevents massively over-estimated q-values by random outliers. (q-val ist doch bestimmt irgendwie statistisch definiert und dann gibt es einen mathematischen Zusammenhang)
+		
+		- Score Rekalibrierung mit Percolator
+	\section{Material, Methods}
+	
+		- Material: Was ich für ein Datensatz zum Testen benutzt habe und wo der herkommt
+	
+		\subsection{Implementation of the percolator algorithm}
+			- Wie genau stelle ich das vor, siehe Mail? Wichtige Punkte wären:\\
+			- Verwendete Scipy-Methoden\\
+			- Abbruch wenn es nicht besser wird und dass ich die AUC als Metrik nutze\\
+			- feature normalization\\
+			- Wichtige Hilfsfunktionen (pseudoROC zB)
+			
+		\subsection{Improvements of the percolator algorithm for cross-link identification}
+			- Klassenspezifische q-values\\
+			- ROC nach jeder Iteration und aufgesplittet nach XL/nXL\\
+			\subsubsection{How to deal with different Ranks}
+			- OptimalRanking Option (Erst paar Iterationen Ränge verändern lassen und dann die schlechten entfernen)\\
+			\subsubsection{Characteristics of cross-linking PSM datasets}
+			- Verhältnis Targets:Decoys und XL:non-XL in inneren und äußeren splits gleich lassen und MinMaxMedian Auswertungen mithilfe von google colab cloud computing\\
+			- Imputation (kam zwar nichts raus ist aber trotzdem interessant)\\
+			- Trennung von Datensatz nach XL/nXL oder sogar cross-linking target falls Datensatz groß genug\\
+			\subsubsection{Small datasets}
+			- Ratio Testing (nicht-random aus ganzem Datensatz und random aus Top 10\%. Liefert Erkenntnisse über die mögliche Größe des Datensatzes und eventuell die Sinnhaftigkeit, wann man die Datensätze einfach trennen kann $\rightarrow$ Für den Leser relevant)\\
+			- Einbau von Identifikationen bei 1\% FDR als Metrik (Sinnhaftigkeit kann man ja diskutieren)\\\\			
+			(- Performance auf anderem Datensatz\\
+			- Vergleich mit Entrapment FDR)
+			
+	\section{Results}
+	
+		\subsection{Implementation of the percolator algorithm}
+			- Reimplementierung funktioniert wie Original\\
+			- feature normalization war wichtiger boost\\
+			- ROC nach jeder Iteration zeigen
+			
+		\subsection{Improvements of the percolator algorithm for cross-link identification}
+		\subsubsection{How to deal with different Ranks}
+			- Ergebnisse von OptimalRanking
+			
+		\subsubsection{Characteristics of cross-linking PSM datasets}
+			- Verhältnis Targets:Decoys und XL:non-XL verringt die Streuung: MinMaxMedian Auswertungen\\
+			- Bei Imputation kam nichts heraus\\
+			- Großer Unterschied wenn man den (großen) Datensatz nach XL/nXL oder sogar cross-linking target aufteilt\\
+			
+		\subsubsection{Small datasets}
+			- Sinnvolle Plots zu Ratio Testing\\
+			- Neue Metrik erlaubt es der Implementierung, auch auf kleineren Datensätzen zu funktionieren
+					
+	\section{Discussion}
+		- Methoden hinterfragen oder begründen, Ergebnisse interpretieren, Anwendbarkeit diskutieren, z.B.:\\
+		- Warum habe ich mich mit Rängen beschäftigt? (Bei XL-Datensätzen oft sinnvoll um erst percolator entscheiden zu lassen was auf Rang 1 steht (?))
+		- C Parameter für jeden split neu optimieren führt zu overfitting? $\rightarrow$ Original-Algorithmus macht es auch so\\
+		- Wie sinnvoll ist die neue Metrik?
+		% NUR FALLS MAN DAS IN DEN ERGEBNISSEN SIEHT: onlyUseRankOne war lange bestes Ergebnis $\Rightarrow$ Schlechtere Ränge verwirren percolator? $\rightarrow$ Nein: Standard in pseudoROC-Funktion hat von sich aus Ränge gefiltert, was ich nicht beachtet habe (Macht so ein Punkt Sinn? War ja eigentlich nur ein Fehler meinerseits, den man aber evtl. in den Ergebnissen sieht...)\\
+		- ScanNr Versuche: Gleiche Spektren (identifiziert anhand der ScanNr.) auf verschiedene splits verteilen verändert nichts, d.h. vermutlich sind die niedrigeren Ränge dann so schlecht, dass es nichts bringt die schonmal gesehen zu haben.\\
+		- Peptide Versuche: Schlechtere Ergebnisse, aber vllt ehrlicher?\\
+		%Die Generalisierung von manchen Peptiden auf alle Pepide fällt der SVM schwer, weil der score sinkt wenn man die Peptide im test set nicht auch im train set zeigt.\\
+		%auf was soll man aber noch generalisieren, die svm wird gelöscht sobald der split fertig ist. Ist es hier unehrlich oder besseres training, wenn man der svm gute Beispiele zeigt?\\		
+		%Idee: Vielleicht sind es nur wenige, bestimmte Peptide (oder Proteine), die besondere Eigenschaften haben und somit schlecht vorhergesagt werden können?\\
+		%Oder: Peptide von decoys und peptide von targets sind disjunkt. Vielleicht haben gleiche Peptide gleiche Eigenschaften in manchen der scores, und die SVM kriegt diese Eigenschaften über die false train mit? Und kann somit zwischen decoy und target direkt unterscheiden?\\
+		%$\rightarrow$ weitere Experimente? Zu beachten: nXL werden hier immer schlechter!\\
+		- Mögliche weiterführende Experimente: mächtigere Klassifikatoren + monotonic constraints (wie von Timo ausprobiert), Ada-Boosting, feature selection
+\end{document}
+
+
+
+
+
+

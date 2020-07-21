@@ -6,6 +6,8 @@ from sklearn.metrics import auc
 from sklearn.model_selection import GridSearchCV, cross_val_score, KFold, GroupKFold, LeaveOneGroupOut
 from cycler import cycler
 from itertools import product
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
 from pycohelper import *
 
 # Read the specified file, calculate q-values and ranks, norm the features if excluded is given and sort it according to its score
@@ -34,13 +36,14 @@ def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, onlyVals = False, qColName 
         temp = calcQ(temp, qColName, ascending = True)
         qVals = temp.loc[temp[qColName] <= xMax, qColName].values.tolist()
     else: 
+        xMax = float(xMax)
         qVals = df.loc[df[qColName] <= xMax, qColName].values.tolist()
     qVals.sort()
     if (onlyVals):
         return qVals
     if (not plot):
         return auc(qVals, range(len(qVals)))
-    plt.xlim(0,xMax)
+    plt.xlim(-0.001,xMax)
     plt.ylim(0,len(qVals))
     plt.title(title)
     AUC = auc(qVals, range(len(qVals)))
@@ -67,17 +70,12 @@ def pseudoROCmulti(lss, xMax = 0.05, title = '', labels = ['maximum', 'minimum',
     
 # plot pseudoROCs for XLs and Non XLs and return the areas under the curves
 def evalXL(df, qColName = 'class-specific_q-val', plot = True):
-    if (plot):
-        nXLauc = pseudoROC(df[df['NuXL:isXL'] == 0], qColName = qColName, label = 'not cross-linked')
-        XLauc = pseudoROC(df[df['NuXL:isXL'] == 1], qColName = qColName, label = 'cross-linked')
-        plt.legend(loc = 'best')  
-    else:
-        nXLauc = pseudoROC(df[df['NuXL:isXL'] == 0], qColName = qColName, plot = False)
-        XLauc = pseudoROC(df[df['NuXL:isXL'] == 1], qColName = qColName, plot = False)
-    return [nXLauc, XLauc]
+    nXLauc = pseudoROC(df[df['NuXL:isXL'] == 0], qColName = qColName, plot = plot, label = 'not cross-linked')
+    XLauc = pseudoROC(df[df['NuXL:isXL'] == 1], qColName = qColName, plot = plot, label = 'cross-linked')
+    return (nXLauc, XLauc)
 
 # percolator with several experimental options
-def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, plotXLnXL = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, cutOffImprove = 0.01, rankOption = False, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False, fastCV = False, propTarDec = True, propXLnXL = True, balancingInner = True, balancingOuter = True, optimalRanking = True, specialGrid = True, identsAsMetric = 'automatic'):
+def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, plotXLnXL = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, cutOffImprove = 0.01, rankOption = False, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False, fastCV = False, propTarDec = True, propXLnXL = True, balancingInner = True, balancingOuter = True, optimalRanking = True, specialGrid = True, identsAsMetric = 'automatic', multImputation = False):
 
     if (useRankOneOnly):
         df = df.loc[df.Rank == 1]
@@ -109,10 +107,23 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
             falseTrain, trueTrain = percSelectTrain(training, qTrain, rankOption, lowRankDecoy, idColName)
             if(len(trueTrain) < 3 or len(falseTrain) < 3):
                 print('Dataset too small. There are not enough positive or negative examples to perform nested cross-validation.')
-                return
+                raise Error
             
             train = falseTrain[features].values.tolist() + trueTrain[features].values.tolist()
             classes = [0] * len(falseTrain) + [1] * len(trueTrain)
+            
+            # imputation
+            if (multImputation):
+                colsToImputate = percPrepImputation(df, 'NuXL:isXL')
+                if (not all(df.loc[df['NuXL:isXL'] == 0, colsToImputate] == np.nan)):
+                    print('error in imputation')
+                imp = IterativeImputer()#estimator = svm.LinearSVC(), max_iter=10)
+                imp.fit(train)
+                df[features] = imp.transform(df[features])
+                
+                falseTrain, trueTrain = percSelectTrain(training, qTrain, rankOption, lowRankDecoy, idColName)
+                train = falseTrain[features].values.tolist() + trueTrain[features].values.tolist()
+                classes = [0] * len(falseTrain) + [1] * len(trueTrain)
             
             # set up SVM using internal cross-validation
             clf = percInitClf(falseTrain, trueTrain, train, classes, balancedOption, KFoldTest, scanNrTest, peptideTest, fastCV, propTarDec, propXLnXL, balancingInner, specialGrid)

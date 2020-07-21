@@ -170,6 +170,13 @@ Notes:	Seltsames Verhalten der Scores der SVM, siehe Linear_ML.ipynb letzte Zell
 
 	AB HIER: NEUER STANDARD: optimalRanking = True, specialGrid = True, balancing = True, rankOption = False
 
+	specialGrid sollte theoretisch keinen Unterschied machen, da man ja nach dem score (= Entfernung von der Hyperebene) sortiert und dann nach
+	geschätzem q-value. Ob man die Hyperebene jetzt mehr in die Richtung der targets schiebt (mit größerem C für decoys, da dadurch decoys auf 
+	der falschen Seite bestraft werden und die Ebene so gelegt wird dass weniger decoys falsch klassifiziert werden) oder nicht, sollte also 
+	keinen unterschied machen.
+
+	https://scikit-learn.org/stable/auto_examples/svm/plot_weighted_samples.html
+
 TO-DO: LeaveOneGroupOut einbauen (s. Codeschnipsel oben)
 Ideen für Zukunft:
 	Welche mächtigeren Klassifikatoren wären sinnvoll? z.b. auch non-linear svms? Ein mächtigerer Klassifikator (hat bei Timo leider nicht gut funktioniert bzw. hat zu stark overfitted) könnte evtl. funktionieren falls wir zusätzliche Bedingungen beim lernen einfügen: https://scikit-learn.org/stable/modules/ensemble.html#monotonic-constraints

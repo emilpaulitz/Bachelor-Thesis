@@ -103,6 +103,26 @@ def floatToInt(df):
         except:
             continue
     return df
+
+# calculate the features that are 0 for ever non-cross-linked PSM
+def percPrepImputation(df, xlcol):
+    ls = []
+    for col in df.columns:
+        ls.append([col])
+        ls[-1].append(min(df[col]))
+        ls[-1].append(max(df[col]))
+        ls[-1].append(min(df.loc[df[xlcol] == 1, col]))
+        ls[-1].append(max(df.loc[df[xlcol] == 1, col]))
+        ls[-1].append(min(df.loc[df[xlcol] == 0, col]))
+        ls[-1].append(max(df.loc[df[xlcol] == 0, col]))
+
+    temp = pd.DataFrame(ls, columns = ['Col','Min Ges', 'Max Ges', 'Min XL', 'Max XL', 'Min nXL', 'Max nXL'])
+    colsToImputate = list(temp.loc[(temp['Min nXL'] == temp['Max nXL']) & (temp['Min XL'] != temp['Max XL']), 'Col'])
+    if(all(df.loc[df[xlcol] == 0, colsToImputate] == 0)):
+        df.loc[df[xlcol] == 0, colsToImputate] = np.nan
+    else:
+        print('reexamine colsToImputate')
+    return colsToImputate
     
 # split data in three parts by selected method (experimental)
 def percSplitOuter(df, scanNrTest, peptideTest, balancingOuter, propTarDec, propXLnXL):
