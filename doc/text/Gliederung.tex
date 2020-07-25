@@ -1,12 +1,15 @@
 \documentclass[10pt,a4paper]{article}
+\usepackage[english]{babel}
 \usepackage{graphicx} 
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{amstext}
+\usepackage[numbers]{natbib}
 \usepackage{scrlayer-scrpage}
 \usepackage{titling}
+\usepackage{hyperref}
 \pagestyle{scrheadings}
 \clearpairofpagestyles
 
@@ -21,22 +24,24 @@
 	\section{Introduction}
 		- Motivation
 	\section{Background}	
-		- Proteomic, MS, Peptide Identification, Protein-RNA cross-linking (alles relativ kurz)\\
+		- Proteomics, MS, Peptide Identification, Protein-RNA cross-linking (alles relativ kurz)\\
 		\\
-		Nachweise!
-		Rather straightforward algorithms like (Beispiele einfacher scoring algorithmen) compare the spectra with every possible peptide and compute a score based on their similarity. The best scoring peptide is then considered a peptide-spectrum-match (PSM). Those algorithms often differ greatly in their results and are thus not considered reliable, but their scores enable FDR estimation using decoy databases and serve as a basis for score re-calibration with the Percolator algorithm.\\
-		Decoy databases are created from the target database, have the same size and contain all of the proteins or peptides in a usually reversed or shuffled order. They are presented to the scoring algorithm along with the target database. For the algorithm, decoy and target peptide are not distinguishable, and thus, for spectra not matching any target peptide very well, the best scoring peptide will be a decoy half the time. This allows for an estimation of wrongly assigned targets, since the score distribution should be the same for decoys and false targets.\\
-		In practice, one estimates the probability of a PSM being a false target via counting the number of decoy-PSMs with the same or a higher score. It is then assumed, there are as many false targets and thus a false discovery rate (FDR) can be calculated. This leads to the following formula:
+		Algorithms like Sequest~\cite{Eng1994} or X!~Tandem~\cite{Craig2004} compare the resulting spectra with theoretical spectra calculated from every possible peptide generated from a given protein list and compute a score based on their similarity. The best scoring peptide is then considered a peptide-spectrum-match (PSM). The score produced by those algorithms often do not distinguish well enough between correct and incorrect matches~\cite{Kll2007}, but their scores enable FDR estimation using decoy databases and serve as a basis for score re-calibration with the Percolator~algorithm~\cite{Granholm2012}.\\
+		Decoy databases are created from the target database, contain usually as  many peptides~\cite{Peng2003, Moore2002} in a reversed or shuffled order with respect to the amino acid sequence~\cite{Aggarwal2016}. They are presented to the scoring algorithm either separately~\cite{Granholm2012} or mixed with the target database~\cite{Peng2003}. It is assumed, that decoy and target peptides have similar features~\cite{Moore2002} and are not easily distinguishable by a scoring algorithm. When the actually fitting peptide for a given spectrum is not in the target database, and thus a wrong one will be chosen, the best scoring peptide will be a decoy approximately half of the time. This allows for an estimation of wrongly assigned targets, since the score distribution is assumed to be the same for decoys and false targets~\cite{Aggarwal2016}.\\
+		In practice, one estimates the probability of a PSM being a false target by counting the number of decoy-PSMs with the same or a higher score. It is then assumed, there are as many false targets and thus a false discovery rate (FDR) can be estimated. This leads to the following formula~\cite{Granholm2012}:
 		\begin{equation}
-		FDR = \frac{\text{\# false target PSMs}}{\text{\# all target PSMs}} =  \frac{\text{\# decoy PSMs}}{\text{\# all target PSMs}}
+		FDR = \frac{\text{\# false target PSMs}}{\text{\# all target PSMs}} \approx  \frac{\text{\# decoy PSMs}}{\text{\# all target PSMs}}
 		\end{equation}
-		Currently, this formula, yielding slightly lower values for the relevant, low FDRs is used [Nachweis, (percolator paper?)]: 
+		In this thesis, the following approximation is used:\\
 		\begin{equation}
-		FDR = \frac{\text{\# decoy PSMs}}{\text{\# all PSMs}} = \frac{\text{\# decoy PSMs}}{\text{\# decoy PSMs} + \text{\# target PSMs}}
+		FDR \approx \frac{\text{\# decoy PSMs}}{\text{\# all PSMs}} = \frac{\text{\# decoy PSMs}}{\text{\# decoy PSMs} + \text{\# target PSMs}}
 		\end{equation}
-		The q-value for a PSM is then derived from this as the minimum FDR of all PSMs with a lower score. (q-val Definition und Grund für diese Berechnung nachschauen) %This prevents massively over-estimated q-values by random outliers. (q-val ist doch bestimmt irgendwie statistisch definiert und dann gibt es einen mathematischen Zusammenhang)
-		
-		- Score Rekalibrierung mit Percolator
+		 It is faster to calculate and yields results differing by the FDR, so in the relevant range of FDRs of $0$ to $5\%$ up to $5\%$:
+		\begin{equation}
+		\frac{\frac{\text{\# decoys}}{\text{\# targets}}}{\frac{\text{\# decoys}}{\text{\# decoys} + \text{\# targets}}} = \frac{\text{\# decoys} + \text{\# targets}}{\text{\# targets}} \\ = 1 + \frac{\text{\# decoys}}{\text{\# targets}} \approx 1 + FDR	\end{equation}
+		The q-value as a measure for a single PSM rather than a metric for a set of PSMs is then derived from this as the minimum FDR of all PSMs with a lower or equal score~\cite{Granholm2012, Aggarwal2016}. It will be used for estimating the credibility for any one PSM.\\
+		As \citet{Kll2007} say, separating correct from incorrect target PSMs with already mentioned algorithms works fine, but there is still room for improvement. This is because often not all information is used and considered jointly. Percolator~\cite{Kll2007, Granholm2012} tries to utilize as much information as possible by using scores from different algorithms, features of the peptide like its length, of the spectrum or the PSM itself. It joins them using a linear SVM and a semi-supervised approach with cross-validation to retain as many PSMs as possible. In every iteration, the top ranking, non-decoy PSMs up to a certain threshold of q-value are chosen as positive training examples, and the decoy PSMs are used as negative training set. The PSMs are then re-ranked using the SVM score, with the intend of getting a better separation of true and false PSMs. If that holds true, the positive training set of the next iteration better is of higher quality and the SVM can be trained even better. The algorithm usually converges within the first 10 iterations~\cite{Kll2007}. To avoid having to split the data into training and testing set and consequently losing possibly correct PSMs but also avoid overfitting, a nested cross-validation approach is being used~\cite{Granholm2012}.
+
 	\section{Material, Methods}
 	
 		- Material: Was ich für ein Datensatz zum Testen benutzt habe und wo der herkommt
@@ -97,6 +102,10 @@
 		%Oder: Peptide von decoys und peptide von targets sind disjunkt. Vielleicht haben gleiche Peptide gleiche Eigenschaften in manchen der scores, und die SVM kriegt diese Eigenschaften über die false train mit? Und kann somit zwischen decoy und target direkt unterscheiden?\\
 		%$\rightarrow$ weitere Experimente? Zu beachten: nXL werden hier immer schlechter!\\
 		- Mögliche weiterführende Experimente: mächtigere Klassifikatoren + monotonic constraints (wie von Timo ausprobiert), Ada-Boosting, feature selection
+		
+		
+		\bibliographystyle{plainnat}
+		\bibliography{bibliography}
 \end{document}
 
 
