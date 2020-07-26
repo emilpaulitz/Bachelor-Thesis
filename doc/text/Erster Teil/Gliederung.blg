@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2018/W32TeX)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: Gliederung.aux
+The style file: plainnat.bst
+Database file #1: bibliography.bib
+Warning--empty journal in Sachsenberg2017
+You've used 10 entries,
+            2773 wiz_defined-function locations,
+            690 strings with 7526 characters,
+and the built_in function-call counts, 5372 in all, are:
+= -- 499
+> -- 334
+< -- 4
++ -- 112
+- -- 102
+* -- 494
+:= -- 846
+add.period$ -- 48
+call.type$ -- 10
+change.case$ -- 64
+chr.to.int$ -- 10
+cite$ -- 21
+duplicate$ -- 218
+empty$ -- 393
+format.name$ -- 116
+if$ -- 1107
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 10
+newline$ -- 75
+num.names$ -- 40
+pop$ -- 103
+preamble$ -- 1
+purify$ -- 54
+quote$ -- 0
+skip$ -- 165
+stack$ -- 0
+substring$ -- 195
+swap$ -- 23
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 110
+warning$ -- 1
+while$ -- 45
+width$ -- 0
+write$ -- 169
+(There was 1 warning)

@@ -1,0 +1,41 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Grundlagen
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Material and Methods}
+\label{matmet}
+
+- Material: Was ich für ein Datensatz zum Testen benutzt habe und wo der herkommt
+
+\section{Implementation of the percolator algorithm}
+- Wie genau stelle ich das vor, siehe Mail? Wichtige Punkte wären:\\
+- Verwendete Scipy-Methoden\\
+- Abbruch wenn es nicht besser wird und dass ich die AUC als Metrik nutze\\
+- feature normalization\\
+- Wichtige Hilfsfunktionen (pseudoROC zB)
+
+\section{Improvements of the percolator algorithm for cross-link identification}
+- Klassenspezifische q-values\\
+- ROC nach jeder Iteration und aufgesplittet nach XL/nXL\\
+\subsection{How to deal with different Ranks}
+- OptimalRanking Option (Erst paar Iterationen Ränge verändern lassen und dann die schlechten entfernen)\\
+\subsection{Characteristics of cross-linking PSM datasets}
+- Verhältnis Targets:Decoys und XL:non-XL in inneren und äußeren splits gleich lassen und MinMaxMedian Auswertungen mithilfe von google colab cloud computing\\
+- Imputation (kam zwar nichts raus ist aber trotzdem interessant)\\
+- Trennung von Datensatz nach XL/nXL oder sogar cross-linking target falls Datensatz groß genug\\
+\subsection{Small datasets}
+- Ratio Testing (nicht-random aus ganzem Datensatz und random aus Top 10\%. Liefert Erkenntnisse über die mögliche Größe des Datensatzes und eventuell die Sinnhaftigkeit, wann man die Datensätze einfach trennen kann $\rightarrow$ Für den Leser relevant)\\
+- Einbau von Identifikationen bei 1\% FDR als Metrik (Sinnhaftigkeit kann man ja diskutieren)\\\\			
+(- Performance auf anderem Datensatz\\
+- Vergleich mit Entrapment FDR)
+
+%{
+%\renewcommand{\baselinestretch}{0.9} 
+%\normalsize
+%\begin{table}[htb]
+%\begin{tabular}{|c|}
+%\end{tabular}
+%  \caption[Tabellenverzeichnis]{}
+%  \label{tab:1}
+%\end{table}
+%}

@@ -1,0 +1,20 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Diskussion und Ausblick
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Discussion and Outlook}
+\label{discussion}
+
+- Methoden hinterfragen oder begründen, Ergebnisse interpretieren, Anwendbarkeit diskutieren, z.B.:\\
+- Warum habe ich mich mit Rängen beschäftigt? (Bei XL-Datensätzen oft sinnvoll um erst percolator entscheiden zu lassen was auf Rang 1 steht (?))
+- C Parameter für jeden split neu optimieren führt zu overfitting? $\rightarrow$ Original-Algorithmus macht es auch so\\
+- Wie sinnvoll ist die neue Metrik?
+% NUR FALLS MAN DAS IN DEN ERGEBNISSEN SIEHT: onlyUseRankOne war lange bestes Ergebnis $\Rightarrow$ Schlechtere Ränge verwirren percolator? $\rightarrow$ Nein: Standard in pseudoROC-Funktion hat von sich aus Ränge gefiltert, was ich nicht beachtet habe (Macht so ein Punkt Sinn? War ja eigentlich nur ein Fehler meinerseits, den man aber evtl. in den Ergebnissen sieht...)\\
+- ScanNr Versuche: Gleiche Spektren (identifiziert anhand der ScanNr.) auf verschiedene splits verteilen verändert nichts, d.h. vermutlich sind die niedrigeren Ränge dann so schlecht, dass es nichts bringt die schonmal gesehen zu haben.\\
+- Peptide Versuche: Schlechtere Ergebnisse, aber vllt ehrlicher?\\
+%Die Generalisierung von manchen Peptiden auf alle Pepide fällt der SVM schwer, weil der score sinkt wenn man die Peptide im test set nicht auch im train set zeigt.\\
+%auf was soll man aber noch generalisieren, die svm wird gelöscht sobald der split fertig ist. Ist es hier unehrlich oder besseres training, wenn man der svm gute Beispiele zeigt?\\		
+%Idee: Vielleicht sind es nur wenige, bestimmte Peptide (oder Proteine), die besondere Eigenschaften haben und somit schlecht vorhergesagt werden können?\\
+%Oder: Peptide von decoys und peptide von targets sind disjunkt. Vielleicht haben gleiche Peptide gleiche Eigenschaften in manchen der scores, und die SVM kriegt diese Eigenschaften über die false train mit? Und kann somit zwischen decoy und target direkt unterscheiden?\\
+%$\rightarrow$ weitere Experimente? Zu beachten: nXL werden hier immer schlechter!\\
+- Mögliche weiterführende Experimente: mächtigere Klassifikatoren + monotonic constraints (wie von Timo ausprobiert), Ada-Boosting, feature selection

@@ -1,0 +1,96 @@
+\begin{thebibliography}{10}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Aggarwal and Yadav(2016)]{Aggarwal2016}
+Suruchi Aggarwal and Amit~Kumar Yadav.
+\newblock False discovery rate estimation in proteomics.
+\newblock In \emph{Methods in Molecular Biology}, pages 119--128. Springer New
+  York, 2016.
+\newblock \doi{10.1007/978-1-4939-3106-4_7}.
+\newblock URL \url{https://doi.org/10.1007/978-1-4939-3106-4_7}.
+
+\bibitem[Angel et~al.(2012)Angel, Aryal, Hengel, Baker, Kelly, Robinson, and
+  Smith]{Angel2012}
+Thomas~E. Angel, Uma~K. Aryal, Shawna~M. Hengel, Erin~S. Baker, Ryan~T. Kelly,
+  Errol~W. Robinson, and Richard~D. Smith.
+\newblock Mass spectrometry-based proteomics: existing capabilities and future
+  directions.
+\newblock \emph{Chemical Society Reviews}, 41\penalty0 (10):\penalty0 3912,
+  2012.
+\newblock \doi{10.1039/c2cs15331a}.
+\newblock URL \url{https://doi.org/10.1039/c2cs15331a}.
+
+\bibitem[Craig and Beavis(2004)]{Craig2004}
+R.~Craig and R.~C. Beavis.
+\newblock {TANDEM}: matching proteins with tandem mass spectra.
+\newblock \emph{Bioinformatics}, 20\penalty0 (9):\penalty0 1466--1467, February
+  2004.
+\newblock \doi{10.1093/bioinformatics/bth092}.
+\newblock URL \url{https://doi.org/10.1093/bioinformatics/bth092}.
+
+\bibitem[Eng et~al.(1994)Eng, McCormack, and Yates]{Eng1994}
+Jimmy~K. Eng, Ashley~L. McCormack, and John~R. Yates.
+\newblock An approach to correlate tandem mass spectral data of peptides with
+  amino acid sequences in a protein database.
+\newblock \emph{Journal of the American Society for Mass Spectrometry}, 1994.
+
+\bibitem[Granholm et~al.(2012)Granholm, Noble, and K\"{a}ll]{Granholm2012}
+Viktor Granholm, William Noble, and Lukas K\"{a}ll.
+\newblock A cross-validation scheme for machine learning algorithms in shotgun
+  proteomics.
+\newblock \emph{{BMC} Bioinformatics}, 13\penalty0 (Suppl 16):\penalty0 S3,
+  2012.
+\newblock \doi{10.1186/1471-2105-13-s16-s3}.
+\newblock URL \url{https://doi.org/10.1186/1471-2105-13-s16-s3}.
+
+\bibitem[Han et~al.(2008)Han, Aslanian, and Yates]{Han2008}
+Xuemei Han, Aaron Aslanian, and John~R Yates.
+\newblock Mass spectrometry for proteomics.
+\newblock \emph{Current Opinion in Chemical Biology}, 12\penalty0 (5):\penalty0
+  483--490, October 2008.
+\newblock \doi{10.1016/j.cbpa.2008.07.024}.
+\newblock URL \url{https://doi.org/10.1016/j.cbpa.2008.07.024}.
+
+\bibitem[K\"{a}ll et~al.(2007)K\"{a}ll, Canterbury, Weston, Noble, and
+  MacCoss]{Kll2007}
+Lukas K\"{a}ll, Jesse~D Canterbury, Jason Weston, William~Stafford Noble, and
+  Michael~J MacCoss.
+\newblock Semi-supervised learning for peptide identification from shotgun
+  proteomics datasets.
+\newblock \emph{Nature Methods}, 4\penalty0 (11):\penalty0 923--925, October
+  2007.
+\newblock \doi{10.1038/nmeth1113}.
+\newblock URL \url{https://doi.org/10.1038/nmeth1113}.
+
+\bibitem[Moore et~al.(2002)Moore, Young, and Lee]{Moore2002}
+Roger~E. Moore, Mary~K. Young, and Terry~D. Lee.
+\newblock Qscore: An algorithm for evaluating {SEQUEST} database search
+  results.
+\newblock \emph{Journal of the American Society for Mass Spectrometry},
+  13\penalty0 (4):\penalty0 378--386, April 2002.
+\newblock \doi{10.1016/s1044-0305(02)00352-5}.
+\newblock URL \url{https://doi.org/10.1016/s1044-0305(02)00352-5}.
+
+\bibitem[Peng et~al.(2003)Peng, Elias, Thoreen, Licklider, and Gygi]{Peng2003}
+Junmin Peng, Joshua~E. Elias, Carson~C. Thoreen, Larry~J. Licklider, and
+  Steven~P. Gygi.
+\newblock Evaluation of multidimensional chromatography coupled with tandem
+  mass spectrometry ({LC}/{LC}-{MS}/{MS}) for large-scale protein analysis:~
+  the yeast proteome.
+\newblock \emph{Journal of Proteome Research}, 2\penalty0 (1):\penalty0 43--50,
+  February 2003.
+\newblock \doi{10.1021/pr025556v}.
+\newblock URL \url{https://doi.org/10.1021/pr025556v}.
+
+\bibitem[Sachsenberg(2017)]{Sachsenberg2017}
+Timo Sachsenberg.
+\newblock Computational methods for mass spectrometry-based study of
+  protein-rna or protein-dna complexes and quantitative metaproteomics.
+\newblock 2017.
+\newblock URL \url{http://hdl.handle.net/10900/83311}.
+
+\end{thebibliography}

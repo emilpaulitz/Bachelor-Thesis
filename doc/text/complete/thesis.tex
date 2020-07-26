@@ -1,0 +1,225 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% LaTeX-Rahmen fuer das Erstellen von englischen Bachelorarbeiten
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% allgemeine Einstellungen
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[twoside,12pt,a4paper]{report}
+%\usepackage{reportpage}
+\usepackage[english]{babel}
+\usepackage{epsf}
+\usepackage{graphics, graphicx}
+\usepackage{latexsym}
+\usepackage[margin=10pt,font=small,labelfont=bf]{caption}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage[numbers]{natbib}
+\usepackage{titling}
+\usepackage{hyperref}
+
+\textwidth 14cm
+\textheight 22cm
+\topmargin 0.0cm
+\evensidemargin 1cm
+\oddsidemargin 1cm
+%\footskip 2cm
+\parskip0.5explus0.1exminus0.1ex
+
+% Kann von Student auch nach pers\"onlichem Geschmack ver\"andert werden.
+\pagestyle{headings}
+
+\sloppy
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Layout Title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+\begin{titlepage}
+ \begin{center}
+  {\LARGE Eberhard Karls Universit\"at T\"ubingen}\\
+  {\large Mathematisch-Naturwissenschaftliche Fakultät \\
+Wilhelm-Schickard-Institut f\"ur Informatik\\[4cm]}
+  {\huge Bachelor Thesis Bioinformatics\\[2cm]}
+  {\Large\bf  Semi-supervised learning for nucleic acid cross-linking mass spectrometry\\[1.5cm]}
+ {\large Emil Paulitz}\\[0.5cm]
+14.08.2020\\[3cm]
+\begin{center}
+{\small\bf Reviewer}\\[0.5cm]
+ {\large Prof. Oliver Kohlbacher}\\
+  {\footnotesize Department of Computer Science\\
+	University of T\"ubingen}
+  \end{center}
+	
+\begin{center}
+{\small\bf Supervisor}\\[0.5cm]
+  {\large Timo Sachsenberg}\\
+  {\footnotesize Address\\
+	University of T\"ubingen}\end{center}
+
+  \end{center}
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Layout back of title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{minipage}{11.2cm}
+\textbf{Paulitz, Emil:}\\
+\emph{Semi-supervised learning for nucleic acid cross-linking mass spectrometry}\\ Bachelor Thesis Bioinformatics\\
+Eberhard Karls Universit\"at T\"ubingen\\
+Period: 14.04.2020-14.08.2020
+\end{minipage}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Page I: Abstract
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section*{Abstract}
+
+Write here your abstract.
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Page 2: Danksagung
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Acknowledgements}
+
+Write here your acknowledgements.
+
+\cleardoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Table of Contents
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\baselinestretch}{1.3}
+\small\normalsize
+
+\tableofcontents
+
+\renewcommand{\baselinestretch}{1}
+\small\normalsize
+
+\cleardoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% List of Figures
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\baselinestretch}{1.3}
+\small\normalsize
+
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+
+\renewcommand{\baselinestretch}{1}
+\small\normalsize
+
+\cleardoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% List of tables
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\baselinestretch}{1.3}
+\small\normalsize
+
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+
+\renewcommand{\baselinestretch}{1}
+\small\normalsize
+
+\cleardoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% List of abbreviations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\addcontentsline{toc}{chapter}{List of Abbreviations}
+\chapter*{List of Abbreviations\markboth{LIST OF ABBREVIATIONS}{LIST OF ABBREVIATIONS}}
+
+\begin{tabbing}
+\textbf{FACTOTUM}\hspace{1cm}\=Schrott\kill
+\textbf{MS}\> Mass Spectrometry \\
+\textbf{LC} \> Liquid Chromatography\\
+\textbf{MS/MS} \> Tandem Mass Spectrometry\\
+\textbf{PSM} \> Peptide Spectrum Match\\
+\textbf{FDR} \> False Discovery Rate\\
+\end{tabbing}
+
+\cleardoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Der Haupttext, ab hier mit arabischer Numerierung
+%%% Mit \input{dateiname} werden die Dateien `dateiname' eingebunden
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+%% Introduction and Background
+\input{introduction_background}
+\cleardoublepage
+
+%% Material and Methods
+\input{material_methods}
+\cleardoublepage
+
+%% Results
+\input{results}
+\cleardoublepage
+
+%% Discussion and Outlook
+\input{discussion_outlook}
+\cleardoublepage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Bibliographie
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\addcontentsline{toc}{chapter}{Bibliography}
+
+\bibliographystyle{plainnat}
+\bibliography{bibliography}
+
+\cleardoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Erklaerung
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\thispagestyle{empty}
+\section*{Selbst\"andigkeitserkl\"arung}
+
+Hiermit versichere ich, dass ich die vorliegende Bachelorarbeit 
+selbst\"andig und nur mit den angegebenen Hilfsmitteln angefertigt habe und dass alle Stellen, die dem Wortlaut oder dem 
+Sinne nach anderen Werken entnommen sind, durch Angaben von Quellen als 
+Entlehnung kenntlich gemacht worden sind. 
+Diese Bachelorarbeit wurde in gleicher oder \"ahnlicher Form in keinem anderen 
+Studiengang als Pr\"ufungsleistung vorgelegt. 
+
+\vskip 3cm
+
+Ort, Datum	\hfill Unterschrift \hfill 
+
+
+%%% Ende
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+
