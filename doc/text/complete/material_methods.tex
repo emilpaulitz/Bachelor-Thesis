@@ -15,9 +15,11 @@
 - Wichtige Hilfsfunktionen (pseudoROC zB)
 
 \section{Improvements of the percolator algorithm for cross-link identification}
-- Klassenspezifische q-values\\
-- ROC nach jeder Iteration und aufgesplittet nach XL/nXL\\
+To be able to monitor the difference any experiment makes, especially with respect to the cross-linked or non-cross-linked PSMs, following features were implemented:\\
+First, in addition to the q-value, which is calculated as described in~\ref{background}, the calculation of a class-specific q-value was implemented. This is done by splitting the dataset according to the class affiliation and calculating the q-value separately for both splits.\\
+Secondly, a ROC curve using the \emph{pseudoROC} function is calculated after every iteration of Percolator, for the whole dataset, only for cross-linked and only for non-cross-linked PSMs. Accordingly, the respective class-specific q-value is used. Thus, three plots containing the corresponding class(es) and every iteration are shown. This allows for fast visual detection of the impact a specific change to the algorithm has on certain classes, iterations or general sensitivity.
 \subsection{How to deal with different Ranks}
+As experience shows, cross-linked peptides can be harder to detect than linear peptides, especially if they are underrepresented in the data. This means, the possibly correct cross-linked peptide will not get the highest score of all the peptides. It thus can be beneficial to not only use the highest scoring peptide, but also the highest scoring cross-linked peptide or even some lower-soring ones and assign them ranks. Then, as experiments showed, percolator can use more information and correct the score of some lower-ranking PSMs, possibly detecting more cross-linked PSMs. Meanwhile, it is known to the experimentor, that only one of the peptides can be correct....********
 - OptimalRanking Option (Erst paar Iterationen Ränge verändern lassen und dann die schlechten entfernen)\\
 \subsection{Characteristics of cross-linking PSM datasets}
 - Verhältnis Targets:Decoys und XL:non-XL in inneren und äußeren splits gleich lassen und MinMaxMedian Auswertungen mithilfe von google colab cloud computing\\

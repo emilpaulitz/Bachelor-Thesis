@@ -6,9 +6,10 @@
 \label{discussion}
 
 - Methoden hinterfragen oder begründen, Ergebnisse interpretieren, Anwendbarkeit diskutieren, z.B.:\\
-- Warum habe ich mich mit Rängen beschäftigt? (Bei XL-Datensätzen oft sinnvoll um erst percolator entscheiden zu lassen was auf Rang 1 steht (?))
+- Warum habe ich mich mit Rängen beschäftigt? (Bei XL-Datensätzen oft sinnvoll um erst percolator entscheiden zu lassen was auf Rang 1 steht (?)) -> Timo: "XL sind schwer. Richtiger XL oft auf Rang 2+, d.h. man muss alle Daten nutzen (= Percolator benutzen) um die maximale Anzahl an XLs zu identifizieren\\
+- Falsche Formel für q-value\\
 - C Parameter für jeden split neu optimieren führt zu overfitting? $\rightarrow$ Original-Algorithmus macht es auch so\\
-- Wie sinnvoll ist die neue Metrik?
+- Wie sinnvoll ist die neue Metrik (idents bei 1\%)?\\
 % NUR FALLS MAN DAS IN DEN ERGEBNISSEN SIEHT: onlyUseRankOne war lange bestes Ergebnis $\Rightarrow$ Schlechtere Ränge verwirren percolator? $\rightarrow$ Nein: Standard in pseudoROC-Funktion hat von sich aus Ränge gefiltert, was ich nicht beachtet habe (Macht so ein Punkt Sinn? War ja eigentlich nur ein Fehler meinerseits, den man aber evtl. in den Ergebnissen sieht...)\\
 - ScanNr Versuche: Gleiche Spektren (identifiziert anhand der ScanNr.) auf verschiedene splits verteilen verändert nichts, d.h. vermutlich sind die niedrigeren Ränge dann so schlecht, dass es nichts bringt die schonmal gesehen zu haben.\\
 - Peptide Versuche: Schlechtere Ergebnisse, aber vllt ehrlicher?\\
