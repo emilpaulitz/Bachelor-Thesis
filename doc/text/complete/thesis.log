@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2018.5.8)  26 JUL 2020 17:48
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2018.5.8)  27 JUL 2020 17:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -303,35 +303,40 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip51
 )
-(./thesis.aux)
+(c:/texlive/2018/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2016/05/22 v1.1-161 Sub-captions (AR)
+\c@subfigure=\count115
+\c@subtable=\count116
+) (./thesis.aux)
 \openout1 = `thesis.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
- (c:/texlive/2018/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+
+(c:/texlive/2018/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count115
+\scratchcounter=\count117
 \scratchdimen=\dimen134
 \scratchbox=\box28
-\nofMPsegments=\count116
-\nofMParguments=\count117
+\nofMPsegments=\count118
+\nofMParguments=\count119
 \everyMPshowfont=\toks22
-\MPscratchCnt=\count118
+\MPscratchCnt=\count120
 \MPscratchDim=\dimen135
-\MPnumerator=\count119
-\makeMPintoPDFobject=\count120
+\MPnumerator=\count121
+\makeMPintoPDFobject=\count122
 \everyMPtoPDFconversion=\toks23
 ) (c:/texlive/2018/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
@@ -354,7 +359,7 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \AtBeginShipoutBox=\box29
-Package hyperref Info: Link coloring OFF on input line 38.
+Package hyperref Info: Link coloring OFF on input line 40.
 
 (c:/texlive/2018/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
@@ -362,11 +367,11 @@ Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 (c:/texlive/2018/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
-\c@section@level=\count121
+\c@section@level=\count123
 )
-LaTeX Info: Redefining \ref on input line 38.
-LaTeX Info: Redefining \pageref on input line 38.
-LaTeX Info: Redefining \nameref on input line 38.
+LaTeX Info: Redefining \ref on input line 40.
+LaTeX Info: Redefining \pageref on input line 40.
+LaTeX Info: Redefining \nameref on input line 40.
 
 (./thesis.out) (./thesis.out)
 \@outlinefile=\write3
@@ -375,16 +380,16 @@ LaTeX Info: Redefining \nameref on input line 38.
  [1
 
 {c:/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Try loading font information for U+lasy on input line 79.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 81.
  (c:/texlive/2018/texmf-dist/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
-LaTeX Font Info:    Try loading font information for U+msa on input line 79.
+LaTeX Font Info:    Try loading font information for U+msa on input line 81.
 
 (c:/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 79.
+LaTeX Font Info:    Try loading font information for U+msb on input line 81.
 
 (c:/texlive/2018/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -420,15 +425,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 ] (./introduction_background.tex
 Chapter 1.
-
-Package caption Warning: \label without proper reference on input line 30.
-See the caption package documentation for explanation.
-
-
-LaTeX Warning: Reference `fig:mass_spectrum' on page 1 undefined on input line 
-23.
-
-<figures/Grafik_Timo.pdf, id=169, 597.50829pt x 845.0471pt>
+<figures/Grafik_Timo.pdf, id=167, 597.50829pt x 845.0471pt>
 File: figures/Grafik_Timo.pdf Graphic file (type pdf)
 <use figures/Grafik_Timo.pdf>
 Package pdftex.def Info: figures/Grafik_Timo.pdf  used on input line 29.
@@ -444,8 +441,8 @@ l.41 	\begin{equation}
  been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.41 	\begin{equation}
-                       [2 <./figures/Grafik_Timo.pdf>]) [3] [4
+l.43 	\end{equation}
+                     [2 <./figures/Grafik_Timo.pdf>]) [3] [4
 
 ]
 (./material_methods.tex
@@ -453,64 +450,85 @@ Chapter 2.
 [5
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 22--23
+Overfull \hbox (37.95686pt too wide) in paragraph at lines 31--31
+\OT1/cmr/m/n/10 https://colab.research.google.com/drive/1VqZAmdta57YhgobA0WkQMq
+e[]U9YIUnDl?usp=sharing| 
+ []
+
+[6]
+Underfull \hbox (badness 10000) in paragraph at lines 45--46
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 24--27
+Underfull \hbox (badness 10000) in paragraph at lines 47--51
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 28--32
+Underfull \vbox (badness 3746) has occurred while \output is active []
 
- []
-
-) [6] (./results.tex
+ [7])
+[8] (./results.tex
 Chapter 3.
+<figures/allRanks.png, id=293, 433.62pt x 289.08pt>
+File: figures/allRanks.png Graphic file (type png)
+<use figures/allRanks.png>
+Package pdftex.def Info: figures/allRanks.png  used on input line 20.
+(pdftex.def)             Requested size: 179.25113pt x 119.50279pt.
+<figures/onlyFirstRank.png, id=295, 433.62pt x 289.08pt>
+File: figures/onlyFirstRank.png Graphic file (type png)
+<use figures/onlyFirstRank.png>
+Package pdftex.def Info: figures/onlyFirstRank.png  used on input line 26.
+(pdftex.def)             Requested size: 179.25113pt x 119.50279pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 15--18
+Underfull \hbox (badness 10000) in paragraph at lines 36--37
 
  []
 
-) [7
+[9
 
 
-] [8] (./discussion_outlook.tex
+ <./figures/allRanks.png> <./figures/onlyFirstRank.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 39--40
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 42--43
+
+ []
+
+) [10] (./discussion_outlook.tex
 Chapter 4.
-) [9
+) [11
 
 
-] [10
+] [12
 
-] (./thesis.bbl [11
+] (./thesis.bbl [13
 
-]) [12]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 225.
- [13
+]) [14]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 229.
+ [15
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 225.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 229.
  (./thesis.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 225.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 225.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 229.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 229.
 Package rerunfilecheck Info: File `thesis.out' has not changed.
-(rerunfilecheck)             Checksum: E1B0B814BCB435E1ACACA17A65544F53;1380.
-
-
-LaTeX Warning: There were undefined references.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 225.
+(rerunfilecheck)             Checksum: 6E0A16EE1BB81C2B4374BCA5ED8C8065;1284.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 229.
  ) 
 Here is how much of TeX's memory you used:
- 8053 strings out of 494497
- 117875 string characters out of 6174740
- 221340 words of memory out of 5000000
- 11524 multiletter control sequences out of 15000+600000
+ 8143 strings out of 494497
+ 119447 string characters out of 6174740
+ 223341 words of memory out of 5000000
+ 11598 multiletter control sequences out of 15000+600000
  15873 words of font info for 65 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 36i,8n,43p,1351b,456s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 36i,8n,43p,1387b,456s stack positions out of 5000i,500n,10000p,200000b,80000s
 <c:/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/tex
 live/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2018
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2018/texmf-di
@@ -525,10 +543,10 @@ fonts/type1/public/amsfonts/cm/cmsl12.pfb><c:/texlive/2018/texmf-dist/fonts/typ
 e1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public
 /amsfonts/cm/cmti12.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmtt12.pfb>
-Output written on thesis.pdf (25 pages, 331823 bytes).
+Output written on thesis.pdf (27 pages, 428407 bytes).
 PDF statistics:
- 384 PDF objects out of 1000 (max. 8388607)
- 329 compressed objects within 4 object streams
- 60 named destinations out of 1000 (max. 500000)
- 164 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 412 PDF objects out of 1000 (max. 8388607)
+ 351 compressed objects within 4 object streams
+ 71 named destinations out of 1000 (max. 500000)
+ 174 words of extra memory for PDF output out of 10000 (max. 10000000)
 
