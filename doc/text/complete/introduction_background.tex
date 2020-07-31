@@ -37,13 +37,45 @@
 	In practice, one estimates the probability of a PSM being a false target by counting the number of decoy-PSMs with the same or a higher score. It is then assumed, there are as many false targets and thus a false discovery rate (FDR) can be estimated~\cite{Granholm2012}. This leads to the following formula\footnote{In this thesis, the following approximation is used:\\
 		$FDR \approx \frac{\text{\# decoy PSMs}}{\text{\# all PSMs}} = \frac{\text{\# decoy PSMs}}{\text{\# decoy PSMs} + \text{\# target PSMs}}$\\
 		It is faster to calculate and yields results differing by the FDR, so in the relevant range of FDRs of $0$ to $5\%$ up to $5\%$:\\
-		$\frac{\frac{\text{\# decoys}}{\text{\# targets}}}{\frac{\text{\# decoys}}{\text{\# decoys} + \text{\# targets}}} = \frac{\text{\# decoys} + \text{\# targets}}{\text{\# targets}} = 1 + \frac{\text{\# decoys}}{\text{\# targets}} \approx 1 + FDR$}:
+		$\frac{\frac{\text{\# decoys}}{\text{\# targets}}}{\frac{\text{\# decoys}}{\text{\# decoys} + \text{\# targets}}} = \frac{\text{\# decoys} + \text{\# targets}}{\text{\# targets}} = 1 + \frac{\text{\# decoys}}{\text{\# targets}} \approx 1 + FDR$\\}:
 	\begin{equation}
 	FDR = \frac{\text{\# false target PSMs}}{\text{\# all target PSMs}} \approx  \frac{\text{\# decoy PSMs}}{\text{\# all target PSMs}}
 	\end{equation}
 	The q-value as a measure for a single PSM rather than a metric for a set of PSMs is then derived from this as the minimum FDR of all PSMs with a lower or equal score~\cite{Granholm2012, Aggarwal2016}. It will be used for estimating the credibility for any one PSM.\\
-	\label{lab:background:percolator} As \citet{Kll2007} say, separating correct from incorrect target PSMs with already mentioned algorithms works fine, but there is still room for improvement. This is because often not all information is used and considered jointly. Percolator~\cite{Kll2007, Granholm2012} tries to utilize as much information as possible by using scores from different algorithms, features of the peptide like its length, of the spectrum or the PSM itself. It joins them using a linear SVM and a semi-supervised approach with cross-validation to retain as many PSMs as possible. In every iteration, the top ranking, non-decoy PSMs up to a certain threshold of q-value are chosen as positive training examples, and the decoy PSMs are used as negative training set. The PSMs are then re-ranked using the SVM score, with the intend of getting a better separation of true and false PSMs. If that holds true, the positive training set of the next iteration better is of higher quality and the SVM can be trained even better. The algorithm usually converges within the first 10 iterations~\cite{Kll2007}. To avoid having to split the data into training and testing set and consequently losing possibly correct PSMs but also avoid overfitting, a nested cross-validation approach is being used~\cite{Granholm2012}.\\
-	- Nested CV näher erklären\\
-	- (Pseudo) ROC Curve noch erklären?\\
-	- AUC als Metrik\\
-	- SVM?
+	\label{lab:background:percolator} As \citet{Kll2007} say, separating correct from incorrect target PSMs with already mentioned algorithms works fine, but there is still room for improvement. This is because often not all information is used and considered jointly. Percolator~\cite{Kll2007, Granholm2012} tries to utilize as much information as possible by using scores from different algorithms, features of the peptide (like its length), of the spectrum, or the PSM itself. It joins them using a linear support vector machine (SVM) and a semi-supervised approach with cross-validation to retain as many PSMs as possible. In every iteration, the top ranking, non-decoy PSMs up to a certain threshold of q-value are chosen as positive training examples, and the decoy PSMs are used as negative training set. The PSMs are then re-ranked using the SVMs score with the intention of getting a better separation of true and false PSMs. If this holds true, the positive training set of the next iteration better is of higher quality and the SVM can be trained even better. The algorithm usually converges within the first 10 iterations~\cite{Kll2007}.\\
+	As explained by~\citet{Bishop2006}, an SVM is a maximum margin classifier model. In the linear case, it tries to generate a hyperplane inside the multi-dimensional space that splits the given training data into the specified classes. For generalization performance, it tries to maximize the distance or margin between the hyperplane and the nearest training points, called support vectors. If the data is not linearly separable, it allows but punishes outliers by their distance to the hyperplane: An outlier inside the margin but on the correct side of the hyperplane is not penalized as badly as if it was on the wrong side of the hyperplane, and the further away from the hyperplane a point lies on the wrong side, the more this gets penalized. The strength of the penalization is also controlled by the parameter C, which can also be defined differently for points of different classes\footnote{https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html}.\\
+	To avoid having to split the data into training and testing set and consequently losing possibly correct PSMs but also avoid overfitting, a nested cross-validation approach is being used. As~\citet{Granholm2012} explain, overfitting is a central problem in machine learning. It happens when the model fits itself onto random variation in the data, not actually connected to a general pattern and performing poorly when presented new data. Cross-validation means splitting the data into a number smaller batches (Percolator uses $3$), presenting all but one to the model as training and the remaining part to validate the results, or, in the case of Percolator, to score the PSMs. For every part of the data a new model is trained by every part but the one to be scored, and the scores of different parts are normalized in the end. Additionally, Percolator performs cross-validation with every training batch, evaluating different parameters for the machine learning model applied to this specific batch of data~\cite{Granholm2012}.\\
+	As well explained by~\citet{Fawcett2006}, performance of classification machine learning models is often evaluated using receiver operating characteristics (ROC) curves. They are graphs in which the true positive rate of a model on the y-axis against its false positive rate on the x-axis. An example is shown in figure~\ref{fig:roc_example}. Generally, a classifier producing an ROC curve further to the northwest than the curve of another classifier,	is better, because it achieves a higher true positive rate at a lower false positive cost. But, to be able to compare classifiers more directly and by using a single scalar value, often the area under an ROC curve is computed and used as a metric, because it represents the probability that "the classifier will rank a randomly chosen positive instance higher than a randomly chosen negative instance"~(\cite{Fawcett2006}, page~868).
+	\renewcommand{\baselinestretch}{0.9}
+	\begin{figure}
+		\normalsize
+		\centering
+		\includegraphics[width = \textwidth]{figures/ROC.png}
+		\caption[Example for an ROC curve]{An Example for an ROC curve. It was plotted from a generated dataset with 1000 positive and negative entries respectively, being "scored" using a log normal distribution with different expected values. The area under the curve was calculated using the auc method from sklearn~\footnotemark}
+		\label{fig:roc_example}
+	\end{figure}
+	\renewcommand{\baselinestretch}{1}
+	\footnotetext{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.auc.html}\\
+	When dealing with the problem of rating PSMs however, there is no way of knowing the ground truth and thus precisely estimating a classifiers performance. Instead, the total number of PSMs that are estimated to be correct when accepting a certain q-value are plotted against that q-value. The graphs shape resembles that of an ROC curve, and is thus called pseudo ROC. However, there are significant differences and neither the number of accepted PSMs nor the q-value are the same as their ROC counterparts: The q-value of a certain PSM, being related to the FDR, is the (estimated!) portion of wrongly accepted PSMs out of every positively classified PSM, when using the PSMs score as threshold. The false positive rate on the other hand would be the percentage of wrongly accepted PSMs out of every wrong PSM in the whole dataset. With the confusion matrix notation from~\citet{Fawcett2006}, this can be written as:\\
+	\begin{equation}
+		FDR = \frac{FP}{Y};~~~ FPR = \frac{FP}{n}
+	\end{equation}
+	With this notation, the true positive rate (TPR) is $\frac{TP}{p}$ and the total number of accepted PSMs is $Y$. From this, a completely different scale arises (since $Y \in \mathbb{N}$ and TPR $\in [0,1]$), and thus the AUC, which is still used as a metric, does not range from 0 to 1 and also does not represent a probability. Examples for such a pseudo ROC are shown in figure~\ref{fig:pseudo_roc_example}.
+	\renewcommand{\baselinestretch}{0.9}
+	\begin{figure}
+		\normalsize
+		\centering
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width = \textwidth]{figures/pseudo_ROC_generated_dataset.png}
+			\caption{This pseudo ROC was generated from the same generated dataset as was used for the ROC curve in~\ref{fig:roc_example}.}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width = \textwidth]{figures/pseudo_ROC_slow.png}
+			\caption{This pseudo ROC is generated from the realistic dataset described in~\ref{lab:matmet:dataset}, using the given NuXL-score.}
+		\end{subfigure}
+		\caption[Examples for pseudo ROC curves]{Examples for pseudo ROC curves, plotted using the function as described in~\ref{lab:matmet:pseudoROC}. The area under the curve was calculated using the auc method from sklearn~\protect\footnotemark}
+		\label{fig:pseudo_roc_example}
+	\end{figure}
+	\renewcommand{\baselinestretch}{1}
+	\footnotetext{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.auc.html}\\

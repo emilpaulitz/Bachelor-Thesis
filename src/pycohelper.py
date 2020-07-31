@@ -41,6 +41,7 @@ def calcQ(df, scoreColName, labelColName = 'Label', isXLColName = 'NuXL:isXL', a
     df.sort_values(scoreColName, ascending=ascending, inplace = True)
     df[labelColName].replace(to_replace = -1, value = 0, inplace = True)
     df['FDR'] = 1 - (df[labelColName].cumsum()/range(1, len(df) + 1))
+#     df['FDR'] = (range(1, len(df) + 1)/df[labelColName].cumsum()) - 1
     df['q-val'] = df['FDR'][::-1].cummin()[::-1]
     
     # add q-values calculated from the different classes

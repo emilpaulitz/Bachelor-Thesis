@@ -1,4 +1,4 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{12}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -24,6 +24,12 @@ Thomas~E. Angel, Uma~K. Aryal, Shawna~M. Hengel, Erin~S. Baker, Ryan~T. Kelly,
 \newblock \doi{10.1039/c2cs15331a}.
 \newblock URL \url{https://doi.org/10.1039/c2cs15331a}.
 
+\bibitem[Bishop(2006)]{Bishop2006}
+Christopher~M. Bishop.
+\newblock \emph{Pattern Recognition and Machine Learning}.
+\newblock Springer Science + Business Media, LLC, 2006.
+\newblock ISBN 978-0387-31073-2.
+
 \bibitem[Craig and Beavis(2004)]{Craig2004}
 R.~Craig and R.~C. Beavis.
 \newblock {TANDEM}: matching proteins with tandem mass spectra.
@@ -37,6 +43,14 @@ Jimmy~K. Eng, Ashley~L. McCormack, and John~R. Yates.
 \newblock An approach to correlate tandem mass spectral data of peptides with
   amino acid sequences in a protein database.
 \newblock \emph{Journal of the American Society for Mass Spectrometry}, 1994.
+
+\bibitem[Fawcett(2006)]{Fawcett2006}
+Tom Fawcett.
+\newblock An introduction to {ROC} analysis.
+\newblock \emph{Pattern Recognition Letters}, 27\penalty0 (8):\penalty0
+  861--874, June 2006.
+\newblock \doi{10.1016/j.patrec.2005.10.010}.
+\newblock URL \url{https://doi.org/10.1016/j.patrec.2005.10.010}.
 
 \bibitem[Granholm et~al.(2012)Granholm, Noble, and K\"{a}ll]{Granholm2012}
 Viktor Granholm, William Noble, and Lukas K\"{a}ll.
