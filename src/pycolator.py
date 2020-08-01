@@ -55,12 +55,17 @@ def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, onlyVals = False, qColName 
 
 # plot pseudo ROCs of maximum, median and minimum of given q-values
 def pseudoROCmulti(lss, xMax = 0.05, title = '', labels = ['maximum', 'minimum', 'median']):
+    # fill with nan to bring all lists to the same length
     l = max([len(ls) for ls in lss])
     for ls in lss:
         ls += [float('NaN')] * (l - len(ls))
+        
+    # calculate best, worst and median outcomes at every point in the graph
     mx = [min(elem) for elem in zip(*lss)]
     mn = [max(elem) for elem in zip(*lss)]
     md = [np.median(elem) for elem in zip(*lss)]
+    
+    # plot them
     plt.xlim(0, xMax)
     plt.ylim(0, len([x for x in mx if(x <= xMax)]))
     plt.plot(mx, range(len(mx)), label = labels[0])
@@ -106,8 +111,7 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
             # calc SpecIds, of which the first rank is a decoy and include corresponding PSMs in neg train set
             falseTrain, trueTrain = percSelectTrain(training, qTrain, rankOption, lowRankDecoy, idColName)
             if(len(trueTrain) < 3 or len(falseTrain) < 3):
-                print('Dataset too small. There are not enough positive or negative examples to perform nested cross-validation.')
-                raise Error
+                raise ValueError('Dataset too small. There are not enough positive or negative examples to perform nested cross-validation.')
             
             train = falseTrain[features].values.tolist() + trueTrain[features].values.tolist()
             classes = [0] * len(falseTrain) + [1] * len(trueTrain)
@@ -119,7 +123,8 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
                     print('error in imputation')
                 imp = IterativeImputer()#estimator = svm.LinearSVC(), max_iter=10)
                 imp.fit(train)
-                df[features] = imp.transform(df[features])
+                training[features] = imp.transform(training[features])
+                validate[features] = imp.transform(validate[features])
                 
                 falseTrain, trueTrain = percSelectTrain(training, qTrain, rankOption, lowRankDecoy, idColName)
                 train = falseTrain[features].values.tolist() + trueTrain[features].values.tolist()
@@ -141,7 +146,10 @@ def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, cent
             
             # merge: calculate comparable score
             calcQ(validate, scoreNameTemp, addXlQ = False)
-            qThreshold = min(validate.loc[validate['q-val'] <= centralScoringQ, scoreNameTemp])
+            try:
+                qThreshold = min(validate.loc[validate['q-val'] <= centralScoringQ, scoreNameTemp])
+            except:
+                raise ValueError('Dataset too small. Score normalization not possible, increase centralScoringQ.')
             decoyMedian = np.median(validate.loc[validate.Label == 0, scoreNameTemp])
             validate[scoreName] = (validate[scoreNameTemp] - qThreshold) / (qThreshold - decoyMedian)
         

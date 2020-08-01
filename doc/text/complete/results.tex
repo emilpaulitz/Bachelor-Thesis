@@ -51,5 +51,9 @@ As one can see, without the new mechanism Pycolator gradually improves the area 
 - Großer Unterschied wenn man den (großen) Datensatz nach XL/nXL oder sogar cross-linking target aufteilt\\
 
 \subsection{Small datasets}
+First, the smaller dataset was sampled using every $2^i$-th PSM, with $i$ being a natural number up to 13. This non-random approach ensures the appearance of PSMs originally classified as correct, but it also keeps the ratio of correct to incorrect PSMs. This leads to cases where only one or two PSMs appear, which originally were assigned a q-value of $<1\%$. 
+1. Experiment: Hints dass zu viele identifizierungen kommen wenn dataset zu klein und neue Metrik eingebaut
+2. Experiment dann richtig
+differing lengths of datasets dxl 7 p is because of filtration of ranks (?)
 - Sinnvolle Plots zu Ratio Testing\\
 - Neue Metrik erlaubt es der Implementierung, auch auf kleineren Datensätzen zu funktionieren
