@@ -314,3 +314,84 @@ def percolator(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ =
     
     # return PSMs with new score
     return df
+
+# clean percolator implementation in python
+def percolator_reimplementation(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, suppressLog = False, termWorseIters = 4):
+    
+    scoreName = 'percolator_score'
+    scoreNameTemp = 'temp_score'
+    aucIter = []
+    scoresIter = []
+    
+    for i in range(I):         
+        
+        # split dataframe in 3.
+        threeParts = np.array_split(df.sample(frac = 1, replace = False), 3)
+        
+        for j in [0,1,2]:
+            
+            validate = threeParts[j]
+            training = pd.concat([threeParts[k] for k in range(3) if(k != j)], sort = False)
+            
+            # compute training and response sets (yes, should use loc, not iloc)
+            falseTrain = training.loc[(training.Label == 0), features]
+            trueTrain = training.loc[(training['q-val'] <= qTrain) & (training.Label == 1), features]
+            train = falseTrain.values.tolist() + trueTrain.values.tolist()
+            classes = [0] * len(falseTrain) + [1] * len(trueTrain)
+            
+            # set up SVM using internal cross-validation
+            parameters = {'C':[0.1,1,10], 'class_weight':[{0:i, 1:1} for i in [1,3,10]]}
+            W = svm.LinearSVC(dual = False)
+            clf = GridSearchCV(W, parameters, cv = 3)
+            
+            if(not suppressLog):
+                print('Training in iteration {} with split {}/3 starts!'.format(i + 1, j + 1))
+            clf.fit(train,classes)
+            
+            # compute score for validation part
+            X = validate[features].values.tolist()
+            validate[scoreNameTemp] = clf.decision_function(X)
+            
+            # merge: calculate comparable score
+            calcQ(validate, scoreNameTemp, addXlQ = False)
+            qThreshold = min(validate.loc[validate['q-val'] <= centralScoringQ, scoreNameTemp])
+            decoyMedian = np.median(validate.loc[validate.Label == 0, scoreNameTemp])
+            validate[scoreName] = (validate[scoreNameTemp] - qThreshold) / (qThreshold - decoyMedian)
+        
+        # merge the three parts and calculate q based on comparable score
+        df = pd.concat([validate, training])
+        df = calcQ(df, scoreName)
+        df = addRanks(df, idColName, scoreName)
+        
+        # calc auc for this iteration
+        aucIter.append(pseudoROC(df, plot = False, onlyFirstRank = False))
+        df['scoresIter_{}'.format(i)] = df[scoreName]
+        
+        # Terminate if auc has not been getting better in last termWorseIters iterations
+        if(i + 1 >= termWorseIters):
+            if(aucIter[-termWorseIters] == max(aucIter)):
+                I = i + 1
+                df[scoreName] = df['scoresIter_{}'.format(I - termWorseIters)]
+                cols = df.columns
+                df.drop([cols[i] for i in range(len(cols)) if(cols[i].startswith('scoresIter_'))], axis = 1, inplace = True)
+                if(not suppressLog):
+                    print('Results are not getting better. Terminating and using Iteration {} with an auc of {}.'.format(i + 2 - termWorseIters, round(max(aucIter),2)))
+                break
+        
+        if(not suppressLog):
+            print('Iteration {}/{} done!'.format(i + 1, I))
+            
+        # in the end, choose the best of the last iterations
+        if((i + 1 == I) and (i + 1 >= termWorseIters)):
+            for j in range(1,termWorseIters):
+                if(aucIter[-j] == max(aucIter)):
+                    df[scoreName] = df['scoresIter_{}'.format(I - j)]
+                    cols = df.columns
+                    df.drop([cols[i] for i in range(len(cols)) if(cols[i].startswith('scoresIter_'))], axis = 1, inplace = True)
+                    print('Terminating and using Iteration {} with an auc of {}.'.format(i + 2 - j, round(max(aucIter),2)))
+                    
+    df = calcQ(df, scoreName)
+    df = addRanks(df, idColName, scoreName)
+    
+    # return PSMs with new score
+    return df
