@@ -270,7 +270,8 @@ def pseudoROCiter(plotList, I, nameList, plotSaveName, plotDPI, plotXLnXL, ident
                 if ('{}' in plotSaveName):
                     name = plotSaveName.format(nameList[i])
                 else:
-                    name = nameList[i] + plotSaveName
+                    lastDot = plotSaveName.rfind('.')
+                    name = plotSaveName[:lastDot] + '_' + nameList[i] + plotSaveName[lastDot:]
                 plt.savefig(name, dpi = plotDPI)
             plt.show()
 
