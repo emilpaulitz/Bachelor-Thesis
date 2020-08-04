@@ -80,7 +80,7 @@ def evalXL(df, qColName = 'class-specific_q-val', plot = True):
     return (nXLauc, XLauc)
 
 # percolator with several experimental options
-def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, plotXLnXL = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, cutOffImprove = 0.01, rankOption = False, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False, fastCV = False, propTarDec = True, propXLnXL = True, balancingInner = True, balancingOuter = True, optimalRanking = True, specialGrid = True, identsAsMetric = 'automatic', multImputation = False):
+def percolator_experimental(df, idColName, features, I = 10, qTrain = 0.05, centralScoringQ = 0.01, useRankOneOnly = False, plotEveryIter = True, plotXLnXL = True, suppressLog = False, plotSaveName = '', plotDPI = 100, termWorseIters = 4, cutOffImprove = 0.01, rankOption = False, scanNrTest = False, peptideTest = False, lowRankDecoy = False, KFoldTest = False, balancedOption = False, fastCV = False, propTarDec = True, propXLnXL = True, balancingInner = True, balancingOuter = True, optimalRanking = True, specialGrid = False, identsAsMetric = 'automatic', multImputation = False):
 
     if (useRankOneOnly):
         df = df.loc[df.Rank == 1]

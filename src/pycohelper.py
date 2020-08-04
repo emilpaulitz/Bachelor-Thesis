@@ -247,7 +247,7 @@ def pseudoROCiter(plotList, I, nameList, plotSaveName, plotDPI, plotXLnXL, ident
             plt.savefig(plotSaveName, dpi = plotDPI)
         plt.show()
     else:
-        # set new color cycle (gradient from red to blue)
+        # set new color cycle to a gradient from red to blue
         cols = []
         for i in range(I):
             cols.append(( 1-(i/(I-1)), 0., i/(I-1) ))
