@@ -3,28 +3,29 @@
 \contentsline {chapter}{List of Tables}{vii}{chapter*.4}
 \contentsline {chapter}{List of Abbreviations}{ix}{chapter*.5}
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}
-\contentsline {section}{\numberline {1.1}Background}{1}{section.1.1}
-\contentsline {subsection}{\numberline {1.1.1}Mass Spectrometry}{1}{subsection.1.1.1}
-\contentsline {subsection}{\numberline {1.1.2}Bioinformatics Tool}{2}{subsection.1.1.2}
-\contentsline {subsection}{\numberline {1.1.3}Percolator}{3}{subsection.1.1.3}
-\contentsline {subsection}{\numberline {1.1.4}ROC curves}{4}{subsection.1.1.4}
-\contentsline {chapter}{\numberline {2}Material and Methods}{7}{chapter.2}
-\contentsline {section}{\numberline {2.1}Implementation of the percolator algorithm}{7}{section.2.1}
-\contentsline {section}{\numberline {2.2}Adapting Percolator to Cross-link Identification}{9}{section.2.2}
-\contentsline {subsection}{\numberline {2.2.1}Different Ranks}{9}{subsection.2.2.1}
-\contentsline {subsection}{\numberline {2.2.2}Characteristics of Cross-linked PSMs}{10}{subsection.2.2.2}
-\contentsline {subsubsection}{Proportions of Different Classes}{10}{section*.11}
-\contentsline {subsubsection}{Imputation}{11}{section*.12}
-\contentsline {subsubsection}{Splitting the Dataset}{11}{section*.13}
-\contentsline {subsection}{\numberline {2.2.3}Small datasets}{11}{subsection.2.2.3}
-\contentsline {chapter}{\numberline {3}Results}{13}{chapter.3}
-\contentsline {section}{\numberline {3.1}Implementation of the percolator algorithm}{13}{section.3.1}
-\contentsline {section}{\numberline {3.2}Adapting Percolator to Cross-link Identification}{14}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Different Ranks}{15}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}Characteristics of Cross-linked PSMs}{15}{subsection.3.2.2}
-\contentsline {subsubsection}{Proportions of Different Classes}{15}{section*.17}
-\contentsline {subsubsection}{Imputation}{18}{section*.21}
-\contentsline {subsubsection}{Splitting the Dataset}{18}{section*.23}
-\contentsline {subsection}{\numberline {3.2.3}Small datasets}{18}{subsection.3.2.3}
-\contentsline {chapter}{\numberline {4}Discussion and Outlook}{23}{chapter.4}
-\contentsline {chapter}{Bibliography}{25}{chapter.4}
+\contentsline {section}{\numberline {1.1}Background}{2}{section.1.1}
+\contentsline {subsection}{\numberline {1.1.1}Cross-linking}{2}{subsection.1.1.1}
+\contentsline {subsection}{\numberline {1.1.2}Mass Spectrometry}{2}{subsection.1.1.2}
+\contentsline {subsection}{\numberline {1.1.3}Bioinformatics Tool}{3}{subsection.1.1.3}
+\contentsline {subsection}{\numberline {1.1.4}Percolator}{4}{subsection.1.1.4}
+\contentsline {subsection}{\numberline {1.1.5}ROC curves}{5}{subsection.1.1.5}
+\contentsline {chapter}{\numberline {2}Material and Methods}{9}{chapter.2}
+\contentsline {section}{\numberline {2.1}Implementation of the percolator algorithm}{9}{section.2.1}
+\contentsline {section}{\numberline {2.2}Adapting Percolator to Cross-link Identification}{11}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Different Ranks}{12}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}Characteristics of Cross-linked PSMs}{12}{subsection.2.2.2}
+\contentsline {subsubsection}{Proportions of Different Classes}{12}{section*.11}
+\contentsline {subsubsection}{Imputation}{13}{section*.12}
+\contentsline {subsubsection}{Splitting the Dataset}{13}{section*.13}
+\contentsline {subsection}{\numberline {2.2.3}Small datasets}{14}{subsection.2.2.3}
+\contentsline {chapter}{\numberline {3}Results}{15}{chapter.3}
+\contentsline {section}{\numberline {3.1}Implementation of the percolator algorithm}{15}{section.3.1}
+\contentsline {section}{\numberline {3.2}Adapting Percolator to Cross-link Identification}{16}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Different Ranks}{17}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Characteristics of Cross-linked PSMs}{17}{subsection.3.2.2}
+\contentsline {subsubsection}{Proportions of Different Classes}{17}{section*.17}
+\contentsline {subsubsection}{Imputation}{20}{section*.21}
+\contentsline {subsubsection}{Splitting the Dataset}{20}{section*.23}
+\contentsline {subsection}{\numberline {3.2.3}Small datasets}{20}{subsection.3.2.3}
+\contentsline {chapter}{\numberline {4}Discussion and Outlook}{25}{chapter.4}
+\contentsline {chapter}{Bibliography}{27}{chapter.4}

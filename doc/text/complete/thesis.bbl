@@ -1,4 +1,4 @@
-\begin{thebibliography}{12}
+\begin{thebibliography}{15}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -29,6 +29,14 @@ Christopher~M. Bishop.
 \newblock \emph{Pattern Recognition and Machine Learning}.
 \newblock Springer Science + Business Media, LLC, 2006.
 \newblock ISBN 978-0387-31073-2.
+
+\bibitem[Burns and Iliffe(2009)]{Burns2009}
+A.~Burns and S.~Iliffe.
+\newblock Alzheimer's disease.
+\newblock \emph{{BMJ}}, 338\penalty0 (feb05 1):\penalty0 b158--b158, February
+  2009.
+\newblock \doi{10.1136/bmj.b158}.
+\newblock URL \url{https://doi.org/10.1136/bmj.b158}.
 
 \bibitem[Craig and Beavis(2004)]{Craig2004}
 R.~Craig and R.~C. Beavis.
@@ -80,6 +88,39 @@ Lukas K\"{a}ll, Jesse~D Canterbury, Jason Weston, William~Stafford Noble, and
 \newblock \doi{10.1038/nmeth1113}.
 \newblock URL \url{https://doi.org/10.1038/nmeth1113}.
 
+\bibitem[Kim et~al.(2014)Kim, Pinto, Getnet, Nirujogi, Manda, Chaerkady,
+  Madugundu, Kelkar, Isserlin, Jain, Thomas, Muthusamy, Leal-Rojas, Kumar,
+  Sahasrabuddhe, Balakrishnan, Advani, George, Renuse, Selvan, Patil, Nanjappa,
+  Radhakrishnan, Prasad, Subbannayya, Raju, Kumar, Sreenivasamurthy, Marimuthu,
+  Sathe, Chavan, Datta, Subbannayya, Sahu, Yelamanchi, Jayaram, Rajagopalan,
+  Sharma, Murthy, Syed, Goel, Khan, Ahmad, Dey, Mudgal, Chatterjee, Huang,
+  Zhong, Wu, Shaw, Freed, Zahari, Mukherjee, Shankar, Mahadevan, Lam, Mitchell,
+  Shankar, Satishchandra, Schroeder, Sirdeshmukh, Maitra, Leach, Drake,
+  Halushka, Prasad, Hruban, Kerr, Bader, Iacobuzio-Donahue, Gowda, and
+  Pandey]{Kim2014}
+Min-Sik Kim, Sneha~M. Pinto, Derese Getnet, Raja~Sekhar Nirujogi, Srikanth~S.
+  Manda, Raghothama Chaerkady, Anil~K. Madugundu, Dhanashree~S. Kelkar, Ruth
+  Isserlin, Shobhit Jain, Joji~K. Thomas, Babylakshmi Muthusamy, Pamela
+  Leal-Rojas, Praveen Kumar, Nandini~A. Sahasrabuddhe, Lavanya Balakrishnan,
+  Jayshree Advani, Bijesh George, Santosh Renuse, Lakshmi Dhevi~N. Selvan,
+  Arun~H. Patil, Vishalakshi Nanjappa, Aneesha Radhakrishnan, Samarjeet Prasad,
+  Tejaswini Subbannayya, Rajesh Raju, Manish Kumar, Sreelakshmi~K.
+  Sreenivasamurthy, Arivusudar Marimuthu, Gajanan~J. Sathe, Sandip Chavan,
+  Keshava~K. Datta, Yashwanth Subbannayya, Apeksha Sahu, Soujanya~D.
+  Yelamanchi, Savita Jayaram, Pavithra Rajagopalan, Jyoti Sharma, Krishna~R.
+  Murthy, Nazia Syed, Renu Goel, Aafaque~A. Khan, Sartaj Ahmad, Gourav Dey,
+  Keshav Mudgal, Aditi Chatterjee, Tai-Chung Huang, Jun Zhong, Xinyan Wu,
+  Patrick~G. Shaw, Donald Freed, Muhammad~S. Zahari, Kanchan~K. Mukherjee,
+  Subramanian Shankar, Anita Mahadevan, Henry Lam, Christopher~J. Mitchell,
+  Susarla~Krishna Shankar, Parthasarathy Satishchandra, John~T. Schroeder, Ravi
+  Sirdeshmukh, Anirban Maitra, Steven~D. Leach, Charles~G. Drake, Marc~K.
+  Halushka, T.~S.~Keshava Prasad, Ralph~H. Hruban, Candace~L. Kerr, Gary~D.
+  Bader, Christine~A. Iacobuzio-Donahue, Harsha Gowda, and Akhilesh Pandey.
+\newblock A draft map of the human proteome.
+\newblock \emph{Nature}, 509\penalty0 (7502):\penalty0 575--581, May 2014.
+\newblock \doi{10.1038/nature13302}.
+\newblock URL \url{https://doi.org/10.1038/nature13302}.
+
 \bibitem[Moore et~al.(2002)Moore, Young, and Lee]{Moore2002}
 Roger~E. Moore, Mary~K. Young, and Terry~D. Lee.
 \newblock Qscore: An algorithm for evaluating {SEQUEST} database search
@@ -106,5 +147,20 @@ Timo Sachsenberg.
   protein-rna or protein-dna complexes and quantitative metaproteomics.
 \newblock 2017.
 \newblock URL \url{http://hdl.handle.net/10900/83311}.
+
+\bibitem[Wilhelm et~al.(2014)Wilhelm, Schlegl, Hahne, Gholami, Lieberenz,
+  Savitski, Ziegler, Butzmann, Gessulat, Marx, Mathieson, Lemeer, Schnatbaum,
+  Reimer, Wenschuh, Mollenhauer, Slotta-Huspenina, Boese, Bantscheff,
+  Gerstmair, Faerber, and Kuster]{Wilhelm2014}
+Mathias Wilhelm, Judith Schlegl, Hannes Hahne, Amin~Moghaddas Gholami, Marcus
+  Lieberenz, Mikhail~M. Savitski, Emanuel Ziegler, Lars Butzmann, Siegfried
+  Gessulat, Harald Marx, Toby Mathieson, Simone Lemeer, Karsten Schnatbaum, Ulf
+  Reimer, Holger Wenschuh, Martin Mollenhauer, Julia Slotta-Huspenina,
+  Joos-Hendrik Boese, Marcus Bantscheff, Anja Gerstmair, Franz Faerber, and
+  Bernhard Kuster.
+\newblock Mass-spectrometry-based draft of the human proteome.
+\newblock \emph{Nature}, 509\penalty0 (7502):\penalty0 582--587, May 2014.
+\newblock \doi{10.1038/nature13319}.
+\newblock URL \url{https://doi.org/10.1038/nature13319}.
 
 \end{thebibliography}

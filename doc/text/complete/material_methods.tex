@@ -6,8 +6,9 @@
 \label{matmet}
 
 - Wo kommen die Daten her? Warum heißt der score NuXL score?\\
+
 \label{lab:matmet:dataset}
-To be able to test the following implementations, a dataset containing $93,219$ PSMs was used. Out of these, $51,521$ are cross-linked and $41,698$ linear peptides, $50,627$ are target and $42,592$ are decoy peptides. Every PSM has $52$ features, $2$ columns specifying the spectrum and $2$ columns describing the peptide and the protein it originated from, as well as one column indicating to the experimenter whether one entry is a target or a decoy PSM. The features contain the NuXL score, which was computed from the scores of different algorithms as discussed in~\ref{lab:background:bioinfo_tools}, and was used as a reference.
+To be able to test the following implementations, a dataset containing $93,219$ PSMs was used. Its spectra result from UV-light cross-linked extract from the nucleus of HeLa cells, and these were matched against the nucleus proteins. For each spectrum, up to 4 matching peptides are recorded. Of the PSMs, $51,521$ are cross-linked and $41,698$ linear peptides, $50,627$ are target and $42,592$ are decoy peptides. Every PSM has $52$ features, $2$ columns specifying the spectrum and $2$ columns describing the peptide and the protein it originated from, as well as one column indicating to the experimenter whether one entry is a target or a decoy PSM. The features contain the NuXL score, which was computed from the scores of different algorithms as discussed in~\ref{lab:background:bioinfo_tools}, and was used as a reference.
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
 	\normalsize

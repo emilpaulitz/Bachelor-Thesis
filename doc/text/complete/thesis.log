@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2018.5.8)  4 AUG 2020 18:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2018.5.8)  6 AUG 2020 14:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -433,144 +433,156 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ] (./introduction_background.tex
 Chapter 1.
 
-Underfull \hbox (badness 10000) in paragraph at lines 23--24
+Underfull \hbox (badness 10000) in paragraph at lines 15--16
 
  []
 
-<figures/Grafik_Timo.pdf, id=218, 597.50829pt x 845.0471pt>
-File: figures/Grafik_Timo.pdf Graphic file (type pdf)
-<use figures/Grafik_Timo.pdf>
-Package pdftex.def Info: figures/Grafik_Timo.pdf  used on input line 31.
-(pdftex.def)             Requested size: 398.33858pt x 182.79977pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 26--37
-
- []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.37 	\subsection
-                 {Bioinformatics Tool} [1
+l.16 	\subsection
+                 {Mass Spectrometry} [1
 
-]pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has
- been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.45 	\begin{equation}
-                       [2 <./figures/Grafik_Timo.pdf>]
-Underfull \hbox (badness 10000) in paragraph at lines 47--49
+]
+<figures/Grafik_Timo.pdf, id=245, 597.50829pt x 845.0471pt>
+File: figures/Grafik_Timo.pdf Graphic file (type pdf)
+<use figures/Grafik_Timo.pdf>
+Package pdftex.def Info: figures/Grafik_Timo.pdf  used on input line 23.
+(pdftex.def)             Requested size: 398.33858pt x 182.79977pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 18--29
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 50--53
+pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.29 	\subsection
+                 {Bioinformatics Tool} [2 <./figures/Grafik_Timo.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 39--41
 
  []
 
 [3]
-<figures/ROC.png, id=317, 433.62pt x 289.08pt>
-File: figures/ROC.png Graphic file (type png)
-<use figures/ROC.png>
-Package pdftex.def Info: figures/ROC.png  used on input line 60.
-(pdftex.def)             Requested size: 398.33858pt x 265.57306pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 55--66
+Underfull \hbox (badness 10000) in paragraph at lines 42--45
 
  []
 
-[4] [5 <./figures/ROC.png>]
-<figures/pseudo_ROC_generated_dataset.png, id=337, 433.62pt x 289.08pt>
+[4]
+<figures/ROC.png, id=340, 433.62pt x 289.08pt>
+File: figures/ROC.png Graphic file (type png)
+<use figures/ROC.png>
+Package pdftex.def Info: figures/ROC.png  used on input line 52.
+(pdftex.def)             Requested size: 398.33858pt x 265.57306pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 47--58
+
+ []
+
+<figures/pseudo_ROC_generated_dataset.png, id=348, 433.62pt x 289.08pt>
 File: figures/pseudo_ROC_generated_dataset.png Graphic file (type png)
 <use figures/pseudo_ROC_generated_dataset.png>
 Package pdftex.def Info: figures/pseudo_ROC_generated_dataset.png  used on inpu
-t line 75.
+t line 67.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/pseudo_ROC_slow.png, id=340, 433.62pt x 289.08pt>
+<figures/pseudo_ROC_slow.png, id=351, 433.62pt x 289.08pt>
 File: figures/pseudo_ROC_slow.png Graphic file (type png)
 <use figures/pseudo_ROC_slow.png>
-Package pdftex.def Info: figures/pseudo_ROC_slow.png  used on input line 80.
+Package pdftex.def Info: figures/pseudo_ROC_slow.png  used on input line 72.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-) [6 <./figures/pseudo_ROC_generated_dataset.png> <./figures/pseudo_ROC_slow.pn
-g>] (./material_methods.tex
+) [5] [6 <./figures/ROC.png>] [7 <./figures/pseudo_ROC_generated_dataset.png> <
+./figures/pseudo_ROC_slow.png>] [8
+
+] (./material_methods.tex
 Chapter 2.
-<figures/Percolator_diagram.pdf, id=354, 963.6pt x 542.025pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 8--9
+
+ []
+
+<figures/Percolator_diagram.pdf, id=381, 963.6pt x 542.025pt>
 File: figures/Percolator_diagram.pdf Graphic file (type pdf)
 <use figures/Percolator_diagram.pdf>
-Package pdftex.def Info: figures/Percolator_diagram.pdf  used on input line 15.
+Package pdftex.def Info: figures/Percolator_diagram.pdf  used on input line 16.
 
 (pdftex.def)             Requested size: 398.33858pt x 224.0595pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 8--20
+Underfull \hbox (badness 10000) in paragraph at lines 11--21
 
  []
 
 
-Overfull \hbox (33.83179pt too wide) in paragraph at lines 22--22
+Overfull \hbox (33.83179pt too wide) in paragraph at lines 23--23
 [][][]\OT1/cmr/m/n/10 https://scikit-learn.org/stable/modules/generated/sklearn
 .model[]selection.GridSearchCV.html| 
  []
 
-[7
+[9
 
+] [10 <./figures/Percolator_diagram.pdf>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-] [8 <./figures/Percolator_diagram.pdf>] [9]
-Overfull \hbox (37.95686pt too wide) in paragraph at lines 42--42
+ [11]
+Overfull \hbox (37.95686pt too wide) in paragraph at lines 43--43
 \OT1/cmr/m/n/10 https://colab.research.google.com/drive/1VqZAmdta57YhgobA0WkQMq
 e[]U9YIUnDl?usp=sharing| 
  []
 
-[10])
-Underfull \hbox (badness 10000) in paragraph at lines 57--189
+[12] [13])
+Underfull \hbox (badness 10000) in paragraph at lines 58--189
 
  []
 
-[11] [12] (./results.tex
+[14] (./results.tex
 Chapter 3.
-<figures/noNorming.png, id=435, 433.62pt x 289.08pt>
+<figures/noNorming.png, id=464, 433.62pt x 289.08pt>
 File: figures/noNorming.png Graphic file (type png)
 <use figures/noNorming.png>
 Package pdftex.def Info: figures/noNorming.png  used on input line 13.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/norming.png, id=436, 433.62pt x 289.08pt>
+<figures/norming.png, id=465, 433.62pt x 289.08pt>
 File: figures/norming.png Graphic file (type png)
 <use figures/norming.png>
 Package pdftex.def Info: figures/norming.png  used on input line 19.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/pseudoROC_non-XL.png, id=447, 433.62pt x 289.08pt>
+<figures/pseudoROC_non-XL.png, id=476, 433.62pt x 289.08pt>
 File: figures/pseudoROC_non-XL.png Graphic file (type png)
 <use figures/pseudoROC_non-XL.png>
 Package pdftex.def Info: figures/pseudoROC_non-XL.png  used on input line 36.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/pseudoROC_XL.png, id=448, 433.62pt x 289.08pt>
+<figures/pseudoROC_XL.png, id=477, 433.62pt x 289.08pt>
 File: figures/pseudoROC_XL.png Graphic file (type png)
 <use figures/pseudoROC_XL.png>
 Package pdftex.def Info: figures/pseudoROC_XL.png  used on input line 42.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/pseudoROC_all.png, id=449, 433.62pt x 289.08pt>
+<figures/pseudoROC_all.png, id=478, 433.62pt x 289.08pt>
 File: figures/pseudoROC_all.png Graphic file (type png)
 <use figures/pseudoROC_all.png>
 Package pdftex.def Info: figures/pseudoROC_all.png  used on input line 48.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 2744) has occurred while \output is active []
 
- [13
+ [15
 
 
  <./figures/noNorming.png> <./figures/norming.png>]
-<figures/allRanks.png, id=472, 433.62pt x 289.08pt>
+<figures/allRanks.png, id=499, 433.62pt x 289.08pt>
 File: figures/allRanks.png Graphic file (type png)
 <use figures/allRanks.png>
 Package pdftex.def Info: figures/allRanks.png  used on input line 66.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/onlyFirstRank.png, id=475, 433.62pt x 289.08pt>
+<figures/onlyFirstRank.png, id=502, 433.62pt x 289.08pt>
 File: figures/onlyFirstRank.png Graphic file (type png)
 <use figures/onlyFirstRank.png>
 Package pdftex.def Info: figures/onlyFirstRank.png  used on input line 72.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/optimalRanking.png, id=478, 433.62pt x 289.08pt>
+<figures/optimalRanking.png, id=505, 433.62pt x 289.08pt>
 File: figures/optimalRanking.png Graphic file (type png)
 <use figures/optimalRanking.png>
 Package pdftex.def Info: figures/optimalRanking.png  used on input line 77.
@@ -578,106 +590,106 @@ Package pdftex.def Info: figures/optimalRanking.png  used on input line 77.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [14 <./figures/pseudoROC_non-XL.png> <./figures/pseudoROC_XL.png> <./figures/p
+ [16 <./figures/pseudoROC_non-XL.png> <./figures/pseudoROC_XL.png> <./figures/p
 seudoROC_all.png>]
-<figures/prop_not_kept_code.jpg, id=489, 550.55687pt x 86.82437pt>
+<figures/prop_not_kept_code.jpg, id=516, 550.55687pt x 86.82437pt>
 File: figures/prop_not_kept_code.jpg Graphic file (type jpg)
 <use figures/prop_not_kept_code.jpg>
 Package pdftex.def Info: figures/prop_not_kept_code.jpg  used on input line 95.
 
 (pdftex.def)             Requested size: 398.33858pt x 62.82085pt.
-<figures/prop_kept_code.jpg, id=490, 702.12312pt x 95.85812pt>
+<figures/prop_kept_code.jpg, id=517, 702.12312pt x 95.85812pt>
 File: figures/prop_kept_code.jpg Graphic file (type jpg)
 <use figures/prop_kept_code.jpg>
 Package pdftex.def Info: figures/prop_kept_code.jpg  used on input line 100.
 (pdftex.def)             Requested size: 398.33858pt x 54.38518pt.
-<figures/MaxMinMedian_no_balancing.png, id=497, 433.62pt x 289.08pt>
+<figures/MaxMinMedian_no_balancing.png, id=524, 433.62pt x 289.08pt>
 File: figures/MaxMinMedian_no_balancing.png Graphic file (type png)
 <use figures/MaxMinMedian_no_balancing.png>
 Package pdftex.def Info: figures/MaxMinMedian_no_balancing.png  used on input l
 ine 114.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/MaxMinMedian_balancing.png, id=498, 433.62pt x 289.08pt>
+<figures/MaxMinMedian_balancing.png, id=525, 433.62pt x 289.08pt>
 File: figures/MaxMinMedian_balancing.png Graphic file (type png)
 <use figures/MaxMinMedian_balancing.png>
 Package pdftex.def Info: figures/MaxMinMedian_balancing.png  used on input line
  120.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/no_imputation.png, id=504, 433.62pt x 289.08pt>
+<figures/no_imputation.png, id=531, 433.62pt x 289.08pt>
 File: figures/no_imputation.png Graphic file (type png)
 <use figures/no_imputation.png>
 Package pdftex.def Info: figures/no_imputation.png  used on input line 154.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/imputation.png, id=505, 433.62pt x 289.08pt>
+<figures/imputation.png, id=532, 433.62pt x 289.08pt>
 File: figures/imputation.png Graphic file (type png)
 <use figures/imputation.png>
 Package pdftex.def Info: figures/imputation.png  used on input line 160.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
- [15] [16 <./figures/allRanks.png> <./figures/onlyFirstRank.png> <./figures/opt
-imalRanking.png>] [17 <./figures/prop_not_kept_code.jpg> <./figures/prop_kept_c
+ [17] [18 <./figures/allRanks.png> <./figures/onlyFirstRank.png> <./figures/opt
+imalRanking.png>] [19 <./figures/prop_not_kept_code.jpg> <./figures/prop_kept_c
 ode.jpg> <./figures/MaxMinMedian_no_balancing.png> <./figures/MaxMinMedian_bala
 ncing.png>]
-<figures/split_by_xl.png, id=529, 433.62pt x 289.08pt>
+<figures/split_by_xl.png, id=557, 433.62pt x 289.08pt>
 File: figures/split_by_xl.png Graphic file (type png)
 <use figures/split_by_xl.png>
 Package pdftex.def Info: figures/split_by_xl.png  used on input line 177.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/split_by_bases.png, id=530, 433.62pt x 289.08pt>
+<figures/split_by_bases.png, id=558, 433.62pt x 289.08pt>
 File: figures/split_by_bases.png Graphic file (type png)
 <use figures/split_by_bases.png>
 Package pdftex.def Info: figures/split_by_bases.png  used on input line 183.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/aucs_perc.png, id=542, 433.62pt x 254.9525pt>
+<figures/aucs_perc.png, id=570, 433.62pt x 254.9525pt>
 File: figures/aucs_perc.png Graphic file (type png)
 <use figures/aucs_perc.png>
 Package pdftex.def Info: figures/aucs_perc.png  used on input line 199.
 (pdftex.def)             Requested size: 195.18808pt x 114.76256pt.
-<figures/ratio_idents_whole_df_NuXL.png, id=545, 433.62pt x 289.08pt>
+<figures/ratio_idents_whole_df_NuXL.png, id=573, 433.62pt x 289.08pt>
 File: figures/ratio_idents_whole_df_NuXL.png Graphic file (type png)
 <use figures/ratio_idents_whole_df_NuXL.png>
 Package pdftex.def Info: figures/ratio_idents_whole_df_NuXL.png  used on input 
 line 207.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/ratio_idents_whole_df_percolator.png, id=546, 433.62pt x 289.08pt>
+<figures/ratio_idents_whole_df_percolator.png, id=574, 433.62pt x 289.08pt>
 File: figures/ratio_idents_whole_df_percolator.png Graphic file (type png)
 <use figures/ratio_idents_whole_df_percolator.png>
 Package pdftex.def Info: figures/ratio_idents_whole_df_percolator.png  used on 
 input line 213.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/expected.png, id=551, 433.62pt x 289.08pt>
+<figures/expected.png, id=579, 433.62pt x 289.08pt>
 File: figures/expected.png Graphic file (type png)
 <use figures/expected.png>
 Package pdftex.def Info: figures/expected.png  used on input line 223.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/found_vs_expected_dxl.png, id=552, 433.62pt x 289.08pt>
+<figures/found_vs_expected_dxl.png, id=580, 433.62pt x 289.08pt>
 File: figures/found_vs_expected_dxl.png Graphic file (type png)
 <use figures/found_vs_expected_dxl.png>
 Package pdftex.def Info: figures/found_vs_expected_dxl.png  used on input line 
 231.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/found_vs_expected_pxl.png, id=553, 433.62pt x 289.08pt>
+<figures/found_vs_expected_pxl.png, id=581, 433.62pt x 289.08pt>
 File: figures/found_vs_expected_pxl.png Graphic file (type png)
 <use figures/found_vs_expected_pxl.png>
 Package pdftex.def Info: figures/found_vs_expected_pxl.png  used on input line 
 237.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/auc_performance.png, id=560, 433.62pt x 289.08pt>
+<figures/auc_performance.png, id=588, 433.62pt x 289.08pt>
 File: figures/auc_performance.png Graphic file (type png)
 <use figures/auc_performance.png>
 Package pdftex.def Info: figures/auc_performance.png  used on input line 248.
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
-<figures/idents_performance.png, id=561, 433.62pt x 289.08pt>
+<figures/idents_performance.png, id=589, 433.62pt x 289.08pt>
 File: figures/idents_performance.png Graphic file (type png)
 <use figures/idents_performance.png>
 Package pdftex.def Info: figures/idents_performance.png  used on input line 254
 .
 (pdftex.def)             Requested size: 195.18808pt x 130.12448pt.
- [18 <./figures/no_imputation.png> <./figures/imputation.png> <./figures/split_
-by_xl.png> <./figures/split_by_bases.png>]) [19 <./figures/aucs_perc.png> <./fi
+ [20 <./figures/no_imputation.png> <./figures/imputation.png> <./figures/split_
+by_xl.png> <./figures/split_by_bases.png>]) [21 <./figures/aucs_perc.png> <./fi
 gures/ratio_idents_whole_df_NuXL.png> <./figures/ratio_idents_whole_df_percolat
-or.png>] [20 <./figures/expected.png> <./figures/found_vs_expected_dxl.png> <./
-figures/found_vs_expected_pxl.png>] [21 <./figures/auc_performance.png> <./figu
-res/idents_performance.png>] [22
+or.png>] [22 <./figures/expected.png> <./figures/found_vs_expected_dxl.png> <./
+figures/found_vs_expected_pxl.png>] [23 <./figures/auc_performance.png> <./figu
+res/idents_performance.png>] [24
 
 ] (./discussion_outlook.tex
 Chapter 4.
@@ -696,29 +708,29 @@ Underfull \hbox (badness 10000) in paragraph at lines 11--18
 
  []
 
-[23
+[25
 
-]) [24] (./thesis.bbl [25
+]) [26] (./thesis.bbl [27
 
 
-]) [26]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 232.
- [27
+] [28]) [29] [30
 
 ]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 232.
+ [31]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 232.
  (./thesis.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 232.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 232.
 Package rerunfilecheck Info: File `thesis.out' has not changed.
-(rerunfilecheck)             Checksum: 9D1F767E09CCCF708196864679F535B1;1556.
+(rerunfilecheck)             Checksum: 50759AD8E8DF5FDA36F866AF1BBFCB00;1623.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 232.
  ) 
 Here is how much of TeX's memory you used:
- 8447 strings out of 494497
- 127088 string characters out of 6174740
- 229628 words of memory out of 5000000
- 11828 multiletter control sequences out of 15000+600000
+ 8467 strings out of 494497
+ 127387 string characters out of 6174740
+ 229647 words of memory out of 5000000
+ 11839 multiletter control sequences out of 15000+600000
  16377 words of font info for 68 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  36i,10n,43p,1398b,467s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -740,10 +752,10 @@ pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb><c:/t
 exlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb><c:/texlive/20
 18/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb><c:/texlive/2018/texmf-d
 ist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on thesis.pdf (39 pages, 1479833 bytes).
+Output written on thesis.pdf (43 pages, 1485768 bytes).
 PDF statistics:
- 739 PDF objects out of 1000 (max. 8388607)
- 575 compressed objects within 6 object streams
- 112 named destinations out of 1000 (max. 500000)
- 336 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 783 PDF objects out of 1000 (max. 8388607)
+ 614 compressed objects within 7 object streams
+ 121 named destinations out of 1000 (max. 500000)
+ 344 words of extra memory for PDF output out of 10000 (max. 10000000)
 

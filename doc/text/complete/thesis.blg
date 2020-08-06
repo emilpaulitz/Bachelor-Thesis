@@ -4,45 +4,45 @@ The top-level auxiliary file: thesis.aux
 The style file: plainnat.bst
 Database file #1: bibliography.bib
 Warning--empty journal in Sachsenberg2017
-You've used 12 entries,
+You've used 15 entries,
             2773 wiz_defined-function locations,
-            709 strings with 7841 characters,
-and the built_in function-call counts, 6098 in all, are:
-= -- 568
-> -- 354
-< -- 6
-+ -- 120
-- -- 108
-* -- 545
-:= -- 962
-add.period$ -- 57
-call.type$ -- 12
-change.case$ -- 71
-chr.to.int$ -- 12
-cite$ -- 25
-duplicate$ -- 258
-empty$ -- 465
-format.name$ -- 124
-if$ -- 1259
+            738 strings with 10229 characters,
+and the built_in function-call counts, 12074 in all, are:
+= -- 988
+> -- 1227
+< -- 7
++ -- 411
+- -- 396
+* -- 1226
+:= -- 1996
+add.period$ -- 72
+call.type$ -- 15
+change.case$ -- 176
+chr.to.int$ -- 15
+cite$ -- 31
+duplicate$ -- 320
+empty$ -- 589
+format.name$ -- 417
+if$ -- 2377
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 13
-newline$ -- 88
-num.names$ -- 48
-pop$ -- 119
+missing$ -- 16
+newline$ -- 109
+num.names$ -- 60
+pop$ -- 317
 preamble$ -- 1
-purify$ -- 60
+purify$ -- 162
 quote$ -- 0
-skip$ -- 189
+skip$ -- 320
 stack$ -- 0
-substring$ -- 224
-swap$ -- 26
+substring$ -- 311
+swap$ -- 32
 text.length$ -- 1
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 127
+type$ -- 160
 warning$ -- 1
-while$ -- 53
+while$ -- 68
 width$ -- 0
-write$ -- 200
+write$ -- 251
 (There was 1 warning)

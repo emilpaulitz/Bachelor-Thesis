@@ -3,7 +3,7 @@
 
 
 \section{Implementation of the percolator algorithm}
-- Reimplementierung funktioniert wie Original $\rightarrow$ Dafür müsste man irgendwie C Percolator zum testen nutzen können. \\
+The original Percolator algorithm finds 5412 cross-linked PSMs with a q-value of $\leq1\%$ on the used dataset~(\ref{lab:matmet:dataset}). The re-implementation in python yields 5503 such PSMs on rank 1.\\
 The implementation of feature normalization yielded an increase in the number of confident PSMs found, as the y-axis and legend of figure~\ref{fig:feature_normalization} show. This type of plot is explained in~\autoref{lab:results:pseudo_rocs}. The performance of Pycolator with feature normalization is better from the first iteration on, and increases until iterations~7~or~8, when the results converge. Without feature normalization, the area under the pseudo ROC increases until iteration~3, when it begins to oscillate. \\
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
