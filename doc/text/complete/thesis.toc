@@ -12,7 +12,7 @@
 \contentsline {chapter}{\numberline {2}Material and Methods}{9}{chapter.2}
 \contentsline {section}{\numberline {2.1}Implementation of the percolator algorithm}{9}{section.2.1}
 \contentsline {section}{\numberline {2.2}Adapting Percolator to Cross-link Identification}{11}{section.2.2}
-\contentsline {subsection}{\numberline {2.2.1}Different Ranks}{12}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.1}Different Ranks}{11}{subsection.2.2.1}
 \contentsline {subsection}{\numberline {2.2.2}Characteristics of Cross-linked PSMs}{12}{subsection.2.2.2}
 \contentsline {subsubsection}{Proportions of Different Classes}{12}{section*.11}
 \contentsline {subsubsection}{Imputation}{13}{section*.12}
@@ -24,8 +24,9 @@
 \contentsline {subsection}{\numberline {3.2.1}Different Ranks}{17}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Characteristics of Cross-linked PSMs}{17}{subsection.3.2.2}
 \contentsline {subsubsection}{Proportions of Different Classes}{17}{section*.17}
-\contentsline {subsubsection}{Imputation}{20}{section*.21}
-\contentsline {subsubsection}{Splitting the Dataset}{20}{section*.23}
+\contentsline {subsubsection}{Imputation}{19}{section*.20}
+\contentsline {subsubsection}{Splitting the Dataset}{19}{section*.22}
 \contentsline {subsection}{\numberline {3.2.3}Small datasets}{20}{subsection.3.2.3}
-\contentsline {chapter}{\numberline {4}Discussion and Outlook}{25}{chapter.4}
-\contentsline {chapter}{Bibliography}{27}{chapter.4}
+\contentsline {chapter}{\numberline {4}Discussion}{23}{chapter.4}
+\contentsline {section}{\numberline {4.1}Outlook}{25}{section.4.1}
+\contentsline {chapter}{Bibliography}{27}{section.4.1}

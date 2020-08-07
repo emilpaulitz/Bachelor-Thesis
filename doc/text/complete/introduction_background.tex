@@ -58,7 +58,8 @@ The scientific background is covered in~\autoref{background}. Chapters~\ref{matm
 	\begin{equation}
 		FDR = \frac{FP}{Y};~~~ FPR = \frac{FP}{n}
 	\end{equation}
-	With this notation, the true positive rate (TPR) is $\frac{TP}{p}$ and the total number of accepted PSMs is $Y$. From this, a completely different scale arises (since $Y \in \mathbb{N}$ and TPR $\in [0,1]$), and thus the AUC, which is still used as a metric, does not range from 0 to 1 and also does not represent a probability. Examples for such a pseudo ROC are shown in figure~\ref{fig:pseudo_roc_example}.
+	With this notation, the true positive rate (TPR) is $\frac{TP}{p}$ and the total number of accepted PSMs is $Y$. From this, a completely different scale arises (since $Y \in \mathbb{N}$ and TPR $\in [0,1]$). The AUC, which is still used as a metric, thus does not range from 0 to 1 and does not represent a probability, but can only be used as a relative score.\\
+	ROC curves improve when the data contains more examples with features clearly indicating the negative class membership to the classifier, because the FPR of all other examples decreases. Since pseudo ROCs are plotted only for q-values regarded interesting, often in $[0,0.05]$, they are insensitive to such changes in the data. This allows including lower-scoring PSMs in the dataset~(like is done in this thesis) without diluting the evaluation. Examples for pseudo ROCs are shown in figure~\ref{fig:pseudo_roc_example}.
 	\renewcommand{\baselinestretch}{0.9}
 	\begin{figure}
 		\normalsize

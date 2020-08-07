@@ -175,7 +175,7 @@ def percSelectTrain(training, qTrain, rankOption, lowRankDecoy, idColName):
 def percInitClf(falseTrain, trueTrain, train, classes, balancedOption, KFoldTest, scanNrTest, peptideTest, fastCV, propTarDec, propXLnXL, balancingInner, specialGrid):
     if (fastCV):
         parameters = {'C':[1,10], 'class_weight':[{0:1, 1:1}]}
-    if (specialGrid):        
+    elif (specialGrid):        
         parameters = {'C':[0.1,1,10], 'class_weight':[{0:i, 1:10} for i in [3,10,30]]}
     else:
         parameters = {'C':[0.1,1,10], 'class_weight':[{0:i, 1:1} for i in [1,3,10]]}

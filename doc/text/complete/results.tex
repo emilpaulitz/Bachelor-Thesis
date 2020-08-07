@@ -27,7 +27,7 @@ The implementation of feature normalization yielded an increase in the number of
 
 \section{Adapting Percolator to Cross-link Identification}
 \label{lab:results:pseudo_rocs}
-An example of the plots created by Pycolator are shown in figure~\ref{fig:results:pseudo_rocs}. \ref{fig:results:pseudo_rocs_nXL}~shows the pseudo ROC of the non-cross-linked PSMs in every iteration, \ref{fig:results:pseudo_rocs_XL}~the cross-linked and \ref{fig:results:pseudo_rocs_all}~all of the PSMs. In each, every iterations pseudo ROC curve has its own color, fading from red in iteration~1 to blue in iteration~10. The colors can be assigned from the legend, which also shows the area under the depicted pseudo ROC curve. Every curve ranges from q-values~$0$~to~$5\%$ and the y-axis is scaled appropriate for the data. As explained in~\ref{lab:background:roc}, a higher and more left (pseudo) ROC curve is better. Thus figure~\ref{fig:results:pseudo_rocs_all} shows how the result of Pycolator improves over most iterations.\\
+An example of the plots created by Pycolator are shown in figure~\ref{fig:results:pseudo_rocs}. \ref{fig:results:pseudo_rocs_nXL}~shows the pseudo ROC of the non-cross-linked PSMs in every iteration, \ref{fig:results:pseudo_rocs_XL}~the cross-linked and \ref{fig:results:pseudo_rocs_all}~all of the PSMs. In each, every iterations pseudo ROC curve has its own color, fading from red in iteration~1 to blue in iteration~10. The colors can be assigned from the legend, which also shows the area under the depicted pseudo ROC curve. Every curve ranges from q-values~$0$~to~$5\%$ and the y-axis is scaled appropriate for the data. As explained in~\ref{lab:background:roc}, a higher and more left (pseudo) ROC curve represents better classification. Thus, figure~\ref{fig:results:pseudo_rocs_all} shows that the result of Pycolator improves over most iterations.\\
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
 	\normalsize
@@ -87,6 +87,9 @@ As one can see, without the new mechanism Pycolator gradually improves the area 
 \subsubsection{Proportions of Different Classes}
 \label{lab:results:proportions}
 Maintaining the proportion of classes works as intended, as figure~\ref{fig:results:prop_code} shows. It depicts the proportion of targets~(t) to decoys~(d) in each of the three outer splits and the whole dataset.\\
+The evaluation produced the results shown in
+%figure~\ref{fig:results:maxminmedian} and
+table~\ref{tab:results:maxminmedian}.
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
 	\normalsize
@@ -104,28 +107,25 @@ Maintaining the proportion of classes works as intended, as figure~\ref{fig:resu
 	\caption[Maintaining proportions works as intended]{The log of two test runs of Pycolator. It calculated and output the ratio of targets to decoys in every of the outer split and the whole dataset. In~\ref{fig:results:prop_maintained} the proportions were maintained, and in~\ref{fig:results:prop_not_maintained} they were not.}
 	\label{fig:results:prop_code}
 \end{figure}
-\renewcommand{\baselinestretch}{1}
-The evaluation produced the results shown in figure~\ref{fig:results:maxminmedian} (MACHT DAS ÜBERHAUPT SINN?) and table~\ref{tab:results:maxminmedian}.
-\renewcommand{\baselinestretch}{0.9}
-\begin{figure}
-	\normalsize
-	\centering
-	\begin{subfigure}{0.49 \textwidth}
-		\includegraphics[width = \textwidth]{figures/MaxMinMedian_no_balancing.png}
-		\caption{}
-		\label{fig:results:maxminmedian_not_maintained}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.49 \textwidth}
-		\includegraphics[width = \textwidth]{figures/MaxMinMedian_balancing.png}
-		\caption{}
-		\label{fig:results:maxminmedian_maintained}
-	\end{subfigure}
-	\caption[pseudo ROCs with and without balancing of classes]{Maximum, minimum and median PSMs found at every q-value over each of the 10 sampling rounds. \ref{fig:results:maxminmedian_not_maintained} shows the results without maintaining the proportions, \ref{fig:results:maxminmedian_maintained} with balancing enabled.}
-	\label{fig:results:maxminmedian}
-\end{figure}
-\normalsize
+%\begin{figure}
+%	\normalsize
+%	\centering
+%	\begin{subfigure}{0.49 \textwidth}
+%		\includegraphics[width = \textwidth]{figures/MaxMinMedian_no_balancing.png}
+%		\caption{}
+%		\label{fig:results:maxminmedian_not_maintained}
+%	\end{subfigure}
+%	\hfill
+%	\begin{subfigure}{0.49 \textwidth}
+%		\includegraphics[width = \textwidth]{figures/MaxMinMedian_balancing.png}
+%		\caption{}
+%		\label{fig:results:maxminmedian_maintained}
+%	\end{subfigure}
+%	\caption[pseudo ROCs with and without balancing of classes]{Maximum, minimum and median PSMs found at every q-value over each of the 10 sampling rounds. \ref{fig:results:maxminmedian_not_maintained} shows the results without maintaining the proportions, \ref{fig:results:maxminmedian_maintained} with balancing enabled.}
+%	\label{fig:results:maxminmedian}
+%\end{figure}
 \begin{table}[htbp]
+	\normalsize
 	\centering	
 	\caption[Area under the pseudo ROC curves with and without balancing of classes]{Shows the area under the pseudo curves of cross-linked, non-cross-linked and all PSMs in the best, worst and median run w.r.t. the AUC of all PSMs. Pycolator was run with and without balancing of target/decoy and cross-linked/non-cross-linked classes in outer and inner splits 10 times each.}
 	\begin{tabular}{r|l||rrr}
@@ -190,6 +190,7 @@ The results of splitting the dataset before running Pycolator are shown in figur
 \renewcommand{\baselinestretch}{1}
 
 \subsection{Small datasets}
+\label{lab:results:small_datasets}
 When measuring the AUC in the first experiment, a roughly linear correlation to the datasets size was found. However, the AUC could not be measured when the dataset became smaller than approximately $200$ PSMs, as shown in figure~\ref{fig:results:small_dataset_first_auc}. The number of PSMs at $1\%$ FDR was larger relative to dataset size when using a smaller portion of the dataset, whether using a fixed score~(\ref{fig:results:small_dataset_first_ratio_dxl}) or percolator~(\ref{fig:results:small_dataset_first_auc_ratio_pxl}). In the case of percolator, with smaller dataset size also more fluctuations occurred.\\
 The second experiment yielded following results: figure~\ref{fig:results:small_dataset_snd_expected} shows the portion of the dataset that was originally estimated to have a q-value of $<1\%$. The ratio of how many PSMs were assigned such a q-value after the sampling to before, is shown in figure~\ref{fig:results:small_dataset_snd_found_dxl} without re-calculating the score and in figure~\ref{fig:results:small_dataset_snd_found_pxl} when running Pycolator on the sampled data and estimating the q-value from the obtained score. Figure~\ref{fig:results:small_dataset_snd_comparison} shows how well the Pycolator score performed compared with the precomputed NuXL score when measured by the identifications with $1\%$ q-value or area under the pseudo ROC curve.\\
 \renewcommand{\baselinestretch}{0.9}
@@ -214,7 +215,7 @@ The second experiment yielded following results: figure~\ref{fig:results:small_d
 		\caption{}
 		\label{fig:results:small_dataset_first_auc_ratio_pxl}
 	\end{subfigure}
-	\caption[]{The ratio of the number of PSMs at $1\%$ q-value to sampled datasets size on the y-axis is plotted against the datasets size on the x-axis. Left~(\ref{fig:results:small_dataset_first_ratio_dxl}) when estimating the q-value based on the unchanged NuXL score, and right~(\ref{fig:results:small_dataset_first_auc_ratio_pxl}) after running Pycolator on the sampled dataset. Both show: the smaller the dataset, the bigger the portion of high-confidence PSMs. Pycolator additionally produced fluctuations.}
+	\caption[]{The portion of PSMs in the sampled dataset with a $1\%$ q-value on the y-axis is plotted against the datasets size on the x-axis. Left~(\ref{fig:results:small_dataset_first_ratio_dxl}) when estimating the q-value based on the unchanged NuXL score, and right~(\ref{fig:results:small_dataset_first_auc_ratio_pxl}) after running Pycolator on the sampled dataset.}
 	\label{fig:results:small_dataset_first_auc_ratio}
 \end{figure}
 \begin{figure}
