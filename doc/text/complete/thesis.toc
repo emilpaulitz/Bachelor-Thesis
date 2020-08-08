@@ -28,5 +28,5 @@
 \contentsline {subsubsection}{Splitting the Dataset}{21}{section*.23}
 \contentsline {subsection}{\numberline {3.2.3}Small datasets}{22}{subsection.3.2.3}
 \contentsline {chapter}{\numberline {4}Discussion}{25}{chapter.4}
-\contentsline {section}{\numberline {4.1}Outlook}{27}{section.4.1}
-\contentsline {chapter}{Bibliography}{29}{section.4.1}
+\contentsline {section}{\numberline {4.1}Outlook}{28}{section.4.1}
+\contentsline {chapter}{Bibliography}{31}{section.4.1}
