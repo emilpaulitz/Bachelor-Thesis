@@ -5,15 +5,16 @@
 \contentsline {figure}{\numberline {1.3}{\ignorespaces Examples for pseudo ROC curves}}{7}{figure.caption.9}
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {2.1}{\ignorespaces Procedure of Percolator}}{10}{figure.caption.10}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Procedure to deal with ranked PSMs}}{13}{figure.caption.11}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Results of implementing feature normalization}}{15}{figure.caption.14}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Examples for pseudo ROC curves as produced by Pycolator}}{16}{figure.caption.15}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Results of strategies regarding different ranks}}{18}{figure.caption.16}
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Maintaining proportions works as intended}}{19}{figure.caption.18}
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Results of imputation}}{19}{figure.caption.21}
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Results of splitting the dataset}}{20}{figure.caption.23}
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Correlation between AUC and dataset size}}{21}{figure.caption.24}
-\contentsline {figure}{\numberline {3.9}{\ignorespaces Portion of the dataset with high-confidence PSMs}}{21}{figure.caption.26}
-\contentsline {figure}{\numberline {3.10}{\ignorespaces Found vs expected number of high confidence PSMs}}{22}{figure.caption.27}
-\contentsline {figure}{\numberline {3.11}{\ignorespaces Performance of Pycolator on smaller datasets}}{22}{figure.caption.28}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Results of implementing feature normalization}}{17}{figure.caption.15}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Examples for pseudo ROC curves as produced by Pycolator}}{18}{figure.caption.16}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Results of strategies regarding different ranks}}{20}{figure.caption.17}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Maintaining proportions works as intended}}{21}{figure.caption.19}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Results of imputation}}{21}{figure.caption.22}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Results of splitting the dataset}}{22}{figure.caption.24}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Correlation between AUC and dataset size}}{23}{figure.caption.25}
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Portion of the dataset with high-confidence PSMs}}{23}{figure.caption.27}
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Found vs expected number of high confidence PSMs}}{24}{figure.caption.28}
+\contentsline {figure}{\numberline {3.11}{\ignorespaces Performance of Pycolator on smaller datasets}}{24}{figure.caption.29}
 \addvspace {10\p@ }

@@ -12,21 +12,21 @@
 \contentsline {chapter}{\numberline {2}Material and Methods}{9}{chapter.2}
 \contentsline {section}{\numberline {2.1}Implementation of the percolator algorithm}{9}{section.2.1}
 \contentsline {section}{\numberline {2.2}Adapting Percolator to Cross-link Identification}{11}{section.2.2}
-\contentsline {subsection}{\numberline {2.2.1}Different Ranks}{11}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.1}Different Ranks}{12}{subsection.2.2.1}
 \contentsline {subsection}{\numberline {2.2.2}Characteristics of Cross-linked PSMs}{12}{subsection.2.2.2}
-\contentsline {subsubsection}{Proportions of Different Classes}{12}{section*.11}
-\contentsline {subsubsection}{Imputation}{13}{section*.12}
-\contentsline {subsubsection}{Splitting the Dataset}{13}{section*.13}
+\contentsline {subsubsection}{Proportions of Different Classes}{13}{section*.12}
+\contentsline {subsubsection}{Imputation}{14}{section*.13}
+\contentsline {subsubsection}{Splitting the Dataset}{14}{section*.14}
 \contentsline {subsection}{\numberline {2.2.3}Small datasets}{14}{subsection.2.2.3}
-\contentsline {chapter}{\numberline {3}Results}{15}{chapter.3}
-\contentsline {section}{\numberline {3.1}Implementation of the percolator algorithm}{15}{section.3.1}
-\contentsline {section}{\numberline {3.2}Adapting Percolator to Cross-link Identification}{16}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Different Ranks}{17}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}Characteristics of Cross-linked PSMs}{17}{subsection.3.2.2}
-\contentsline {subsubsection}{Proportions of Different Classes}{17}{section*.17}
-\contentsline {subsubsection}{Imputation}{19}{section*.20}
-\contentsline {subsubsection}{Splitting the Dataset}{19}{section*.22}
-\contentsline {subsection}{\numberline {3.2.3}Small datasets}{20}{subsection.3.2.3}
-\contentsline {chapter}{\numberline {4}Discussion}{23}{chapter.4}
-\contentsline {section}{\numberline {4.1}Outlook}{25}{section.4.1}
-\contentsline {chapter}{Bibliography}{27}{section.4.1}
+\contentsline {chapter}{\numberline {3}Results}{17}{chapter.3}
+\contentsline {section}{\numberline {3.1}Implementation of the percolator algorithm}{17}{section.3.1}
+\contentsline {section}{\numberline {3.2}Adapting Percolator to Cross-link Identification}{18}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Different Ranks}{19}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Characteristics of Cross-linked PSMs}{19}{subsection.3.2.2}
+\contentsline {subsubsection}{Proportions of Different Classes}{19}{section*.18}
+\contentsline {subsubsection}{Imputation}{21}{section*.21}
+\contentsline {subsubsection}{Splitting the Dataset}{21}{section*.23}
+\contentsline {subsection}{\numberline {3.2.3}Small datasets}{22}{subsection.3.2.3}
+\contentsline {chapter}{\numberline {4}Discussion}{25}{chapter.4}
+\contentsline {section}{\numberline {4.1}Outlook}{27}{section.4.1}
+\contentsline {chapter}{Bibliography}{29}{section.4.1}

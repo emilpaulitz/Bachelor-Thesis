@@ -4,7 +4,7 @@
 
 \section{Implementation of the percolator algorithm}
 The original Percolator algorithm finds 5412 cross-linked PSMs with a q-value of $\leq1\%$ on the used dataset~(\ref{lab:matmet:dataset}). The re-implementation in python yields 5503 such PSMs on rank 1.\\
-The implementation of feature normalization yielded an increase in the number of confident PSMs found, as the y-axis and legend of figure~\ref{fig:feature_normalization} show. This type of plot is explained in~\autoref{lab:results:pseudo_rocs}. The performance of Pycolator with feature normalization is better from the first iteration on, and increases until iterations~7~or~8, when the results converge. Without feature normalization, the area under the pseudo ROC increases until iteration~3, when it begins to oscillate. \\
+The implementation of feature normalization yielded an increase in the number of confident PSMs found, as the y-axis and legend of Figure~\ref{fig:feature_normalization} show. This type of plot is explained in~\autoref{lab:results:pseudo_rocs}. The performance of Pycolator with feature normalization is better from the first iteration on, and increases until iterations~7~or~8, when the results converge. Without feature normalization, the area under the pseudo ROC increases until iteration~3, when it begins to oscillate. \\
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
 	\normalsize
@@ -27,7 +27,7 @@ The implementation of feature normalization yielded an increase in the number of
 
 \section{Adapting Percolator to Cross-link Identification}
 \label{lab:results:pseudo_rocs}
-An example of the plots created by Pycolator are shown in figure~\ref{fig:results:pseudo_rocs}. \ref{fig:results:pseudo_rocs_nXL}~shows the pseudo ROC of the non-cross-linked PSMs in every iteration, \ref{fig:results:pseudo_rocs_XL}~the cross-linked and \ref{fig:results:pseudo_rocs_all}~all of the PSMs. In each, every iterations pseudo ROC curve has its own color, fading from red in iteration~1 to blue in iteration~10. The colors can be assigned from the legend, which also shows the area under the depicted pseudo ROC curve. Every curve ranges from q-values~$0$~to~$5\%$ and the y-axis is scaled appropriate for the data. As explained in~\ref{lab:background:roc}, a higher and more left (pseudo) ROC curve represents better classification. Thus, figure~\ref{fig:results:pseudo_rocs_all} shows that the result of Pycolator improves over most iterations.\\
+An example of the plots created by Pycolator are shown in Figure~\ref{fig:results:pseudo_rocs}. \ref{fig:results:pseudo_rocs_nXL}~shows the pseudo ROC of the non-cross-linked PSMs in every iteration, \ref{fig:results:pseudo_rocs_XL}~the cross-linked and \ref{fig:results:pseudo_rocs_all}~all of the PSMs. In each, every iterations pseudo ROC curve has its own color, fading from red in iteration~1 to blue in iteration~10. The colors can be assigned from the legend, which also shows the area under the depicted pseudo ROC curve. Every curve ranges from q-values~$0$~to~$5\%$ and the y-axis is scaled appropriate for the data. As explained in~\ref{lab:background:roc}, a higher and more left (pseudo) ROC curve represents better classification. Thus, Figure~\ref{fig:results:pseudo_rocs_all} shows that the result of Pycolator improves over most iterations.\\
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
 	\normalsize
@@ -86,10 +86,10 @@ As one can see, without the new mechanism Pycolator gradually improves the area 
 \subsection{Characteristics of Cross-linked PSMs}
 \subsubsection{Proportions of Different Classes}
 \label{lab:results:proportions}
-Maintaining the proportion of classes works as intended, as figure~\ref{fig:results:prop_code} shows. It depicts the proportion of targets~(t) to decoys~(d) in each of the three outer splits and the whole dataset.\\
+Maintaining the proportion of classes works as intended, as Figure~\ref{fig:results:prop_code} shows. It depicts the proportion of targets~(t) to decoys~(d) in each of the three outer splits and the whole dataset.\\
 The evaluation produced the results shown in
 %figure~\ref{fig:results:maxminmedian} and
-table~\ref{tab:results:maxminmedian}.
+Table~\ref{tab:results:maxminmedian}.
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
 	\normalsize
@@ -145,7 +145,7 @@ table~\ref{tab:results:maxminmedian}.
 
 \subsubsection{Imputation}
 \label{lab:results:imputation}
-The resulting pseudo ROCs and their AUC for all PSMs are shown in figure~\ref{fig:results:imputation}. The pseudo ROCs for cross-linked and not cross-linked PSMs show similarly few differences.
+The resulting pseudo ROCs and their AUC for all PSMs are shown in Figure~\ref{fig:results:imputation}. The pseudo ROCs for cross-linked and not cross-linked PSMs show similarly few differences.
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
 	\normalsize
@@ -191,8 +191,8 @@ The results of splitting the dataset before running Pycolator are shown in figur
 
 \subsection{Small datasets}
 \label{lab:results:small_datasets}
-When measuring the AUC in the first experiment, a roughly linear correlation to the datasets size was found. However, the AUC could not be measured when the dataset became smaller than approximately $200$ PSMs, as shown in figure~\ref{fig:results:small_dataset_first_auc}. The number of PSMs at $1\%$ FDR was larger relative to dataset size when using a smaller portion of the dataset, whether using a fixed score~(\ref{fig:results:small_dataset_first_ratio_dxl}) or percolator~(\ref{fig:results:small_dataset_first_auc_ratio_pxl}). In the case of percolator, with smaller dataset size also more fluctuations occurred.\\
-The second experiment yielded following results: figure~\ref{fig:results:small_dataset_snd_expected} shows the portion of the dataset that was originally estimated to have a q-value of $<1\%$. The ratio of how many PSMs were assigned such a q-value after the sampling to before, is shown in figure~\ref{fig:results:small_dataset_snd_found_dxl} without re-calculating the score and in figure~\ref{fig:results:small_dataset_snd_found_pxl} when running Pycolator on the sampled data and estimating the q-value from the obtained score. Figure~\ref{fig:results:small_dataset_snd_comparison} shows how well the Pycolator score performed compared with the precomputed NuXL score when measured by the identifications with $1\%$ q-value or area under the pseudo ROC curve.\\
+When measuring the AUC in the first experiment, a roughly linear correlation to the datasets size was found. However, the AUC could not be measured when the dataset became smaller than approximately $200$ PSMs, as shown in Figure~\ref{fig:results:small_dataset_first_auc}. The number of PSMs at $1\%$ FDR was larger relative to dataset size when using a smaller portion of the dataset, whether using a fixed score~(\ref{fig:results:small_dataset_first_ratio_dxl}) or percolator~(\ref{fig:results:small_dataset_first_auc_ratio_pxl}). In the case of percolator, with smaller dataset size also more fluctuations occurred.\\
+The second experiment yielded following results: Figure~\ref{fig:results:small_dataset_snd_expected} shows the portion of the dataset that was originally estimated to have a q-value of $<1\%$. The ratio of how many PSMs were assigned such a q-value after the sampling to before, is shown in Figure~\ref{fig:results:small_dataset_snd_found_dxl} without re-calculating the score and in Figure~\ref{fig:results:small_dataset_snd_found_pxl} when running Pycolator on the sampled data and estimating the q-value from the obtained score. Figure~\ref{fig:results:small_dataset_snd_comparison} shows how well the Pycolator score performed compared with the precomputed NuXL score when measured by the identifications with $1\%$ q-value or area under the pseudo ROC curve. The boxplots for the smallest datasets doe not always contain 10 results, because Pycolator does not work on all splits with datasets this small. \\
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
 	\normalsize
@@ -239,20 +239,20 @@ The second experiment yielded following results: figure~\ref{fig:results:small_d
 		\caption{}
 		\label{fig:results:small_dataset_snd_found_pxl}
 	\end{subfigure}
-	\caption[Found vs expected number of high confidence PSMs]{Ratio of PSMs with q-value $\leq1\%$ found after to before re-calculating the FDR in the sampled dataset on the y-axis, is plotted against the datasets size on the x-axis. For~\ref{fig:results:small_dataset_snd_found_pxl}, the newly calculated Pycolator score was used to re-calculate the FDR. The data from every of the 10 repetitions is shown combined in a boxplot. In~\ref{fig:results:small_dataset_snd_found_dxl}, the variance but also the ratio increases for a smaller dataset, while figure~\ref{fig:results:small_dataset_snd_found_dxl} shows a larger variance, fluctuation and a slight increase of the ratio for smaller datasets.}
+	\caption[Found vs expected number of high confidence PSMs]{Ratio of PSMs with q-value $\leq1\%$ found after to before re-calculating the FDR in the sampled dataset on the y-axis, is plotted against the datasets size on the x-axis. For~\ref{fig:results:small_dataset_snd_found_pxl}, the newly calculated Pycolator score was used to re-calculate the FDR. The data from every of the 10 repetitions is shown combined in a boxplot. In~\ref{fig:results:small_dataset_snd_found_dxl}, the variance but also the ratio increases for a smaller dataset, while Figure~\ref{fig:results:small_dataset_snd_found_dxl} shows a larger variance, fluctuation and a slight increase of the ratio for smaller datasets.}
 	\label{fig:results:small_dataset_snd_found}
 \end{figure}
 \begin{figure}
 	\normalsize
 	\centering
 	\begin{subfigure}{0.49 \textwidth}
-		\includegraphics[width = \textwidth]{figures/auc_performance.png}
+		\includegraphics[width = \textwidth]{figures/auc_p_vs_ori.png}
 		\caption{}
 		\label{fig:results:small_dataset_snd_comparison_auc}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.49 \textwidth}
-		\includegraphics[width = \textwidth]{figures/idents_performance.png}
+		\includegraphics[width = \textwidth]{figures/idents_p_vs_ori_zoomed.png}
 		\caption{}
 		\label{fig:results:small_dataset_snd_comparison_idents}
 	\end{subfigure}
