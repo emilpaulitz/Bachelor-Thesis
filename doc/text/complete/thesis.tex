@@ -63,7 +63,7 @@ Wilhelm-Schickard-Institut f\"ur Informatik\\[4cm]}
 \begin{center}
 {\small\bf Supervisor}\\[0.5cm]
   {\large Timo Sachsenberg}\\
-  {\footnotesize Address\\
+  {\footnotesize Applied Bioinformatics Group\\
 	University of T\"ubingen}\end{center}
 
   \end{center}
@@ -94,15 +94,21 @@ Period: 14.04.2020-14.08.2020
 
 \section*{Abstract}
 
-Write here your abstract.
+Modern analysis instruments in life sciences produce data on an ever larger scale. While this allows more comprehensive insight into biological mechanisms, it also requires computational methods able to process the data appropriately. Currently, the method of choice for identification of a proteome, the entirety of proteins in a cell or an organism, is mass spectrometry, which produces spectra corresponding to the peptides amino acid sequence. An important step in matching every spectrum to the peptide they originate from, is the well-established Percolator algorithm. It combines every given information and previously computed scores for a peptide-spectrum-match, to achieve best possible separation between correct and incorrect matches.\\
+In this thesis, the algorithm was transferred from C++ into the python programming language. This enables the use of machine learning libraries like scikit-learn, which can be utilized to more easily adapt the algorithm to the special demands of one’s experiment. As such, we present Pycolator, an adaptation of Percolator to the characteristics of peptides cross-linked onto (ribo-) nucleotides, for which the original algorithm often does not provide optimal results. The analysis of such proteins promises to yield insight about the interaction between peptides and DNA or RNA, possibly providing a more comprehensive view on the interactions driving biological systems.
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Page 2: Danksagung
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}
-
-Leo.org~\footnote{https://dict.leo.org/englisch-deutsch/}, always finding the right words for me. 
-
+I would like to express my gratitude to my supervisor Timo Sachsenberg, who over all of our online meetings had input, ideas and inspiration, never tiring of explaining unknown concepts and even responded to my questions on weekends.\\
+%I would also like to thank Leo.org~\footnote{https://dict.leo.org/englisch-deutsch/} for always finding the right words for me.
+I also want to thank my proof-readers Jonathan Paulitz, Benedikt Rössler and Simon Schäfermann, as well as Carmen Gil Bredehöft, who encouraged me constantly and provided the perfect refreshment in critical moments. 
+Lastly I want to thank my cats for keeping me company and warming me every 10~minutes in the final phase of writing.\\
+\vspace*{\fill}\\
+In accordance with the standard scientfic protocol, I will use the personal pronoun
+\textit{we} to indicate the reader and the writer or my scientific collaborators and myself.
 \cleardoublepage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

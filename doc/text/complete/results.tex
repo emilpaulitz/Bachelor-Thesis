@@ -2,9 +2,9 @@
 \label{results}
 
 
-\section{Implementation of the percolator algorithm}
+\section{Implementation of the Percolator algorithm}
 The original Percolator algorithm finds 5412 cross-linked PSMs with a q-value of $\leq1\%$ on the used dataset~(\ref{lab:matmet:dataset}). The re-implementation in python yields 5450 such PSMs on rank 1.\\
-The implementation of feature normalization yielded an increase in the number of confident PSMs found, as the y-axis and legend of Figure~\ref{fig:feature_normalization} show. This type of plot is explained in~\autoref{lab:results:pseudo_rocs}. The performance of Pycolator with feature normalization is better from the first iteration on, and increases until iterations~7~or~8, when the results converge. Without feature normalization, the area under the pseudo ROC increases until iteration~3, when it begins to oscillate. \\
+The implementation of feature normalization yielded an increase in the number of confident PSMs found, as the y-axis and legend of Figure~\ref{fig:feature_normalization} show. This type of plot is explained in Section~\ref{lab:results:pseudo_rocs}. The performance of Pycolator with feature normalization is better from the first iteration on, and increases until iterations~7~or~8, when the results converge. Without feature normalization, the area under the pseudo ROC increases until iteration~3, when it begins to oscillate. \\
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
 	\normalsize
@@ -20,7 +20,7 @@ The implementation of feature normalization yielded an increase in the number of
 		\caption{}
 		\label{fig:after_feature_normalization}
 	\end{subfigure}
-	\caption[Results of implementing feature normalization]{Result of Pycolator before~(\ref{fig:before_feature_normalization}) and after~(\ref{fig:after_feature_normalization}) the implementation of feature normalization. }
+	\caption[Results of implementing feature normalization]{Result of Pycolator without~(\ref{fig:before_feature_normalization}) and with~(\ref{fig:after_feature_normalization}) the implementation of feature normalization. }
 	\label{fig:feature_normalization}
 \end{figure}
 \renewcommand{\baselinestretch}{1}
@@ -56,8 +56,8 @@ An example of the plots created by Pycolator are shown in Figure~\ref{fig:result
 
 \subsection{Different Ranks}
 \label{lab:results:ranks}
-Figure~\ref{fig:before_optimalranking} shows the pseudo ROCs of Pycolator before the implementation of the new mechanism. \ref{fig:all_ranks} was plotted when Pycolator used all PSMs available, meaning all ranks, and only at the end lower ranking PSMs than 1 were excluded. \ref{fig:only_rank_one} is the result of running Pycolator only with rank 1 PSMs of the given dataset~\ref{lab:matmet:dataset} and~\ref{fig:optimalranking} shows the final result with the new feature.\\
-As one can see, without the new mechanism Pycolator gradually improves the area under the curve and takes $5$ and $4$ iterations to roughly converge when given every PSM or only rank 1 PSMs to train respectively. This can be seen by the AUC results after every iteration or the ROC curves themselves. The end result, however, is better when removing the lower ranking PSMs right at the beginning (AUC of $345.79$) instead of in the end (AUC of $343.21$ after dropping the lower ranking PSMs). Since in the latter case Pycolator ended with an AUC of $343.79$ as one can see in~\ref{fig:all_ranks}, dropping the PSMs slightly worsened the end result. With the new feature, the algorithm takes about $5$ iterations to converge, then performs a jump and again improves over two iterations. The end result, an AUC of $348.13$, is higher than both alternatives. Multiple runs yielded very similar results. 
+Figure~\ref{fig:before_optimalranking} shows the pseudo ROCs of Pycolator before the implementation of the new mechanism. \ref{fig:all_ranks} was plotted when Pycolator used all PSMs available, meaning all ranks, and only at the end PSMs ranking lower than~$1$ were excluded. \ref{fig:only_rank_one} is the result of running Pycolator only with rank 1 PSMs of the given dataset~(\ref{lab:matmet:dataset}) and~\ref{fig:optimalranking} shows the final result with the new feature.\\
+As one can see, without the new mechanism Pycolator gradually improves the area under the curve and takes $5$ and $4$ iterations to roughly converge when given every PSM or only rank 1 PSMs to train respectively. This can be seen by the AUC results after every iteration or the ROC curves themselves. The end result, however, is better when removing the lower ranking PSMs right at the beginning (AUC of $345.79$) instead of in the end (AUC of $343.21$ after dropping the lower ranking PSMs). Since in the latter case Pycolator ended with an AUC of $343.79$ as one can see in~\ref{fig:all_ranks}, dropping the PSMs slightly worsened the end result. With the new feature, the algorithm takes about $5$ iterations to converge, then performs a jump and again improves over two iterations. The end result, an AUC of $348.13$, is higher than both alternatives. A t-test with the AUC results of $10$~repetitions between the new procedure and providing Pycolator with all PSMs yielded a p-value of $2.77\cdot10^{-12}$ and between the new procedure and providing Pycolator with only rank~one PSMs yielded $4.17\cdot10^{-9}$ as p-value.
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
 	\normalsize
@@ -86,27 +86,27 @@ As one can see, without the new mechanism Pycolator gradually improves the area 
 \subsection{Characteristics of Cross-linked PSMs}
 \subsubsection{Proportions of Different Classes}
 \label{lab:results:proportions}
-Maintaining the proportion of classes works as intended, as Figure~\ref{fig:results:prop_code} shows. It depicts the proportion of targets~(t) to decoys~(d) in each of the three outer splits and the whole dataset.\\
+Maintaining the proportion of classes works as intended: The log of two test runs of Pycolator when it calculated and output the ratio of targets to decoys in every of the outer split and the whole dataset showed following results: Without maintaining the ratios of target to decoy PSMs in each of the three splits, these ranged from $1.173$ to $1.203$, while the ratio is $1.8865$ in the whole dataset. With maintaining the ratio according to the new method however, these ranged from $1.18862$ to $1.18870$, while the ratio is $1.18865$ in the whole dataset.\\
 The evaluation produced the results shown in
 %figure~\ref{fig:results:maxminmedian} and
 Table~\ref{tab:results:maxminmedian}.
 \renewcommand{\baselinestretch}{0.9}
-\begin{figure}
-	\normalsize
-	\centering
-	\begin{subfigure}{\textwidth}
-		\includegraphics[width = \textwidth]{figures/prop_not_kept_code.jpg}
-		\caption{Ratios of target to decoy PSMs in each of the three splits, ranging from $1.173$ to $1.203$, while the ratio is $1.8865$ in the whole dataset.}
-		\label{fig:results:prop_not_maintained}
-	\end{subfigure}
-	\begin{subfigure}{\textwidth}
-		\includegraphics[width = \textwidth]{figures/prop_kept_code.jpg}
-		\caption{Ratios of target to decoy PSMs in each of the three splits, ranging from $1.18862$ to $1.18870$, while the ratio is $1.18865$ in the whole dataset.}
-		\label{fig:results:prop_maintained}
-	\end{subfigure}
-	\caption[Maintaining proportions works as intended]{The log of two test runs of Pycolator. It calculated and output the ratio of targets to decoys in every of the outer split and the whole dataset. In~\ref{fig:results:prop_maintained} the proportions were maintained, and in~\ref{fig:results:prop_not_maintained} they were not.}
-	\label{fig:results:prop_code}
-\end{figure}
+%\begin{figure}
+%	\normalsize
+%	\centering
+%	\begin{subfigure}{\textwidth}
+%		\includegraphics[width = \textwidth]{figures/prop_not_kept_code.jpg}
+%		\caption{}
+%		\label{fig:results:prop_not_maintained}
+%	\end{subfigure}
+%	\begin{subfigure}{\textwidth}
+%		\includegraphics[width = \textwidth]{figures/prop_kept_code.jpg}
+%		\caption{}
+%		\label{fig:results:prop_maintained}
+%	\end{subfigure}
+%	\caption[Maintaining proportions works as intended]{}
+%	\label{fig:results:prop_code}
+%\end{figure}
 %\begin{figure}
 %	\normalsize
 %	\centering
@@ -127,7 +127,7 @@ Table~\ref{tab:results:maxminmedian}.
 \begin{table}[htbp]
 	\normalsize
 	\centering	
-	\caption[Area under the pseudo ROC curves with and without balancing of classes]{Shows the area under the pseudo curves of cross-linked, non-cross-linked and all PSMs in the best, worst and median run w.r.t. the AUC of all PSMs. Pycolator was run with and without balancing of target/decoy and cross-linked/non-cross-linked classes in outer and inner splits 10 times each.}
+	\caption[Area under the pseudo ROC curves with and without balancing of classes]{Shows the area under the pseudo curves of cross-linked, non-cross-linked and all PSMs in the best, worst and median run w.r.t. the AUC of the pseudo ROC. Pycolator was run with and without balancing of target/decoy and cross-linked/non-cross-linked classes in outer and inner splits 10 times each.}
 	\begin{tabular}{r|l||rrr}
 		\multicolumn{2}{c}{AUC of pseudo ROC} & maximum & minimum & median \\
 		\hline
@@ -161,14 +161,14 @@ The resulting pseudo ROCs and their AUC for all PSMs are shown in Figure~\ref{fi
 		\caption{}
 		\label{fig:results:imputation_yes}
 	\end{subfigure}
-	\caption[Results of imputation]{Results of running Pycolator with~(\ref{fig:results:imputation_yes}) and without~(\ref{fig:results:imputation_no}) the use of imputation.}
+	\caption[Results of imputation]{Results of running Pycolator with~(\ref{fig:results:imputation_yes}) and without~(\ref{fig:results:imputation_no}) the use of imputation. Both are very similar.}
 	\label{fig:results:imputation}
 \end{figure}
 \renewcommand{\baselinestretch}{1}
 
 \subsubsection{Splitting the Dataset}
 \label{lab:results:splitting}
-The results of splitting the dataset before running Pycolator are shown in figure~\ref{fig:results:splitting}.
+The results of splitting the dataset before running Pycolator are shown in figure~\ref{fig:results:splitting}. Splitting by cross-linked and non-cross-linked PSMs yielded an AUC of~$350.55$, which is slightly higher than when running Pycolator on all PSMs~(typically $348.5$), and splitting by the cross-linked nucleotide yielded an AUC of~$389.22$.
 \renewcommand{\baselinestretch}{0.9}
 \begin{figure}
 	\normalsize
@@ -198,7 +198,7 @@ The second experiment yielded following results: Figure~\ref{fig:results:small_d
 	\normalsize
 	\centering
 	\includegraphics[width = 0.49\textwidth]{figures/aucs_perc.png}
-	\caption[Correlation between AUC and dataset size]{The AUC of a Pycolator run on the y-axis is plotted against the size of the dataset sampled as described in~\ref{lab:matmet:small_datasets} on the x-axis. Below about 200 PSMs in the dataset, the pseudo ROC consisted of data at one q-value and thus enclosed an area of 0.}
+	\caption[Correlation between AUC and dataset size]{The AUC of a Pycolator run on the y-axis is plotted against the size of the dataset sampled as described in~\ref{lab:matmet:small_datasets} on the x-axis. Below about 200 PSMs in the dataset, the pseudo ROC consisted of data at one q-value and thus enclosed an area of 0 or could not be determined.}
 	\label{fig:results:small_dataset_first_auc}
 \end{figure}
 \begin{figure}
@@ -215,7 +215,7 @@ The second experiment yielded following results: Figure~\ref{fig:results:small_d
 		\caption{}
 		\label{fig:results:small_dataset_first_auc_ratio_pxl}
 	\end{subfigure}
-	\caption[]{The portion of PSMs in the sampled dataset with a $1\%$ q-value on the y-axis is plotted against the datasets size on the x-axis. Left~(\ref{fig:results:small_dataset_first_ratio_dxl}) when estimating the q-value based on the unchanged NuXL score, and right~(\ref{fig:results:small_dataset_first_auc_ratio_pxl}) after running Pycolator on the sampled dataset.}
+	\caption[Portion of high-confidence PSMs in different dataset sizes]{The portion of PSMs in the sampled dataset with a $1\%$ q-value on the y-axis is plotted against the datasets size on the x-axis. Left~(\ref{fig:results:small_dataset_first_ratio_dxl}) when estimating the q-value based on the unchanged NuXL score, and right~(\ref{fig:results:small_dataset_first_auc_ratio_pxl}) after running Pycolator on the sampled dataset.}
 	\label{fig:results:small_dataset_first_auc_ratio}
 \end{figure}
 \begin{figure}
@@ -254,7 +254,7 @@ The second experiment yielded following results: Figure~\ref{fig:results:small_d
 		\caption{}
 		\label{fig:results:small_dataset_snd_comparison_idents}
 	\end{subfigure}
-	\caption[Performance of Pycolator on smaller datasets]{The ratio of Pycolators performance to the unchanged NuXL score on the y-axis is plotted against the datasets size on the x-axis. Left~(\ref{fig:results:small_dataset_snd_comparison_auc}), to measure the performance the area enclosed by the pseudo ROC is used, right~(\ref{fig:results:small_dataset_snd_comparison_idents}) the number of PSMs with a q-value of~$\leq1\%$. The data from every of the 10 repetitions is shown combined in a boxplot. While the median AUC increases for smaller datasets, Pycolator does not identify more PSMs with a confidence of $1\%$ than the NuXL score on datasets with $47$ or less PSMs.}
+	\caption[Performance of Pycolator on smaller datasets]{The ratio of Pycolators performance to the unchanged NuXL score on the y-axis is plotted against the datasets size on the x-axis. Left~(\ref{fig:results:small_dataset_snd_comparison_auc}), to measure the performance the area enclosed by the pseudo ROC is used, right~(\ref{fig:results:small_dataset_snd_comparison_idents}) the number of PSMs with a q-value of~$\leq1\%$. The data from every of the 10 repetitions is shown combined in a boxplot. While the median performance ratio measured by the AUC increases for datasets smaller than about $200$ PSMs, Pycolator identifies less PSMs with a confidence of $1\%$ than the NuXL score for smaller datasets.}
 	\label{fig:results:small_dataset_snd_comparison}
 \end{figure}
 \renewcommand{\baselinestretch}{1}
