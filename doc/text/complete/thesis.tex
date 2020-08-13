@@ -50,7 +50,7 @@
   {\large Mathematisch-Naturwissenschaftliche Fakultät \\
 Wilhelm-Schickard-Institut f\"ur Informatik\\[4cm]}
   {\huge Bachelor Thesis Bioinformatics\\[2cm]}
-  {\Large\bf  Semi-supervised learning for nucleic acid cross-linking mass spectrometry\\[1.5cm]}
+  {\Large\bf  Semi-supervised Learning for Nucleic Acid Cross-linking Mass Spectrometry\\[1.5cm]}
  {\large Emil Paulitz}\\[0.5cm]
 14.08.2020\\[3cm]
 \begin{center}
@@ -75,7 +75,7 @@ Wilhelm-Schickard-Institut f\"ur Informatik\\[4cm]}
 \thispagestyle{empty}
 \vspace*{\fill}
 \begin{minipage}{11.2cm}
-\textbf{Paulitz, Emilian Nicolaus Simons:}\\
+\textbf{Paulitz, Emil:}\\
 \emph{Semi-supervised learning for nucleic acid cross-linking mass spectrometry}\\ Bachelor Thesis Bioinformatics\\
 Eberhard Karls Universit\"at T\"ubingen\\
 Period: 14.04.2020-14.08.2020
@@ -94,8 +94,8 @@ Period: 14.04.2020-14.08.2020
 
 \section*{Abstract}
 
-Modern analysis instruments in life sciences produce data on an ever larger scale. While this allows more comprehensive insight into biological mechanisms, it also requires computational methods able to process the data appropriately. Currently, the method of choice for identification of a proteome, the entirety of proteins in a cell or an organism, is mass spectrometry, which produces spectra corresponding to the peptides amino acid sequence. An important step in matching every spectrum to the peptide they originate from, is the well-established Percolator algorithm. It combines every given information and previously computed scores for a peptide-spectrum-match, to achieve best possible separation between correct and incorrect matches.\\
-In this thesis, the algorithm was transferred from C++ into the python programming language. This enables the use of machine learning libraries like scikit-learn, which can be utilized to more easily adapt the algorithm to the special demands of one’s experiment. As such, we present Pycolator, an adaptation of Percolator to the characteristics of peptides cross-linked onto (ribo-) nucleotides, for which the original algorithm often does not provide optimal results. The analysis of such proteins promises to yield insight about the interaction between peptides and DNA or RNA, possibly providing a more comprehensive view on the interactions driving biological systems.
+Modern analysis instruments in life sciences produce data on an ever-larger scale. While this allows more comprehensive insight into biological mechanisms, it also requires computational methods able to process the data appropriately. Currently, the method of choice for analyzing a proteome, the entirety of proteins in a cell or an organism, is mass spectrometry, which produces spectra containing information corresponding to the peptide's amino acid sequence. An important step in matching every spectrum to the peptide they originate from, is the well-established Percolator algorithm. It combines every information about the spectrum, peptide and scores for the similarity of peptide-spectrum-match, to achieve best possible separation between correct and incorrect matches.\\
+In this thesis, the algorithm was transferred from C++ into the python programming language. This implementation increases the flexibility and extends the range of potential applications by enabling the use of machine learning libraries like scikit-learn, which can be utilized to adapt the algorithm more easily to the special demands of one’s experiment. As such, we present Pycolator, an adaptation of Percolator to the characteristics of peptides cross-linked onto (ribo-)~nucleotides, for which the original algorithm often does not provide optimal results. Pycolator finds $1\%$ more cross-linked peptides on the tested dataset and employs techniques to reduce variation. The analysis of such proteins promises to yield insight about the interaction between peptides and DNA or RNA, possibly providing a more comprehensive view on the interactions driving biological systems.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,10 +104,10 @@ In this thesis, the algorithm was transferred from C++ into the python programmi
 \section*{Acknowledgements}
 I would like to express my gratitude to my supervisor Timo Sachsenberg, who over all of our online meetings had input, ideas and inspiration, never tiring of explaining unknown concepts and even responded to my questions on weekends.\\
 %I would also like to thank Leo.org~\footnote{https://dict.leo.org/englisch-deutsch/} for always finding the right words for me.
-I also want to thank my proof-readers Jonathan Paulitz, Benedikt Rössler and Simon Schäfermann, as well as Carmen Gil Bredehöft, who encouraged me constantly and provided the perfect refreshment in critical moments. 
-Lastly I want to thank my cats for keeping me company and warming me every 10~minutes in the final phase of writing.\\
+I also want to thank my proof-readers Jonathan Paulitz (especially for all the personal and general tips), Benedikt Rössler and Simon Schäfermann, as well as Carmen Gil Bredehöft for the best colors, fonts and the perfect refreshment in critical moments.\\
+Lastly, I want to thank my parents for their continuous support and love, and for enabling me the studies I cherish. Also my cats for keeping me company and warming me every 10~minutes in the final phase of writing.\\
 \vspace*{\fill}\\
-In accordance with the standard scientfic protocol, I will use the personal pronoun
+In accordance with the standard scientific protocol, I will use the personal pronoun
 \textit{we} to indicate the reader and the writer or my scientific collaborators and myself.
 \cleardoublepage
 

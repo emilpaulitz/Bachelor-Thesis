@@ -45,6 +45,8 @@ def pseudoROC(df, xMax = 0.05, onlyFirstRank = True, onlyVals = False, qColName 
         return auc(qVals, range(len(qVals)))
     plt.xlim(-0.001,xMax)
     plt.ylim(0,len(qVals))
+    plt.xlabel('q-value')
+    plt.ylabel('Number of PSMs')
     plt.title(title)
     AUC = auc(qVals, range(len(qVals)))
     if (label != ''):
