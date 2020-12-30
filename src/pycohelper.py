@@ -26,7 +26,7 @@ def DFfromTXT(fileName):
     df = pd.DataFrame(xs[1:], index = range(len(xs[1:])), columns = xs[0])
     return df
 
-# convert every string col into an int or float if possible
+# convert every string col into a float if possible
 def strToFloat(df):
     for col in df:
         try:
